@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #003b95;
+  --color-primary-dark: #002d72;
+  --color-primary-light: #006ce4;
+  
+  --color-secondary: #ffb700;
+  --color-secondary-dark: #cc9200;
+  --color-secondary-light: #ffd14d;
+
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+}
+
+@layer base {
+  body {
+    background-color: var(--background, #ffffff);
+    color: var(--foreground, #111827);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: var(--font-sans);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+  }
+}
+
+.glass {
+  @apply bg-white/70 backdrop-blur-md border border-white/20;
+}
+
+@keyframes subtle-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
