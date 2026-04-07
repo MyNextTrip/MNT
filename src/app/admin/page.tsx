@@ -1,10 +1,3 @@
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Admin Dashboard | Internal",
-  robots: { index: false, follow: false },
-};
-
 "use client";
 
 import { useState, useEffect } from "react";
