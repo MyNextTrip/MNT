@@ -14,11 +14,11 @@ export default function TrustFactors() {
   ];
 
   return (
-    <section className="py-24 bg-gray-50">
+    <section className="py-16 md:py-24 bg-gray-50">
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">{t('trust.title')}</h2>
-          <p className="text-lg text-gray-600 leading-relaxed">
+        <div className="text-center max-w-3xl mx-auto mb-12 md:mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700 px-4">
+          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 md:mb-6">{t('trust.title')}</h2>
+          <p className="text-base md:text-lg text-gray-600 leading-relaxed">
             {t('trust.subtitle')}
           </p>
         </div>
@@ -39,11 +39,11 @@ export default function TrustFactors() {
         <div className="bg-primary rounded-[2.5rem] p-12 md:p-20 text-white relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 right-0 w-1/3 h-full bg-white/5 skew-x-12 translate-x-1/2" />
           
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
             <div>
-              <h3 className="text-3xl md:text-4xl font-bold mb-8">{t('trust.testimonials_title')}</h3>
-              <div className="space-y-8">
-                <blockquote className="text-xl italic font-light text-white/90 border-l-4 border-secondary pl-6">
+              <h3 className="text-2xl md:text-4xl font-bold mb-6 md:mb-8">{t('trust.testimonials_title')}</h3>
+              <div className="space-y-6 md:space-y-8">
+                <blockquote className="text-lg md:text-xl italic font-light text-white/90 border-l-4 border-secondary pl-6">
                   "The most seamless booking experience I've ever had. The attention to detail and curated list of hotels made our anniversary trip truly unforgettable."
                 </blockquote>
                 <div className="flex items-center gap-4">
@@ -56,22 +56,22 @@ export default function TrustFactors() {
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-2 gap-6 md:gap-8">
               <div className="text-center">
-                <p className="text-5xl font-bold text-secondary mb-2">1.5M+</p>
-                <p className="text-white/70 uppercase tracking-widest text-xs font-bold">{t('trust.stats.customers')}</p>
+                <p className="text-3xl md:text-5xl font-bold text-secondary mb-1">1.5M+</p>
+                <p className="text-white/70 uppercase tracking-widest text-[10px] md:text-xs font-bold">{t('trust.stats.customers')}</p>
               </div>
               <div className="text-center">
-                <p className="text-5xl font-bold text-secondary mb-2">4.9/5</p>
-                <p className="text-white/70 uppercase tracking-widest text-xs font-bold">Trustpilot Rating</p>
+                <p className="text-3xl md:text-5xl font-bold text-secondary mb-1">4.9/5</p>
+                <p className="text-white/70 uppercase tracking-widest text-[10px] md:text-xs font-bold">Trustpilot Rating</p>
               </div>
               <div className="text-center">
-                <p className="text-5xl font-bold text-secondary mb-2">500+</p>
-                <p className="text-white/70 uppercase tracking-widest text-xs font-bold">{t('trust.stats.destinations')}</p>
+                <p className="text-3xl md:text-5xl font-bold text-secondary mb-1">500+</p>
+                <p className="text-white/70 uppercase tracking-widest text-[10px] md:text-xs font-bold">{t('trust.stats.destinations')}</p>
               </div>
               <div className="text-center">
-                <p className="text-5xl font-bold text-secondary mb-2">100%</p>
-                <p className="text-white/70 uppercase tracking-widest text-xs font-bold">Price Match</p>
+                <p className="text-3xl md:text-5xl font-bold text-secondary mb-1">100%</p>
+                <p className="text-white/70 uppercase tracking-widest text-[10px] md:text-xs font-bold">Price Match</p>
               </div>
             </div>
           </div>

@@ -3,10 +3,11 @@
 import React, { useState } from "react";
 import { User, Mail, Lock, AlertCircle, ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function SignupClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,7 +27,13 @@ export default function SignupClient() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Something went wrong");
-      router.push("/login?registered=true");
+      
+      const callbackUrl = searchParams?.get('callbackUrl');
+      const loginUrl = callbackUrl 
+        ? `/login?registered=true&callbackUrl=${encodeURIComponent(callbackUrl)}` 
+        : "/login?registered=true";
+        
+      router.push(loginUrl);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -89,7 +96,15 @@ export default function SignupClient() {
             </button>
           </form>
 
-          <div className="mt-8 text-center text-sm text-indigo-200/70">Already have an account? <Link href="/login" className="font-medium text-indigo-400 hover:text-indigo-300 transition-colors">Sign in</Link></div>
+          <div className="mt-8 text-center text-sm text-indigo-200/70">
+            Already have an account?{" "}
+            <Link 
+              href={searchParams?.get('callbackUrl') ? `/login?callbackUrl=${encodeURIComponent(searchParams.get('callbackUrl')!)}` : "/login"} 
+              className="font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+            >
+              Sign in
+            </Link>
+          </div>
         </div>
       </div>
     </div>

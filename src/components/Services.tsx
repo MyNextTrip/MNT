@@ -45,14 +45,14 @@ export default function Services() {
   const prevSlide = () => setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
 
   return (
-    <section className="py-24 bg-slate-50 overflow-hidden">
+    <section className="py-16 md:py-24 bg-slate-50 overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
           <div className="max-w-2xl">
-            <span className="text-primary font-bold uppercase tracking-[0.2em] text-sm mb-4 block">
+            <span className="text-primary font-bold uppercase tracking-[0.2em] text-[10px] md:text-sm mb-3 md:mb-4 block">
               {t('services.tag') || "Featured"}
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 leading-tight">
               Trending Destinations for Your <span className="text-primary italic">Next Journey</span>
             </h2>
           </div>
@@ -86,7 +86,7 @@ export default function Services() {
                 className="flex-shrink-0 px-4"
                 style={{ width: `${100 / itemsToShow}%` }}
               >
-                <Link href={`/hotels?location=${encodeURIComponent(dest.city)}`} className="group relative block bg-white rounded-[32px] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 h-[450px]">
+                <Link href={`/hotels?location=${encodeURIComponent(dest.city)}`} className="group relative block bg-white rounded-[24px] md:rounded-[32px] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 h-[380px] md:h-[450px]">
                   {/* Background Image */}
                   <Image 
                     src={dest.image}
@@ -101,10 +101,10 @@ export default function Services() {
                   {/* Content Area */}
                   <div className="absolute inset-0 p-8 flex flex-col justify-end text-white">
                     <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                      <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest mb-3">
+                      <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-2 md:mb-3">
                         {dest.landmark}
                       </span>
-                      <h3 className="text-3xl font-black mb-1 drop-shadow-md">
+                      <h3 className="text-2xl md:text-3xl font-black mb-1 drop-shadow-md">
                         {dest.city}
                       </h3>
                       <p className="text-white/70 font-medium flex items-center gap-1.5 mb-6">
@@ -129,6 +129,16 @@ export default function Services() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Contact Expert Button */}
+        <div className="mt-12 md:mt-16 text-center">
+            <Link 
+              href="/contact-expert" 
+              className="inline-flex items-center gap-3 px-10 py-5 bg-primary text-white font-black rounded-2xl hover:bg-primary-dark transition-all shadow-xl hover:shadow-primary/30 hover:-translate-y-1 active:scale-95 text-sm md:text-base uppercase tracking-widest"
+            >
+              Contact a Travel Expert <ArrowRight className="w-5 h-5" />
+            </Link>
         </div>
       </div>
     </section>

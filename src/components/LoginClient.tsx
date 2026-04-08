@@ -46,7 +46,8 @@ function LoginContent() {
       } else if (data.user.role === 'hotel_admin') {
         window.location.href = "/hotel-admin";
       } else {
-        window.location.href = "/";
+        const callbackUrl = searchParams?.get('callbackUrl');
+        window.location.href = callbackUrl ? decodeURIComponent(callbackUrl) : "/";
       }
     } catch (err: any) {
       setError(err.message);

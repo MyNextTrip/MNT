@@ -14,12 +14,17 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
     background-color: var(--background, #ffffff);
     color: var(--foreground, #111827);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-family: var(--font-sans);
+    overflow-x: hidden;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
@@ -32,5 +37,28 @@
 
 @keyframes subtle-zoom {
   from { transform: scale(1); }
-  to { transform: scale(1.1); }
+  to { transform: scale(1.05); }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(-3%) translateX(-50%); }
+  50% { transform: translateY(0) translateX(-50%); }
+}
+
+.animate-subtle-zoom {
+  animation: subtle-zoom 20s infinite alternate ease-in-out;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 4s infinite ease-in-out;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

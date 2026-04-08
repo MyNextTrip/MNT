@@ -331,12 +331,12 @@ export default function Header() {
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-[100] md:hidden">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={() => setIsMobileMenuOpen(false)} />
-          <div className="absolute top-0 right-0 w-[280px] h-full bg-white shadow-2xl animate-in slide-in-from-right flex flex-col pointer-events-auto">
-            <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-              <span className="font-bold text-primary tracking-tight">Menu</span>
-              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
-                <X className="w-5 h-5 text-gray-500" />
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onClick={() => setIsMobileMenuOpen(false)} />
+          <div className="absolute top-0 right-0 w-[85%] max-w-[320px] h-full bg-white/95 backdrop-blur-xl shadow-2xl animate-in slide-in-from-right duration-300 flex flex-col pointer-events-auto overflow-hidden">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white/50">
+              <span className="font-black text-primary text-xl tracking-tight uppercase">Menu</span>
+              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400">
+                <X className="w-6 h-6" />
               </button>
             </div>
             
@@ -346,10 +346,10 @@ export default function Header() {
                 <div className="mb-2">
                   <button 
                     onClick={() => setIsMobileDestinationsOpen(!isMobileDestinationsOpen)}
-                    className="w-full flex items-center justify-between p-3 font-bold text-gray-700 hover:bg-primary/5 hover:text-primary rounded-xl transition-colors"
+                    className="w-full flex items-center justify-between p-4 font-black text-slate-800 hover:bg-primary/5 hover:text-primary rounded-2xl transition-all"
                   >
-                    <span className="flex items-center gap-3"><MapPin className="w-4 h-4 text-primary" /> {t('nav.destinations')}</span>
-                    <ChevronDown className={cn("w-4 h-4 transition-transform text-gray-400", isMobileDestinationsOpen && "rotate-180")} />
+                    <span className="flex items-center gap-4"><MapPin className="w-5 h-5 text-primary" /> {t('nav.destinations')}</span>
+                    <ChevronDown className={cn("w-4 h-4 transition-transform text-slate-400", isMobileDestinationsOpen && "rotate-180")} />
                   </button>
                   
                   {isMobileDestinationsOpen && (

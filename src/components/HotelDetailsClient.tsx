@@ -12,6 +12,7 @@ import Link from "next/link";
 import Script from "next/script";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
+import { HotelDetailsSkeleton } from "./Skeletons";
 
 const MEAL_PLANS = [
   { id: 'EP', label: 'EP – European Plan', desc: 'Room Only', price: 0, detail: 'No meals included. Best for guests who prefer eating outside.', tip: 'Only stay 🛏️' },
@@ -91,11 +92,18 @@ export default function HotelDetailsClient({ id, initialHotel }: HotelDetailsCli
 
   useEffect(() => {
     if (searchParams?.get("bookNow") === "true" && hotel && hotel.rooms && hotel.rooms.length > 0) {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) {
+        // Redirect to login with current URL as callback
+        const callbackUrl = encodeURIComponent(window.location.href);
+        router.push(`/login?callbackUrl=${callbackUrl}`);
+        return;
+      }
       const firstRoom = hotel.rooms[0];
       setSelectedRoomForBooking({ room: firstRoom, idx: 0 });
       setShowPaymentModal(true);
     }
-  }, [searchParams, hotel]);
+  }, [searchParams, hotel, router]);
 
   const handleNextImage = () => {
     if (!hotel || !hotel.images) return;
@@ -167,6 +175,13 @@ export default function HotelDetailsClient({ id, initialHotel }: HotelDetailsCli
   };
 
   const handleBookNow = (room: any, idx: number) => {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
+      // Redirect to login with current URL as callback
+      const callbackUrl = encodeURIComponent(window.location.href);
+      router.push(`/login?callbackUrl=${callbackUrl}`);
+      return;
+    }
     setSelectedRoomForBooking({ room, idx });
     setShowPaymentModal(true);
   };
@@ -321,11 +336,7 @@ export default function HotelDetailsClient({ id, initialHotel }: HotelDetailsCli
     }
   };
 
-  if (loading) return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center pt-24">
-      <Loader2 className="w-12 h-12 text-primary animate-spin" />
-    </div>
-  );
+  if (loading) return <HotelDetailsSkeleton />;
 
   if (!hotel) return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center pt-24 text-slate-500">
@@ -349,6 +360,7 @@ export default function HotelDetailsClient({ id, initialHotel }: HotelDetailsCli
               src={hotel.images[currentImageIndex]} 
               alt={`${hotel.hotelName} image ${currentImageIndex + 1}`} 
               fill className="object-cover transition-opacity duration-500" priority
+              sizes="(max-width: 768px) 100vw, 1200px"
             />
             {hotel.images.length > 1 && (
               <>

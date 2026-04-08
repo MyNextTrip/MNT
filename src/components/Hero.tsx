@@ -72,7 +72,7 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-[90vh] flex items-start justify-center pt-24 pb-16">
+    <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-start justify-center pt-20 md:pt-24 pb-16">
       <div className="absolute inset-0 z-0">
         <Image 
           src="/images/hero-bg.png"
@@ -84,21 +84,21 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-transparent" />
       </div>
 
-      <div className="container relative z-10 mx-auto px-4 text-center mt-12 text-white">
-        <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+      <div className="container relative z-10 mx-auto px-4 text-center mt-8 md:mt-12 text-white">
+        <div className="max-w-5xl mx-auto space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
           
-          <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold font-serif leading-tight text-white drop-shadow-lg">
+          <div className="space-y-3 md:space-y-4">
+            <h1 className="text-3xl md:text-5xl lg:text-7xl font-bold font-serif leading-tight text-white drop-shadow-xl">
               {t('hero.title')}
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 font-medium max-w-2xl mx-auto drop-shadow-md">
+            <p className="text-lg md:text-2xl text-white/95 font-medium max-w-2xl mx-auto drop-shadow-lg px-4">
                {t('hero.subtitle')}
             </p>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-2xl p-4 md:p-8 border border-white/40 text-left relative mt-16 max-w-5xl mx-auto">
-            {/* MakeMyTrip Style Tabs */}
-            <div className="absolute -top-7 left-1/2 -translate-x-1/2 flex items-center bg-white shadow-xl rounded-full px-2 py-1 gap-1 border border-primary/10 z-20 overflow-x-auto max-w-[95vw]">
+          <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl p-4 md:p-8 border border-white/40 text-left relative mt-12 md:mt-16 max-w-5xl mx-auto mx-1">
+            {/* Desktop Tabs (Floating Pill) */}
+            <div className="hidden md:flex absolute -top-7 left-1/2 -translate-x-1/2 items-center bg-white shadow-xl rounded-full px-2 py-1 gap-1 border border-primary/10 z-20 overflow-x-auto max-w-[95vw] no-scrollbar">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
@@ -106,14 +106,48 @@ export default function Hero() {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={cn(
-                      "flex items-center gap-2 px-6 py-3 rounded-full transition-all font-bold text-sm whitespace-nowrap",
+                      "flex items-center gap-2 px-6 py-3 rounded-full transition-all font-black text-sm whitespace-nowrap",
                       activeTab === tab.id 
-                        ? "bg-primary/10 text-primary shadow-sm" 
-                        : "text-slate-500 hover:text-slate-800 hover:bg-slate-50"
+                        ? "bg-primary/10 text-primary shadow-[0_2px_10px_-4px_rgba(0,59,149,0.3)]" 
+                        : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
                     )}
                   >
-                    <Icon className={cn("w-4 h-4", activeTab === tab.id ? "text-primary" : "text-slate-400")} />
+                    <Icon className={cn("w-4 h-4", activeTab === tab.id ? "text-primary" : "text-slate-300")} />
                     {t(tab.label)}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Mobile Tabs (Connected Grid) */}
+            <div className="grid grid-cols-3 md:hidden border-b border-slate-100 mb-4 -mx-4 -mt-4 bg-slate-50/50">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={cn(
+                      "flex flex-col items-center justify-center gap-2 py-4 px-2 transition-all relative",
+                      isActive ? "bg-white" : "text-slate-400"
+                    )}
+                  >
+                    <div className={cn(
+                      "p-2.5 rounded-2xl transition-all",
+                      isActive ? "bg-primary text-white shadow-lg shadow-primary/20 scale-110" : "bg-white text-slate-300 shadow-sm"
+                    )}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span className={cn(
+                      "text-[10px] font-black uppercase tracking-widest",
+                      isActive ? "text-slate-900" : "text-slate-400"
+                    )}>
+                      {t(tab.label).split(' ')[0]} {/* Use single word for mobile grid */}
+                    </span>
+                    {isActive && (
+                      <div className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-t-full" />
+                    )}
                   </button>
                 );
               })}
@@ -122,50 +156,53 @@ export default function Hero() {
             {/* FLIGHTS TAB */}
             {activeTab === "flights" && (
               <div className="animate-in fade-in zoom-in-95 duration-300">
-                <div className="flex gap-6 mb-4 pb-4 border-b border-slate-100">
-                  <label className="flex items-center gap-2 text-sm font-bold text-slate-800 cursor-pointer hover:text-blue-600 transition-colors">
-                    <input type="radio" name="flight_type" className="text-blue-600 w-4 h-4" defaultChecked /> One Way
+                <div className="flex gap-4 md:gap-6 mb-4 pb-4 border-b border-slate-100 overflow-x-auto no-scrollbar">
+                  <label className="flex items-center gap-2 text-xs md:text-sm font-black text-slate-800 cursor-pointer group whitespace-nowrap">
+                    <input type="radio" name="flight_type" className="text-blue-600 w-4 h-4 accent-primary" defaultChecked /> One Way
                   </label>
-                  <label className="flex items-center gap-2 text-sm font-bold text-slate-800 cursor-pointer hover:text-blue-600 transition-colors">
-                    <input type="radio" name="flight_type" className="text-blue-600 w-4 h-4" /> Round Trip
+                  <label className="flex items-center gap-2 text-xs md:text-sm font-black text-slate-500 hover:text-primary cursor-pointer group whitespace-nowrap">
+                    <input type="radio" name="flight_type" className="text-blue-600 w-4 h-4 accent-primary" /> Round Trip
+                  </label>
+                  <label className="flex items-center gap-2 text-xs md:text-sm font-black text-slate-500 hover:text-primary cursor-pointer group whitespace-nowrap">
+                    <input type="radio" name="flight_type" className="text-blue-600 w-4 h-4 accent-primary" /> Multi City
                   </label>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-2 bg-slate-50 rounded-2xl p-2 border border-slate-100">
-                  <div className="relative group/input p-3 bg-white rounded-xl border hover:border-blue-200 transition-colors cursor-pointer">
-                    <p className="text-[10px] font-black tracking-wider text-slate-400 mb-0.5">FROM</p>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-0 md:gap-2 bg-slate-50 md:bg-white rounded-2xl md:p-0 overflow-hidden md:border-none">
+                  <div className="relative group/input p-3 bg-white rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm">
+                    <p className="text-[9px] md:text-[10px] font-black tracking-wider text-slate-400 mb-0.5 uppercase">FROM</p>
                     <div className="flex justify-between items-center">
                       <input 
                         type="text" 
                         value={flightFrom}
                         onChange={(e) => setFlightFrom(e.target.value)}
-                        className="w-full text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" 
+                        className="w-full text-lg md:text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" 
                       /> 
                       <Plane className="w-5 h-5 text-slate-300 -rotate-45" />
                     </div>
-                    <p className="text-xs font-semibold text-slate-50">{flightFrom === "Patna" ? "PTA, India" : "India"}</p>
+                    <p className="text-[10px] md:text-xs font-semibold text-slate-400">{flightFrom === "Patna" ? "PTA, India" : "India"}</p>
                   </div>
-                  <div className="relative group/input p-3 bg-white rounded-xl border hover:border-blue-200 transition-colors cursor-pointer">
-                    <p className="text-[10px] font-black tracking-wider text-slate-400 mb-0.5">TO</p>
-                    <div className="flex justify-between items-center"><input type="text" placeholder="Destination" className="w-full text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" /></div>
-                    <p className="text-xs font-semibold text-slate-500">Any Worldwide City</p>
+                  <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
+                    <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">DESTINATION</p>
+                    <div className="flex justify-between items-center"><input type="text" placeholder="Where to?" className="w-full text-lg md:text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" /> <MapPin className="w-5 h-5 text-slate-300" /></div>
+                    <p className="text-[10px] md:text-xs font-semibold text-slate-400">Search globally</p>
                   </div>
-                  <div className="relative group/input p-3 bg-white rounded-xl border hover:border-blue-200 transition-colors cursor-pointer">
-                    <p className="text-[10px] font-black tracking-wider text-slate-400 mb-0.5">DEPARTURE</p>
+                  <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
+                    <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">DEPARTURE</p>
                     <div className="flex items-center justify-between relative">
                       <input type="date" min={today} value={flightDate} onChange={e=>setFlightDate(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-                      <h3 className="text-xl font-black text-slate-800 truncate">{flightDate ? new Date(flightDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : "Select Date"}</h3>
+                      <h3 className="text-lg md:text-xl font-black text-slate-800 truncate">{flightDate ? new Date(flightDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : "Select Date"}</h3>
                       <Calendar className="w-5 h-5 text-slate-300" />
                     </div>
-                    <p className="text-xs font-semibold text-slate-500">{flightDate ? new Date(flightDate).toLocaleDateString('en-GB',{weekday:'long'}) : "Tap to open calendar"}</p>
+                    <p className="text-[10px] md:text-xs font-semibold text-slate-400">{flightDate ? new Date(flightDate).toLocaleDateString('en-GB',{weekday:'long'}) : "Tap to open calendar"}</p>
                   </div>
                   <div 
-                    className="relative group/input p-3 bg-white rounded-xl border hover:border-blue-200 transition-colors cursor-pointer select-none"
+                    className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer select-none md:shadow-none"
                     onClick={() => setShowFlightTravellers(!showFlightTravellers)}
                   >
-                    <p className="text-[10px] font-black tracking-wider text-slate-400 mb-0.5">TRAVELLERS & CLASS</p>
-                    <div className="flex justify-between items-center"><h3 className="text-xl font-black text-slate-800"><span className="text-primary mr-1">{flightAdults}</span> Adult</h3> <Users className="w-5 h-5 text-slate-300" /></div>
-                    <p className="text-xs font-semibold text-slate-500 truncate">{flightClass}</p>
+                    <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">TRAVELLERS & CLASS</p>
+                    <div className="flex justify-between items-center"><h3 className="text-lg md:text-xl font-black text-slate-800"><span className="text-primary mr-1">{flightAdults}</span> Adult</h3> <Users className="w-5 h-5 text-slate-300" /></div>
+                    <p className="text-[10px] md:text-xs font-semibold text-slate-400 truncate">{flightClass}</p>
 
                     {showFlightTravellers && (
                       <div 
@@ -226,57 +263,57 @@ export default function Hero() {
             {/* HOTELS TAB */}
             {activeTab === "hotels" && (
               <div className="animate-in fade-in zoom-in-95 duration-300">
-                <div className="flex gap-6 mb-4 pb-4 border-b border-slate-100">
-                  <label className="flex items-center gap-2 text-sm font-bold text-slate-800 cursor-pointer hover:text-blue-600 transition-colors">
-                    <input type="radio" name="hotel_type" className="text-blue-600 w-4 h-4" onChange={() => setHotelRooms(1)} checked={hotelRooms === 1} /> 1 Room
+                <div className="flex gap-4 md:gap-6 mb-4 pb-4 border-b border-slate-100 overflow-x-auto no-scrollbar">
+                  <label className="flex items-center gap-2 text-xs md:text-sm font-black text-slate-800 cursor-pointer whitespace-nowrap">
+                    <input type="radio" name="hotel_type" className="text-blue-600 w-4 h-4 accent-primary" onChange={() => setHotelRooms(1)} checked={hotelRooms === 1} /> 1 Room
                   </label>
-                  <label className="flex items-center gap-2 text-sm font-bold text-slate-800 cursor-pointer hover:text-blue-600 transition-colors">
-                    <input type="radio" name="hotel_type" className="text-blue-600 w-4 h-4" onChange={() => setHotelRooms(5)} checked={hotelRooms > 1 && hotelRooms <= 5} /> Upto 5 Rooms
+                  <label className="flex items-center gap-2 text-xs md:text-sm font-black text-slate-500 hover:text-primary cursor-pointer whitespace-nowrap">
+                    <input type="radio" name="hotel_type" className="text-blue-600 w-4 h-4 accent-primary" onChange={() => setHotelRooms(5)} checked={hotelRooms > 1 && hotelRooms <= 5} /> Group Booking
                   </label>
-                  <label className="flex items-center gap-2 text-sm font-bold text-slate-800 cursor-pointer hover:text-blue-600 transition-colors">
-                    <input type="radio" name="hotel_type" className="text-blue-600 w-4 h-4" /> Group Booking
+                  <label className="flex items-center gap-2 text-xs md:text-sm font-black text-slate-500 hover:text-primary cursor-pointer whitespace-nowrap">
+                    <input type="radio" name="hotel_type" className="text-blue-600 w-4 h-4 accent-primary" /> Long Stay
                   </label>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-2 bg-slate-50 rounded-2xl p-2 border border-slate-100">
-                  <div className="relative group/input md:col-span-2 p-3 bg-white rounded-xl border hover:border-blue-200 transition-colors cursor-pointer">
-                    <p className="text-[10px] font-black tracking-wider text-slate-400 mb-0.5">CITY, PROPERTY NAME OR LOCATION</p>
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-0 md:gap-2 bg-slate-50 md:bg-white rounded-2xl md:p-0 overflow-hidden md:border-none">
+                  <div className="relative group/input md:col-span-2 p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
+                    <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">CITY OR PROPERTY</p>
                     <div className="flex justify-between items-center">
                       <input 
                         type="text" 
-                        placeholder="e.g. Patna, Ranchi" 
+                        placeholder="Where are you going?" 
                         value={hotelLocation}
                         onChange={(e) => setHotelLocation(e.target.value)}
-                        className="w-full text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" 
+                        className="w-full text-lg md:text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" 
                       /> 
                       <Building2 className="w-5 h-5 text-slate-300" />
                     </div>
-                    <p className="text-xs font-semibold text-slate-500">India</p>
+                    <p className="text-[10px] md:text-xs font-semibold text-slate-400">Popular: Patna, Ranchi, Nepal</p>
                   </div>
-                  <div className="relative group/input p-3 bg-white rounded-xl border hover:border-blue-200 transition-colors cursor-pointer">
-                    <p className="text-[10px] font-black tracking-wider text-slate-400 mb-0.5">CHECK-IN</p>
+                  <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
+                    <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">CHECK-IN</p>
                     <div className="flex items-center justify-between relative">
                       <input type="date" min={today} value={hotelIn} onChange={e=>handleHotelInChange(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-                      <h3 className="text-xl font-black text-slate-800 truncate">{hotelIn ? new Date(hotelIn).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : "Select Date"}</h3>
+                      <h3 className="text-lg md:text-xl font-black text-slate-800 truncate">{hotelIn ? new Date(hotelIn).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : "Select Date"}</h3>
                       <Calendar className="w-5 h-5 text-slate-300" />
                     </div>
                   </div>
-                  <div className="relative group/input p-3 bg-white rounded-xl border hover:border-blue-200 transition-colors cursor-pointer">
-                    <p className="text-[10px] font-black tracking-wider text-slate-400 mb-0.5">CHECK-OUT</p>
+                  <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
+                    <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">CHECK-OUT</p>
                     <div className="flex items-center justify-between relative">
                       <input type="date" min={minCheckOut} value={hotelOut} onChange={e=>setHotelOut(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-                      <h3 className="text-xl font-black text-slate-800 truncate">{hotelOut ? new Date(hotelOut).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : "Select Date"}</h3>
+                      <h3 className="text-lg md:text-xl font-black text-slate-800 truncate">{hotelOut ? new Date(hotelOut).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : "Select Date"}</h3>
                       <Calendar className="w-5 h-5 text-slate-300" />
                     </div>
                   </div>
                   <div 
-                    className="relative group/input p-3 bg-white rounded-xl border hover:border-blue-200 transition-colors cursor-pointer select-none"
+                    className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer select-none md:shadow-none"
                     onClick={() => setShowHotelGuests(!showHotelGuests)}
                   >
-                    <p className="text-[10px] font-black tracking-wider text-slate-400 mb-0.5">ROOMS & GUESTS</p>
+                    <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">GUESTS</p>
                     <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-black text-slate-800 truncate">
-                        <span className="text-primary mr-1">{hotelRooms}</span> Room, <span className="text-primary mx-1">{hotelAdults}</span> Guests
+                      <h3 className="text-base md:text-sm font-black text-slate-800 truncate">
+                        <span className="text-primary mr-1">{hotelRooms}</span> Rm, <span className="text-primary mx-1">{hotelAdults}</span> Gst
                       </h3>
                       <Users className="w-4 h-4 text-slate-300" />
                     </div>
@@ -345,41 +382,41 @@ export default function Hero() {
                   </label>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-2 bg-slate-50 rounded-2xl p-2 border border-slate-100">
-                  <div className="relative group/input p-3 bg-white rounded-xl border hover:border-blue-200 transition-colors cursor-pointer">
-                    <p className="text-[10px] font-black tracking-wider text-slate-400 mb-0.5">FROM CITY</p>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-0 md:gap-2 bg-slate-50 md:bg-white rounded-2xl md:p-0 overflow-hidden md:border-none">
+                  <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
+                    <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">FROM CITY</p>
                     <div className="flex justify-between items-center">
                       <input 
                         type="text" 
                         value={pkgFrom}
                         onChange={(e) => setPkgFrom(e.target.value)}
-                        className="w-full text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" 
+                        className="w-full text-lg md:text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" 
                       /> 
                       <MapPin className="w-5 h-5 text-slate-300" />
                     </div>
-                    <p className="text-xs font-semibold text-slate-500">India</p>
+                    <p className="text-[10px] md:text-xs font-semibold text-slate-400">Your location</p>
                   </div>
-                  <div className="relative group/input p-3 bg-white rounded-xl border hover:border-blue-200 transition-colors cursor-pointer">
-                    <p className="text-[10px] font-black tracking-wider text-slate-400 mb-0.5">TO CITY/DESTINATION</p>
-                    <div className="flex justify-between items-center"><input type="text" placeholder="e.g. Goa, Kerala" className="w-full text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" /></div>
-                    <p className="text-xs font-semibold text-slate-500">Anywhere</p>
+                  <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
+                    <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">DESTINATION</p>
+                    <div className="flex justify-between items-center"><input type="text" placeholder="Where to?" className="w-full text-lg md:text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" /> <Globe className="w-5 h-5 text-slate-300" /></div>
+                    <p className="text-[10px] md:text-xs font-semibold text-slate-400">Trending: Bali, Dubai</p>
                   </div>
-                  <div className="relative group/input p-3 bg-white rounded-xl border hover:border-blue-200 transition-colors cursor-pointer">
-                    <p className="text-[10px] font-black tracking-wider text-slate-400 mb-0.5">STARTING DATE</p>
+                  <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
+                    <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">STARTING DATE</p>
                     <div className="flex items-center justify-between relative">
                       <input type="date" min={today} value={pkgDate} onChange={e=>setPkgDate(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-                      <h3 className="text-xl font-black text-slate-800 truncate">{pkgDate ? new Date(pkgDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : "Select Date"}</h3>
+                      <h3 className="text-lg md:text-xl font-black text-slate-800 truncate">{pkgDate ? new Date(pkgDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : "Select Date"}</h3>
                       <Calendar className="w-5 h-5 text-slate-300" />
                     </div>
                   </div>
                   <div 
-                    className="relative group/input p-3 bg-white rounded-xl border hover:border-blue-200 transition-colors cursor-pointer select-none"
+                    className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer select-none md:shadow-none"
                     onClick={() => setShowPkgGuests(!showPkgGuests)}
                   >
-                    <p className="text-[10px] font-black tracking-wider text-slate-400 mb-0.5">ROOMS & GUESTS</p>
+                    <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">TRAVELLERS</p>
                     <div className="flex items-center justify-between">
-                      <h3 className="text-xl font-black text-slate-800">
-                        <span className="text-primary mr-1">{pkgRooms}</span> Room, <span className="text-primary mx-1">{pkgAdults + pkgChildren}</span> Guests
+                      <h3 className="text-lg md:text-xl font-black text-slate-800">
+                        <span className="text-primary mr-1">{pkgRooms}</span> Rm, <span className="text-primary mx-1">{pkgAdults + pkgChildren}</span> Gst
                       </h3>
                       <Users className="w-5 h-5 text-slate-300 group-hover/input:text-blue-500 transition-colors" />
                     </div>
@@ -445,12 +482,13 @@ export default function Hero() {
             )}
 
             {/* Global Search Button */}
-            <div className="absolute -bottom-7 left-1/2 -translate-x-1/2">
+            <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] md:w-auto px-4 md:px-0">
               <button 
                 onClick={handleSearch}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-xl py-3.5 px-16 rounded-full shadow-[0_12px_24px_-8px_rgba(37,99,235,0.7)] hover:shadow-[0_16px_32px_-8px_rgba(37,99,235,0.8)] transition-all flex items-center gap-3"
+                className="w-full md:w-auto bg-slate-900 md:bg-gradient-to-r md:from-blue-600 md:to-indigo-600 text-white font-black text-lg md:text-xl py-4.5 md:py-3.5 px-8 md:px-16 rounded-2xl md:rounded-full shadow-[0_20px_40px_-12px_rgba(0,0,0,0.3)] md:shadow-[0_12px_24px_-8px_rgba(37,99,235,0.7)] hover:scale-[1.02] transition-all flex items-center justify-center gap-3 active:scale-95"
               >
-                SEARCH <ArrowRight className="w-5 h-5" />
+                {activeTab === 'hotels' ? 'SEARCH HOTELS' : activeTab === 'flights' ? 'SEARCH FLIGHTS' : 'FIND PACKAGES'} 
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
             
