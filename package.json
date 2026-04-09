@@ -14,13 +14,13 @@
   "description": "",
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^25.5.0",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
     "autoprefixer": "^10.4.27",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2",
-    "typescript": "^6.0.2"
+    "typescript": "^5.7.3"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
@@ -32,7 +32,7 @@
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.470.0",
     "mongoose": "^9.3.3",
-    "next": "^16.2.1",
+    "next": "^15.1.7",
     "razorpay": "^2.9.6",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

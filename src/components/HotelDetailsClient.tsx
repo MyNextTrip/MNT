@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { 
@@ -26,7 +26,7 @@ interface HotelDetailsClientProps {
   initialHotel: any;
 }
 
-export default function HotelDetailsClient({ id, initialHotel }: HotelDetailsClientProps) {
+function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -603,5 +603,13 @@ export default function HotelDetailsClient({ id, initialHotel }: HotelDetailsCli
 
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
     </main>
+  );
+}
+
+export default function HotelDetailsClient({ id, initialHotel }: HotelDetailsClientProps) {
+  return (
+    <Suspense fallback={<HotelDetailsSkeleton />}>
+      <HotelDetailsContent id={id} initialHotel={initialHotel} />
+    </Suspense>
   );
 }

@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { User, Mail, Lock, AlertCircle, ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SignupClient() {
+function SignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
@@ -108,5 +108,17 @@ export default function SignupClient() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupClient() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-900 flex justify-center items-center">
+        <Loader2 className="animate-spin text-white w-8 h-8"/>
+      </div>
+    }>
+      <SignupContent />
+    </Suspense>
   );
 }
