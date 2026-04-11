@@ -26,6 +26,9 @@ export default function HotelAdminDashboard() {
   const [stats, setStats] = useState<any>(null);
   const [bookings, setBookings] = useState<any[]>([]);
   const [hotelData, setHotelData] = useState<any>(null);
+  const [virtualRooms, setVirtualRooms] = useState<any[]>([]);
+  const [roomAssignments, setRoomAssignments] = useState<Record<string, string>>({}); // bookingId -> roomId
+
   
   const [loadingStats, setLoadingStats] = useState(false);
   const [loadingBookings, setLoadingBookings] = useState(false);
@@ -136,6 +139,52 @@ export default function HotelAdminDashboard() {
       setLoadingHotel(false);
     }
   };
+  
+  useEffect(() => {
+    if (hotelData?.rooms) {
+      const rooms: any[] = [];
+      hotelData.rooms.forEach((type: any, typeIdx: number) => {
+        for (let i = 1; i <= (type.count || 0); i++) {
+          const roomNumber = `${100 + typeIdx + 1}${i.toString().padStart(2, '0')}`;
+          rooms.push({
+            id: `${type.type}-${i}`,
+            roomType: type.type,
+            roomNumber,
+            price: type.price
+          });
+        }
+      });
+      setVirtualRooms(rooms);
+    }
+  }, [hotelData]);
+
+  useEffect(() => {
+    if (virtualRooms.length > 0 && bookings.length > 0) {
+      const assignments: Record<string, string> = {};
+      const sortedBookings = [...bookings].sort((a, b) => new Date(a.checkInDate).getTime() - new Date(b.checkInDate).getTime());
+      
+      const roomSchedule: Record<string, Array<{ start: number, end: number }>> = {};
+      virtualRooms.forEach(r => roomSchedule[r.id] = []);
+
+      sortedBookings.forEach(booking => {
+        const start = new Date(booking.checkInDate).getTime();
+        const end = new Date(booking.checkOutDate).getTime();
+        
+        // Find first available room of the correct type
+        const availableRoom = virtualRooms.find(r => {
+          if (r.roomType !== booking.roomType) return false;
+          return !roomSchedule[r.id].some(s => (start < s.end && end > s.start));
+        });
+
+        if (availableRoom) {
+          assignments[booking._id] = availableRoom.id;
+          roomSchedule[availableRoom.id].push({ start, end });
+        }
+      });
+      setRoomAssignments(assignments);
+    }
+  }, [virtualRooms, bookings]);
+
 
   const handleUpdateBookingStatus = async (bookingId: string, status: string) => {
     try {
@@ -728,7 +777,294 @@ export default function HotelAdminDashboard() {
           </div>
         )}
 
-        {['stayview', 'roomview', 'reservation', 'rates', 'distribution', 'guest', 'cashiering', 'housekeeping', 'nightaudit', 'b2b', 'netlocks', 'reports', 'exported', 
+        {activeTab === 'stayview' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4">
+            <header className="mb-8">
+              <h1 className="text-3xl font-black text-slate-900">Stayview</h1>
+              <p className="text-slate-500 mt-2 font-medium">Real-time room occupancy timeline.</p>
+            </header>
+
+            <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+              <div className="overflow-x-auto p-4">
+                <div className="min-w-[1200px]">
+                  {/* Timeline Header */}
+                  <div className="flex border-b border-slate-100">
+                    <div className="w-48 p-4 shrink-0 font-black text-xs uppercase tracking-widest text-slate-400 border-r border-slate-100 bg-slate-50/50">
+                      Room Details
+                    </div>
+                    <div className="flex-1 flex">
+                      {Array.from({ length: 14 }).map((_, i) => {
+                        const d = new Date();
+                        d.setDate(d.getDate() + i - 2);
+                        const isToday = d.toDateString() === new Date().toDateString();
+                        return (
+                          <div key={i} className={cn(
+                            "flex-1 p-3 text-center border-r border-slate-50 min-w-[80px]",
+                            isToday && "bg-amber-50"
+                          )}>
+                            <p className="text-[10px] font-black text-slate-400 uppercase">{d.toLocaleDateString('en-US', { weekday: 'short' })}</p>
+                            <p className={cn("text-sm font-black mt-1", isToday ? "text-amber-600" : "text-slate-700")}>{d.getDate()}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Timeline Body */}
+                  <div className="divide-y divide-slate-50">
+                    {virtualRooms.map(room => (
+                      <div key={room.id} className="flex group hover:bg-slate-50/30 transition-colors">
+                        <div className="w-48 p-4 shrink-0 border-r border-slate-100 flex flex-col justify-center">
+                          <p className="font-black text-slate-900 text-sm">Room {room.roomNumber}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate">{room.roomType}</p>
+                        </div>
+                        <div className="flex-1 flex relative h-16">
+                          {/* Grid Lines */}
+                          {Array.from({ length: 14 }).map((_, i) => (
+                            <div key={i} className="flex-1 border-r border-slate-50/50" />
+                          ))}
+                          
+                          {/* Booking Bars */}
+                          {bookings
+                            .filter(b => roomAssignments[b._id] === room.id && b.reservationStatus !== 'Cancelled')
+                            .map(booking => {
+                              const checkIn = new Date(booking.checkInDate);
+                              const checkOut = new Date(booking.checkOutDate);
+                              const today = new Date();
+                              today.setDate(today.getDate() - 2); // Start timeline 2 days ago
+                              
+                              const startOffset = Math.max(0, (checkIn.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+                              const duration = (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24);
+                              
+                              if (startOffset > 14 || startOffset + duration < 0) return null;
+
+                              const left = `${(startOffset / 14) * 100}%`;
+                              const width = `${(duration / 14) * 100}%`;
+
+                              return (
+                                <div 
+                                  key={booking._id}
+                                  style={{ left, width }}
+                                  className={cn(
+                                    "absolute top-1/2 -translate-y-1/2 h-10 rounded-xl px-3 flex items-center shadow-lg border-2 z-10 cursor-pointer hover:scale-[1.02] transition-transform overflow-hidden",
+                                    booking.reservationStatus === 'Confirmed' ? "bg-indigo-600 border-indigo-400 text-white" : "bg-amber-500 border-amber-300 text-white"
+                                  )}
+                                >
+                                  <p className="text-[10px] font-black uppercase tracking-tighter truncate">
+                                    {booking.guestName}
+                                  </p>
+                                </div>
+                              );
+                            })
+                          }
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'roomview' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4">
+            <header className="mb-8 flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-black text-slate-900">Room Status Grid</h1>
+                <p className="text-slate-500 mt-2 font-medium">Real-time status of all property rooms.</p>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                  <span className="text-[10px] font-bold text-slate-500 uppercase">Vacant</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-rose-500" />
+                  <span className="text-[10px] font-bold text-slate-500 uppercase">Occupied</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-amber-500" />
+                  <span className="text-[10px] font-bold text-slate-500 uppercase">Reserved</span>
+                </div>
+              </div>
+            </header>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+              {virtualRooms.map(room => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const currentBooking = bookings.find(b => {
+                  if (roomAssignments[b._id] !== room.id || b.reservationStatus === 'Cancelled') return false;
+                  const ci = new Date(b.checkInDate); ci.setHours(0,0,0,0);
+                  const co = new Date(b.checkOutDate); co.setHours(0,0,0,0);
+                  return today >= ci && today < co;
+                });
+
+                const upcomingBooking = !currentBooking && bookings.find(b => {
+                  if (roomAssignments[b._id] !== room.id || b.reservationStatus === 'Cancelled') return false;
+                  const ci = new Date(b.checkInDate); ci.setHours(0,0,0,0);
+                  return ci.getTime() === today.getTime();
+                });
+
+                const status = currentBooking ? 'Occupied' : upcomingBooking ? 'Reserved' : 'Vacant';
+                
+                return (
+                  <div 
+                    key={room.id}
+                    className={cn(
+                      "bg-white rounded-3xl p-5 shadow-sm border-2 transition-all hover:shadow-md cursor-pointer relative overflow-hidden group",
+                      status === 'Occupied' ? "border-rose-100 hover:border-rose-300" :
+                      status === 'Reserved' ? "border-amber-100 hover:border-amber-300" :
+                      "border-emerald-100 hover:border-emerald-300"
+                    )}
+                  >
+                    <div className="relative z-10">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className={cn(
+                          "w-10 h-10 rounded-2xl flex items-center justify-center",
+                          status === 'Occupied' ? "bg-rose-50 text-rose-500" :
+                          status === 'Reserved' ? "bg-amber-50 text-amber-500" :
+                          "bg-emerald-50 text-emerald-500"
+                        )}>
+                          <BedDouble className="w-5 h-5" />
+                        </div>
+                        <span className={cn(
+                          "text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest",
+                          status === 'Occupied' ? "bg-rose-100 text-rose-600" :
+                          status === 'Reserved' ? "bg-amber-100 text-amber-600" :
+                          "bg-emerald-100 text-emerald-600"
+                        )}>
+                          {status}
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-black text-slate-900">Room {room.roomNumber}</h3>
+                      <p className="text-[10px] font-bold text-slate-400 capitalize truncate mt-1">{room.roomType}</p>
+                      
+                      {currentBooking && (
+                        <div className="mt-4 pt-4 border-t border-slate-50">
+                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Guest</p>
+                          <p className="text-xs font-bold text-slate-800 truncate">{currentBooking.guestName}</p>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Background Icon */}
+                    <DoorOpen className={cn(
+                      "absolute -right-4 -bottom-4 w-20 h-20 opacity-[0.03] transition-transform group-hover:scale-110",
+                      status === 'Occupied' ? "text-rose-900" : "text-emerald-900"
+                    )} />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'reservation' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4">
+            <header className="mb-8 flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-black text-slate-900">Reservation Desk</h1>
+                <p className="text-slate-500 mt-2 font-medium">Detailed log of all guest bookings and financial status.</p>
+              </div>
+              <button className="flex items-center gap-2 px-6 py-3 bg-amber-500 text-white font-black rounded-xl shadow-lg hover:shadow-amber-500/30 hover:-translate-y-0.5 transition-all">
+                <PlusCircle className="w-5 h-5" /> New Reservation
+              </button>
+            </header>
+
+            <div className="bg-white rounded-[2rem] shadow-xl border border-slate-100 overflow-hidden">
+              <div className="p-6 border-b border-slate-50 bg-slate-50/30 flex flex-wrap gap-4 items-center justify-between">
+                <div className="flex gap-2">
+                  {['All', 'Confirmed', 'Pending', 'Cancelled'].map(filter => (
+                    <button key={filter} className={cn(
+                      "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+                      filter === 'All' ? "bg-slate-900 text-white shadow-md" : "text-slate-500 hover:bg-white hover:shadow-sm"
+                    )}>
+                      {filter}
+                    </button>
+                  ))}
+                </div>
+                <div className="relative w-full lg:w-72">
+                  <FileSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input 
+                    type="text" placeholder="Search guests, rooms..." 
+                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500/20 outline-none transition-all"
+                  />
+                </div>
+              </div>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-slate-50">
+                      <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Guest Detail</th>
+                      <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Stay Duration</th>
+                      <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Room / Type</th>
+                      <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Payment</th>
+                      <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Status</th>
+                      <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    {bookings.map(b => (
+                      <tr key={b._id} className="hover:bg-slate-50/50 transition-colors group">
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-black text-xs">
+                              {b.guestName.charAt(0)}
+                            </div>
+                            <div>
+                              <p className="font-black text-slate-900 text-sm leading-none">{b.guestName}</p>
+                              <p className="text-[10px] font-bold text-slate-500 mt-1.5">{b.guestPhone || b.userEmail}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          <p className="text-xs font-black text-slate-700">{new Date(b.checkInDate).toLocaleDateString(undefined, { day: '2-digit', month: 'short' })} — {new Date(b.checkOutDate).toLocaleDateString(undefined, { day: '2-digit', month: 'short' })}</p>
+                          <p className="text-[9px] font-bold text-slate-400 uppercase mt-1 tracking-wider">{b.numberOfNights} Nights</p>
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-2">
+                             <span className="text-xs font-black text-indigo-600 px-2 py-0.5 bg-indigo-50 rounded">
+                               {roomAssignments[b._id] ? `R${virtualRooms.find(r => r.id === roomAssignments[b._id])?.roomNumber}` : '—'}
+                             </span>
+                             <span className="text-[10px] font-bold text-slate-500 uppercase">{b.roomType}</span>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          <p className="text-xs font-black text-slate-900">₹{b.totalAmount?.toLocaleString()}</p>
+                          <p className={cn(
+                            "text-[9px] font-black uppercase mt-1",
+                            b.paymentStatus === 'Paid' ? "text-emerald-500" : "text-amber-500"
+                          )}>{b.paymentStatus}</p>
+                        </td>
+                        <td className="px-8 py-6">
+                           <span className={cn(
+                            "text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-[0.15em] border",
+                            b.reservationStatus === 'Confirmed' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                            b.reservationStatus === 'Pending' ? "bg-amber-50 text-amber-600 border-amber-100" :
+                            "bg-red-50 text-red-600 border-red-100"
+                           )}>
+                             {b.reservationStatus}
+                           </span>
+                        </td>
+                        <td className="px-8 py-6">
+                          <button className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all">
+                            <ChevronRight className="w-5 h-5" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {['rates', 'distribution', 'guest', 'cashiering', 'housekeeping', 'nightaudit', 'b2b', 'netlocks', 'reports', 'exported', 
           'ratewizard', 'packages', 'stopsell', 'channellogs', 'guestdb', 'unsettled', 'lostfound', 'travelagent', 'businesssource', 'salesperson', 'companydb', 'expensevoucher', 'pos', 'housestatus', 'maintenanceblock', 'workorder', 'nightaudit_main', 'nightauditlog', 'inserttransaction'].includes(activeTab) && (
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-slate-400 animate-in fade-in zoom-in-95">
               <div className="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mb-8 border-4 border-white shadow-xl">
