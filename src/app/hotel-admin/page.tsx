@@ -602,6 +602,7 @@ export default function HotelAdminDashboard() {
                                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Booking ID</th>
                                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Guest Info</th>
                                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Dates / Room</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Payment</th>
                                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</th>
                                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Actions</th>
                             </tr>
@@ -624,6 +625,32 @@ export default function HotelAdminDashboard() {
                                         <td className="px-6 py-4">
                                             <p className="text-xs font-bold text-slate-800">{new Date(b.checkInDate).toLocaleDateString()} - {new Date(b.checkOutDate).toLocaleDateString()}</p>
                                             <p className="text-[10px] text-slate-500 mt-1">{b.roomType} × {b.roomsCount || 1}</p>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-col gap-1.5">
+                                                <span className={cn(
+                                                    "text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider border w-fit",
+                                                    b.paymentType === 'Prepaid' ? "bg-blue-50 text-blue-600 border-blue-100" :
+                                                    b.paymentType === 'Partial' ? "bg-purple-50 text-purple-600 border-purple-100" :
+                                                    "bg-indigo-50 text-indigo-600 border-indigo-100"
+                                                )}>
+                                                    {b.paymentType || 'PayAtHotel'}
+                                                </span>
+                                                <div className="flex flex-col gap-0.5 mt-0.5">
+                                                    {(b.paymentType === 'PayAtHotel' || !b.paymentType) && (
+                                                        <span className="text-[10px] font-bold text-indigo-600">Due: ₹{b.totalAmount?.toLocaleString()}</span>
+                                                    )}
+                                                    {b.paymentType === 'Partial' && (
+                                                        <>
+                                                            <span className="text-[10px] font-bold text-emerald-600">Paid: ₹{b.paidAmount?.toLocaleString()}</span>
+                                                            <span className="text-[10px] font-bold text-amber-600">Due: ₹{b.balanceAmount?.toLocaleString()}</span>
+                                                        </>
+                                                    )}
+                                                    {b.paymentType === 'Prepaid' && (
+                                                        <span className="text-[10px] font-bold text-emerald-600">Paid: ₹{b.totalAmount?.toLocaleString()}</span>
+                                                    )}
+                                                </div>
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={cn(
