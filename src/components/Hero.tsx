@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Calendar, Users, MapPin, Plane, Building2, Globe, ArrowRight } from "lucide-react";
+import { Search, Calendar, Users, MapPin, Plane, Building2, Globe, ArrowRight, Volume2, VolumeX } from "lucide-react";
 import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,7 @@ export default function Hero() {
   const { t } = useLanguage();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("flights");
+  const [isMuted, setIsMuted] = useState(true);
   const [flightDate, setFlightDate] = useState("");
   const [hotelIn, setHotelIn] = useState("");
   const [hotelOut, setHotelOut] = useState("");
@@ -73,15 +74,30 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-start justify-center pt-20 md:pt-24 pb-16">
-      <div className="absolute inset-0 z-0">
-        <Image 
-          src="/images/hero-bg.png"
-          alt="MyNextTrip - Luxury Hotels and Premium Travel Experiences"
-          fill
-          className="object-cover animate-subtle-zoom"
-          priority
-        />
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <video
+          autoPlay
+          loop
+          muted={isMuted}
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/images/website bg video.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-transparent" />
+        
+        {/* Mute/Unmute Toggle */}
+        <button 
+          onClick={() => setIsMuted(!isMuted)}
+          className="absolute bottom-8 right-8 z-20 p-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-white/20 transition-all text-white shadow-xl group"
+          title={isMuted ? "Unmute" : "Mute"}
+        >
+          {isMuted ? (
+            <VolumeX className="w-5 h-5 md:w-6 h-6 text-white/80 group-hover:text-white transition-colors" />
+          ) : (
+            <Volume2 className="w-5 h-5 md:w-6 h-6 text-white/80 group-hover:text-white transition-colors" />
+          )}
+        </button>
       </div>
 
       <div className="container relative z-10 mx-auto px-4 text-center mt-8 md:mt-12 text-white">
