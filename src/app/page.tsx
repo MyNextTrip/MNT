@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "MNT | Premium Travel Agency for Patna, Ranchi & Nepal",
     description: "Book premium stays directly with My Next Trip (MNT). Direct hotel booking and property listing for owners.",
+    url: "https://www.mynexttrip.in",
   },
 };
 

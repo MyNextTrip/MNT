@@ -17,8 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       };
     }
 
-    const title = `${hotel.hotelName} | Best Hotel in ${hotel.location}`;
-    const description = `Book your stay at ${hotel.hotelName} in ${hotel.location}. ${hotel.address}. Exclusive deals for premium stays only on MyNextTrip.`;
+    const title = `${hotel.hotelName} | Best Hotel in ${hotel.location} | MNT Brand`;
+    const description = `Book your stay at ${hotel.hotelName} in ${hotel.location}. ${hotel.address}. Direct booking available via My Next Trip (MNT) for premium hospitality and verified stays.`;
+    const hotelUrl = `https://www.mynexttrip.in/hotels/${id}`;
 
     return {
       title,
@@ -26,8 +27,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       openGraph: {
         title,
         description,
-        url: `https://mynexttrip.onrender.com/hotels/${id}`,
-        siteName: "MyNextTrip",
+        url: hotelUrl,
+        siteName: "My Next Trip (MNT)",
         images: hotel.images?.[0] ? [{ url: hotel.images[0], width: 800, height: 600 }] : [],
         type: "website",
       },

@@ -3,11 +3,12 @@ import { Phone, MapPin, Clock, ShieldCheck, MessageCircle } from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Support & Contact Us | 24/7 Travel Assistance | MyNextTrip",
-  description: "Get 24/7 support for your travel bookings, hotel reservations, and holiday packages. Contact MyNextTrip for expert assistance and peace of mind.",
+  title: "Support & Contact Us | 24/7 Travel Assistance | MNT Brand",
+  description: "Get 24/7 support for travel bookings and holiday packages in Bihar, Jharkhand & Nepal. Contact My Next Trip (MNT) for expert assistance and reliable travel service.",
   openGraph: {
-    title: "How can we help you? | Support | MyNextTrip",
+    title: "How can we help you? | Support | My Next Trip (MNT)",
     description: "Our expert support team is always ready to assist with your travel inquiries.",
+    url: "https://www.mynexttrip.in/support",
   }
 };
 

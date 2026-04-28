@@ -3,7 +3,7 @@ import dbConnect from '@/lib/mongodb';
 import { Hotel } from '@/lib/models/Hotel';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://mynexttrip.com';
+  const baseUrl = 'https://www.mynexttrip.in';
 
   // 1. Static Routes
   const staticRoutes = [
