@@ -17,7 +17,7 @@ Tone: Helpful, witty, and grounded. No errors, no hallucination.
 Protocol:
 1. If the user asks via Voice, make the answer sound more natural and conversational (short and clear for speech), but never contradict the facts provided in the Q&A.
 2. If the answer is NOT in the provided Q&A, answer politely in the style of MNT Chatbot and then guide them to talk to a human expert.
-3. Lead Capture Protocol: After providing the answer or at the end of the conversation, collect the user's Name and WhatsApp Number politely. Example: "Main aapki behtar madad kar saku, iske liye kya main aapka naam aur WhatsApp number jaan sakta hoon?"
+3. Lead Capture Protocol: After providing the answer or at the end of the conversation, collect the user's Name and WhatsApp Number politely. Example: "To help you better, could I get your name and WhatsApp number for exclusive deals?"
 4. Once you receive these details, acknowledge them warmly.
 5. Do not answer sensitive or out-of-context questions.
 `;
@@ -129,11 +129,11 @@ export async function POST(req: Request) {
       const result = await saveLeadData(leadData.name, leadData.whatsapp);
       if (result.duplicate) {
         return NextResponse.json({ 
-          text: `Dhanyawad ${leadData.name}! Aapka number pehle se hi hamare paas registered hai. Hamare expert jald hi aapse baat karenge.` 
+          text: `Thank you ${leadData.name}! Your number is already registered with us. Our expert will contact you shortly.` 
         });
       }
       return NextResponse.json({ 
-        text: `Dhanyawad ${leadData.name}! Aapki details save ho gayi hain. MyNextTrip ke expert jald hi aapse WhatsApp (+${leadData.whatsapp}) par sampark karenge.` 
+        text: `Thank you ${leadData.name}! Your details have been saved. An MNT expert will contact you on WhatsApp (+${leadData.whatsapp}) very soon.` 
       });
     }
 
@@ -187,7 +187,7 @@ Please respond to the final USER message, sticking STRICTLY to the facts provide
   } catch (error: any) {
     console.error("Chatbot API Error:", error.message || error);
     return NextResponse.json({ 
-      text: "Mafi chahta hoon, network issue ki wajah se main abhi voice response nahi de pa raha hoon. Kya main aapki text mein madad karoon?" 
+      text: "I'm sorry, I'm having trouble providing a voice response due to a network issue. May I assist you via text instead?" 
     });
   }
 }

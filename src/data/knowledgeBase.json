@@ -69,8 +69,8 @@
   },
   {
     "id": 7,
-    "question": "Best Price Guarantee kya hai?",
-    "answer": "Agar aapko koi lower price mile, toh hum match karenge + extra 5% discount denge!",
+    "question": "What is the Best Price Guarantee?",
+    "answer": "If you find a lower price elsewhere, we will match it and give you an extra 5% discount!",
     "keywords": [
       "price",
       "guarantee",
@@ -127,7 +127,7 @@
   {
     "id": 12,
     "question": "Where is MNT office?",
-    "answer": "123 Travel Lane, Jharkhand, India.",
+    "answer": "Walmi, Khagaul, Patna, Bihar 801505, India.",
     "keywords": [
       "office",
       "address",
@@ -138,7 +138,7 @@
   {
     "id": 13,
     "question": "MNT contact number?",
-    "answer": "Call/WhatsApp: +91 9263554855 or +91 98765 43210.",
+    "answer": "Call/WhatsApp: +91 9263554855.",
     "keywords": [
       "contact",
       "number",
@@ -182,7 +182,7 @@
   },
   {
     "id": 17,
-    "question": "Website URL kya hai?",
+    "question": "What is the website URL?",
     "answer": "www.mynexttrip.in",
     "keywords": [
       "url",
@@ -216,7 +216,7 @@
   },
   {
     "id": 20,
-    "question": "MNT competitor se kaise alag hai?",
+    "question": "How is MNT different from competitors?",
     "answer": "MNT focuses on Luxury, Handpicked Destinations & Best Price Guarantee (Match + 5% extra discount).",
     "keywords": [
       "competitor",
@@ -228,8 +228,8 @@
   },
   {
     "id": 21,
-    "question": "Kya MNT global hai?",
-    "answer": "Yes, global portal with core focus on Bihar (Patna, Motihari) & Jharkhand (Ranchi, Jamshedpur).",
+    "question": "Is MNT global?",
+    "answer": "Yes, a global portal with a core focus on Bihar (Patna, Motihari) & Jharkhand (Ranchi, Jamshedpur).",
     "keywords": [
       "global",
       "international",
@@ -238,8 +238,8 @@
   },
   {
     "id": 22,
-    "question": "Kya WhatsApp pe support milta hai?",
-    "answer": "Haan, WhatsApp pe instant/fast response milta hai +91 9263554855.",
+    "question": "Is support available on WhatsApp?",
+    "answer": "Yes, we provide instant/fast response on WhatsApp at +91 9263554855.",
     "keywords": [
       "whatsapp",
       "chat",
@@ -248,8 +248,8 @@
   },
   {
     "id": 23,
-    "question": "Expert consultation free hai?",
-    "answer": "Yes, expert consultation is completely free. 24/7 available.",
+    "question": "Is expert consultation free?",
+    "answer": "Yes, expert consultation is completely free and available 24/7.",
     "keywords": [
       "expert",
       "consultation",
@@ -259,8 +259,8 @@
   },
   {
     "id": 24,
-    "question": "Reviews kaisi hain?",
-    "answer": "4.9/5 Trustpilot rating. Sarah Jenkins (Luxury Traveler) & others verify our service.",
+    "question": "What are the reviews like?",
+    "answer": "We have a 4.9/5 Trustpilot rating. Verified by luxury travelers like Sarah Jenkins and many others.",
     "keywords": [
       "reviews",
       "testimonials",
@@ -269,8 +269,8 @@
   },
   {
     "id": 25,
-    "question": "Account banana zaroori hai?",
-    "answer": "Search ke liye nahi, lekin booking history & profile manage karne ke liye required hai.",
+    "question": "Is an account necessary?",
+    "answer": "Not for searching, but it is required to manage your booking history and profile.",
     "keywords": [
       "account",
       "register",
@@ -281,7 +281,7 @@
   {
     "id": 26,
     "question": "Hotels in Patna?",
-    "answer": "Patna mein hamare paas hain: Gharonda Hotel (₹2000/night), Hotel The Dev Regency (₹1600/night), Princess Home (₹699/night), Hotel Friends Inn (₹699/night), Hotel Chandrashila (₹799/night), Hotel Nandak Grand.",
+    "answer": "In Patna, we have: Gharonda Hotel (₹2000/night), Hotel The Dev Regency (₹1600/night), Princess Home (₹699/night), Hotel Friends Inn (₹699/night), Hotel Chandrashila (₹799/night), and Hotel Nandak Grand.",
     "keywords": [
       "hotels",
       "patna",
@@ -292,7 +292,7 @@
   {
     "id": 27,
     "question": "Hotels in Ranchi?",
-    "answer": "Ranchi mein hamare paas hain: Hotel La Vista (₹1400/night, Ring Road), Hotel Harsh Regency (Hatia, 1km from station), Mountain View Resort (₹799/night, Bariatu - hilly views).",
+    "answer": "In Ranchi, we have: Hotel La Vista (₹1400/night, Ring Road), Hotel Harsh Regency (Hatia, 1km from station), and Mountain View Resort (₹799/night, Bariatu - hilly views).",
     "keywords": [
       "hotels",
       "ranchi",
@@ -303,7 +303,7 @@
   {
     "id": 28,
     "question": "Hotels in Motihari?",
-    "answer": "Motihari mein: Siddhi Vinayak Hotel & Banquet — Chhatauni (₹1600/night) & Station Road (₹1500/night).",
+    "answer": "In Motihari: Siddhi Vinayak Hotel & Banquet — Chhatauni (₹1600/night) & Station Road (₹1500/night).",
     "keywords": [
       "hotels",
       "motihari",
@@ -313,7 +313,7 @@
   {
     "id": 29,
     "question": "Hotels in Nepal?",
-    "answer": "Nepal mein: Hotels Ichchha — Bara District, Madhesh Province (₹4000/night, 2km from Simara Airport).",
+    "answer": "In Nepal: Hotels Ichchha — Bara District, Madhesh Province (₹4000/night, 2km from Simara Airport).",
     "keywords": [
       "hotels",
       "nepal",
@@ -323,7 +323,7 @@
   {
     "id": 30,
     "question": "Hotels in Jamshedpur?",
-    "answer": "Jamshedpur is a top destination. Hotels available via search on www.mynexttrip.in/hotels.",
+    "answer": "Jamshedpur is a top destination. Hotels are available via search on www.mynexttrip.in/hotels.",
     "keywords": [
       "hotels",
       "jamshedpur",
@@ -333,7 +333,7 @@
   {
     "id": 31,
     "question": "Hotels in Kolkata?",
-    "answer": "Kolkata hotels available via search on www.mynexttrip.in/hotels.",
+    "answer": "Kolkata hotels are available via search on www.mynexttrip.in/hotels.",
     "keywords": [
       "hotels",
       "kolkata",
@@ -342,8 +342,8 @@
   },
   {
     "id": 32,
-    "question": "Sabse sasta hotel kaunsa hai?",
-    "answer": "Hotel Friends Inn (Patna) & Princess Home (Patna) — dono ₹699/night se start hote hain!",
+    "question": "Which is the cheapest hotel?",
+    "answer": "Hotel Friends Inn (Patna) & Princess Home (Patna) both start at just ₹699/night!",
     "keywords": [
       "cheapest",
       "sasta",
@@ -354,8 +354,8 @@
   },
   {
     "id": 33,
-    "question": "Luxury hotel kaunsa hai?",
-    "answer": "Hotels Ichchha Nepal (₹4000/night), Gharonda Hotel Patna (₹2000/night) — premium luxury properties.",
+    "question": "Which are the luxury hotels?",
+    "answer": "Hotels Ichchha Nepal (₹4000/night) and Gharonda Hotel Patna (₹2000/night) are our premium luxury properties.",
     "keywords": [
       "luxury",
       "premium",
@@ -366,8 +366,8 @@
   },
   {
     "id": 34,
-    "question": "Check-in time kya hai?",
-    "answer": "Standard check-in time 12:00 PM hai.",
+    "question": "What is the check-in time?",
+    "answer": "The standard check-in time is 12:00 PM.",
     "keywords": [
       "check-in",
       "checkin",
@@ -377,8 +377,8 @@
   },
   {
     "id": 35,
-    "question": "Couple friendly hotel hai?",
-    "answer": "Yes, usually allowed. Specific hotel page pe check karein.",
+    "question": "Are hotels couple-friendly?",
+    "answer": "Yes, couples are usually allowed. Please check the specific hotel page for details.",
     "keywords": [
       "couple",
       "couple friendly",
@@ -387,8 +387,8 @@
   },
   {
     "id": 36,
-    "question": "Banquet hall available hai?",
-    "answer": "Yes, Gharonda Hotel (Patna) & Siddhi Vinayak (Motihari) mein banquet halls available hain.",
+    "question": "Is a banquet hall available?",
+    "answer": "Yes, banquet halls are available at Gharonda Hotel (Patna) & Siddhi Vinayak (Motihari).",
     "keywords": [
       "banquet",
       "hall",
@@ -400,8 +400,8 @@
   },
   {
     "id": 37,
-    "question": "Hotel facilities kya hain?",
-    "answer": "Premium/Luxury properties with AC, WiFi, Banquet halls & Restaurants.",
+    "question": "What are the hotel facilities?",
+    "answer": "Our premium/luxury properties feature AC, WiFi, Banquet halls, and Restaurants.",
     "keywords": [
       "facilities",
       "amenities",
@@ -412,8 +412,8 @@
   },
   {
     "id": 38,
-    "question": "Sanitized stays hain?",
-    "answer": "Yes! All partner properties undergo strict hygiene protocols for premium & secure experience.",
+    "question": "Are the stays sanitized?",
+    "answer": "Yes! All partner properties undergo strict hygiene protocols for a premium and secure experience.",
     "keywords": [
       "sanitized",
       "hygiene",
@@ -424,8 +424,8 @@
   },
   {
     "id": 39,
-    "question": "Business stays available hain?",
-    "answer": "Yes, corporate-ready properties available across Bihar & Jharkhand.",
+    "question": "Are business stays available?",
+    "answer": "Yes, corporate-ready properties are available across Bihar & Jharkhand.",
     "keywords": [
       "business",
       "corporate",
@@ -435,7 +435,7 @@
   {
     "id": 40,
     "question": "Weekend getaway options?",
-    "answer": "Relaxing nature retreats available. Check www.mynexttrip.in/destinations.",
+    "answer": "Relaxing nature retreats are available. Check www.mynexttrip.in/destinations.",
     "keywords": [
       "weekend",
       "getaway",
@@ -445,8 +445,8 @@
   },
   {
     "id": 41,
-    "question": "Gharonda Hotel kahan hai?",
-    "answer": "Walmi Branch, AIIMS Patna Rd, near Bank of Baroda, Saida Nagar Colony, Patna. Airport: 10km, Station: 8km. ₹2000/night.",
+    "question": "Where is Gharonda Hotel located?",
+    "answer": "Walmi Branch, AIIMS Patna Rd, near Bank of Baroda, Saida Nagar Colony, Patna. 10km from Airport, 8km from Station. ₹2000/night.",
     "keywords": [
       "gharonda",
       "aiims"
@@ -454,8 +454,8 @@
   },
   {
     "id": 42,
-    "question": "Hotel The Dev Regency kahan hai?",
-    "answer": "Plot no. 23, Main Rd, behind UKO Bank, Anisabad, Patna. Airport: 3km, Station: 7km. ₹1600/night.",
+    "question": "Where is Hotel The Dev Regency located?",
+    "answer": "Plot no. 23, Main Rd, behind UKO Bank, Anisabad, Patna. 3km from Airport, 7km from Station. ₹1600/night.",
     "keywords": [
       "dev regency",
       "anisabad"
@@ -463,8 +463,8 @@
   },
   {
     "id": 43,
-    "question": "Princess Home kahan hai?",
-    "answer": "Zero Number Road, Near Energy Park, Rajbansi Nagar, Patna. Airport: 4km, Station: 5.2km. ₹699/night.",
+    "question": "Where is Princess Home located?",
+    "answer": "Zero Number Road, Near Energy Park, Rajbansi Nagar, Patna. 4km from Airport, 5.2km from Station. ₹699/night.",
     "keywords": [
       "princess home",
       "rajbansi",
@@ -473,8 +473,8 @@
   },
   {
     "id": 44,
-    "question": "Hotel Friends Inn kahan hai?",
-    "answer": "Near Patliputra ISBT, VIP Colony, Jakariyapur, Bihar. Airport: 12km, Station: 8.7km. ₹699/night.",
+    "question": "Where is Hotel Friends Inn located?",
+    "answer": "Near Patliputra ISBT, VIP Colony, Jakariyapur, Bihar. 12km from Airport, 8.7km from Station. ₹699/night.",
     "keywords": [
       "friends inn",
       "isbt",
@@ -483,7 +483,7 @@
   },
   {
     "id": 45,
-    "question": "Hotel Chandrashila kahan hai?",
+    "question": "Where is Hotel Chandrashila located?",
     "answer": "Opp Metro Pillar No. 169, Bairiya Zero Mile, Patna. 0.5km from Patna Bus Stand. ₹799/night.",
     "keywords": [
       "chandrashila",
@@ -493,8 +493,8 @@
   },
   {
     "id": 46,
-    "question": "Hotel Nandak Grand kahan hai?",
-    "answer": "Saguna More, Danapur, Patna. Airport: 7-8km, Station: 5-6km.",
+    "question": "Where is Hotel Nandak Grand located?",
+    "answer": "Saguna More, Danapur, Patna. 7-8km from Airport, 5-6km from Station.",
     "keywords": [
       "nandak",
       "saguna more",
@@ -503,8 +503,8 @@
   },
   {
     "id": 47,
-    "question": "Hotel La Vista kahan hai?",
-    "answer": "Opp Central University, Ring Road, Manatu, Ranchi. Airport: 20km, Station: 16km. ₹1400/night.",
+    "question": "Where is Hotel La Vista located?",
+    "answer": "Opp Central University, Ring Road, Manatu, Ranchi. 20km from Airport, 16km from Station. ₹1400/night.",
     "keywords": [
       "la vista",
       "ring road",
@@ -513,8 +513,8 @@
   },
   {
     "id": 48,
-    "question": "Hotel Harsh Regency kahan hai?",
-    "answer": "Subarnarekha Pul, Hatia, Ranchi. Airport: 8km, Station: 1km.",
+    "question": "Where is Hotel Harsh Regency located?",
+    "answer": "Subarnarekha Pul, Hatia, Ranchi. 8km from Airport, 1km from Station.",
     "keywords": [
       "harsh regency",
       "hatia",
@@ -523,8 +523,8 @@
   },
   {
     "id": 49,
-    "question": "Mountain View Resort kahan hai?",
-    "answer": "Near DAV School, Bariatu, Ranchi. Airport: 13km, Station: 8km. ₹799/night. Hilly views!",
+    "question": "Where is Mountain View Resort located?",
+    "answer": "Near DAV School, Bariatu, Ranchi. 13km from Airport, 8km from Station. ₹799/night. Features beautiful hilly views!",
     "keywords": [
       "mountain view",
       "bariatu",
@@ -533,8 +533,8 @@
   },
   {
     "id": 50,
-    "question": "Siddhi Vinayak Hotel Chhatauni?",
-    "answer": "Near Narega Bal Udyan, Chhatauni, Motihari. Airport: 57km (Simara), Station: 2km. ₹1600/night.",
+    "question": "Where is Siddhi Vinayak Hotel Chhatauni?",
+    "answer": "Near Narega Bal Udyan, Chhatauni, Motihari. 57km from Simara Airport, 2km from Station. ₹1600/night.",
     "keywords": [
       "siddhi vinayak",
       "chhatauni"
@@ -542,8 +542,8 @@
   },
   {
     "id": 51,
-    "question": "Siddhi Vinayak Hotel Station Road?",
-    "answer": "Station Rd, Near Aditya Vision, Belbawana, Motihari. Airport: 10km, Station: 3km. ₹1500/night.",
+    "question": "Where is Siddhi Vinayak Hotel Station Road?",
+    "answer": "Station Rd, Near Aditya Vision, Belbawana, Motihari. 10km from Airport, 3km from Station. ₹1500/night.",
     "keywords": [
       "siddhi vinayak",
       "station road",
@@ -553,8 +553,8 @@
   },
   {
     "id": 52,
-    "question": "Hotels Ichchha Nepal details?",
-    "answer": "Gadhimai 44400, Bara District, Madhesh Province, Nepal. Airport: 2km (Simara), Railway: 15km. ₹4000/night.",
+    "question": "What are the details for Hotels Ichchha Nepal?",
+    "answer": "Gadhimai 44400, Bara District, Madhesh Province, Nepal. 2km from Simara Airport, 15km from Railway. ₹4000/night.",
     "keywords": [
       "ichchha",
       "gadhimai",
@@ -564,8 +564,8 @@
   },
   {
     "id": 53,
-    "question": "Airport ke paas hotel Patna?",
-    "answer": "Hotel The Dev Regency — sirf 3km from airport! Princess Home — 4km.",
+    "question": "Hotels near Patna Airport?",
+    "answer": "Hotel The Dev Regency is just 3km from the airport! Princess Home is 4km away.",
     "keywords": [
       "airport",
       "near airport",
@@ -574,8 +574,8 @@
   },
   {
     "id": 54,
-    "question": "Station ke paas hotel Patna?",
-    "answer": "Hotel Chandrashila — 0.5km from bus stand! Princess Home — 5.2km from station.",
+    "question": "Hotels near Patna Station?",
+    "answer": "Hotel Chandrashila is 0.5km from the bus stand! Princess Home is 5.2km from the station.",
     "keywords": [
       "station",
       "near station",
@@ -584,8 +584,8 @@
   },
   {
     "id": 55,
-    "question": "Station ke paas hotel Ranchi?",
-    "answer": "Hotel Harsh Regency — sirf 1km from Hatia station!",
+    "question": "Hotels near Ranchi Station?",
+    "answer": "Hotel Harsh Regency is just 1km from Hatia station!",
     "keywords": [
       "station",
       "ranchi",
@@ -595,8 +595,8 @@
   },
   {
     "id": 56,
-    "question": "Gharonda mein banquet hai?",
-    "answer": "Haan! Gharonda Hotel Restaurant Banquet — weddings & functions ke liye perfect.",
+    "question": "Does Gharonda have a banquet?",
+    "answer": "Yes! Gharonda Hotel Restaurant Banquet is perfect for weddings and functions.",
     "keywords": [
       "gharonda",
       "banquet"
@@ -604,8 +604,8 @@
   },
   {
     "id": 57,
-    "question": "Patna airport se kitna door?",
-    "answer": "Hotels range: 3km (Dev Regency) to 12km (Friends Inn) from Patna Airport.",
+    "question": "How far are hotels from Patna Airport?",
+    "answer": "Our hotels range from 3km (Dev Regency) to 12km (Friends Inn) from Patna Airport.",
     "keywords": [
       "patna",
       "airport",
@@ -615,8 +615,8 @@
   },
   {
     "id": 58,
-    "question": "Ranchi airport se kitna door?",
-    "answer": "Hotels range: 8km (Harsh Regency) to 20km (La Vista) from Ranchi Airport.",
+    "question": "How far are hotels from Ranchi Airport?",
+    "answer": "Our hotels range from 8km (Harsh Regency) to 20km (La Vista) from Ranchi Airport.",
     "keywords": [
       "ranchi",
       "airport",
@@ -625,8 +625,8 @@
   },
   {
     "id": 59,
-    "question": "Pilgrimage hotels hain?",
-    "answer": "Yes! Hotels near heritage sites available — Patna Sikh Circuit, Nepal Pashupatinath.",
+    "question": "Are there pilgrimage hotels?",
+    "answer": "Yes! We have hotels near heritage sites like the Patna Sikh Circuit and Nepal's Pashupatinath.",
     "keywords": [
       "pilgrimage",
       "temple",
@@ -637,8 +637,8 @@
   },
   {
     "id": 60,
-    "question": "Hilly view hotel chahiye?",
-    "answer": "Mountain View Resort, Bariatu, Ranchi — beautiful hilly views! ₹799/night.",
+    "question": "Do you have hilly view hotels?",
+    "answer": "Mountain View Resort in Bariatu, Ranchi offers beautiful hilly views for ₹799/night.",
     "keywords": [
       "hilly",
       "hill",
@@ -649,8 +649,8 @@
   },
   {
     "id": 61,
-    "question": "Flight booking kaise karein?",
-    "answer": "www.mynexttrip.in/flights pe jaayein, From-To city select karein, date & travelers choose karein.",
+    "question": "How do I book a flight?",
+    "answer": "Visit www.mynexttrip.in/flights, select your From-To cities, choosing your dates and travelers.",
     "keywords": [
       "flight",
       "book",
@@ -660,8 +660,8 @@
   },
   {
     "id": 62,
-    "question": "One-way flight book kar sakte hain?",
-    "answer": "Yes! One-way, Round-trip & Multi-city sab available hain.",
+    "question": "Can I book a one-way flight?",
+    "answer": "Yes! One-way, Round-trip, and Multi-city options are all available.",
     "keywords": [
       "one-way",
       "one way",
@@ -670,8 +670,8 @@
   },
   {
     "id": 63,
-    "question": "Round-trip flight available hai?",
-    "answer": "Haan, round-trip flights available hain.",
+    "question": "Are round-trip flights available?",
+    "answer": "Yes, round-trip flights are available.",
     "keywords": [
       "round-trip",
       "round trip",
@@ -680,8 +680,8 @@
   },
   {
     "id": 64,
-    "question": "Multi-city flight book kar sakte hain?",
-    "answer": "Yes, multi-city flights bhi book kar sakte hain.",
+    "question": "Can I book a multi-city flight?",
+    "answer": "Yes, multi-city flights can also be booked on our portal.",
     "keywords": [
       "multi-city",
       "multi city",
@@ -690,8 +690,8 @@
   },
   {
     "id": 65,
-    "question": "Patna se flight milegi?",
-    "answer": "Haan! Patna (PAT) airport se domestic & international flights available.",
+    "question": "Are flights available from Patna?",
+    "answer": "Yes! Domestic and international flights are available from Patna (PAT) airport.",
     "keywords": [
       "patna",
       "flight",
@@ -700,8 +700,8 @@
   },
   {
     "id": 66,
-    "question": "Kaunsi airlines available hain?",
-    "answer": "Indigo, Air India, SpiceJet, Emirates & more.",
+    "question": "Which airlines are available?",
+    "answer": "Airlines include Indigo, Air India, SpiceJet, Emirates, and more.",
     "keywords": [
       "airlines",
       "airline",
@@ -713,8 +713,8 @@
   },
   {
     "id": 67,
-    "question": "Economy class available hai?",
-    "answer": "Haan, Economy, Premium Economy, Business & First Class — sab available.",
+    "question": "Is economy class available?",
+    "answer": "Yes, Economy, Premium Economy, Business, and First Class are all available.",
     "keywords": [
       "economy",
       "class",
@@ -723,32 +723,32 @@
   },
   {
     "id": 68,
-    "question": "Business class book kar sakte hain?",
-    "answer": "Yes! Business class flights available on MyNextTrip.",
+    "question": "Can I book business class?",
+    "answer": "Yes! Business class flights are available on MyNextTrip.",
     "keywords": [
       "business class"
     ]
   },
   {
     "id": 69,
-    "question": "First class flight milegi?",
-    "answer": "Yes, First Class flights available for premium travelers.",
+    "question": "Are first class flights available?",
+    "answer": "Yes, First Class flights are available for our premium travelers.",
     "keywords": [
       "first class"
     ]
   },
   {
     "id": 70,
-    "question": "Premium Economy kya hai?",
-    "answer": "Economy se better comfort with extra legroom. Available on MNT.",
+    "question": "What is Premium Economy?",
+    "answer": "It offers better comfort than Economy with extra legroom. Available on MNT.",
     "keywords": [
       "premium economy"
     ]
   },
   {
     "id": 71,
-    "question": "Flight cancel kar sakte hain?",
-    "answer": "Haan, airline policy ke according possible hai. MNT support assist karega.",
+    "question": "Can I cancel my flight?",
+    "answer": "Yes, it is possible according to airline policy. MNT support will assist you.",
     "keywords": [
       "cancel",
       "cancellation",
@@ -757,8 +757,8 @@
   },
   {
     "id": 72,
-    "question": "Flight change kar sakte hain?",
-    "answer": "Possible based on airline policy. Contact MNT support for assistance.",
+    "question": "Can I change my flight?",
+    "answer": "This is possible based on airline policy. Contact MNT support for assistance.",
     "keywords": [
       "change",
       "reschedule",
@@ -767,8 +767,8 @@
   },
   {
     "id": 73,
-    "question": "Seat selection available hai?",
-    "answer": "Yes! Booking ke time ya web check-in ke time seat select kar sakte hain.",
+    "question": "Is seat selection available?",
+    "answer": "Yes! You can select your seat at the time of booking or during web check-in.",
     "keywords": [
       "seat",
       "selection",
@@ -777,8 +777,8 @@
   },
   {
     "id": 74,
-    "question": "Infant ticket milega?",
-    "answer": "Haan, infant & child ticket support available hai.",
+    "question": "Are infant tickets available?",
+    "answer": "Yes, we support infant and child ticket bookings.",
     "keywords": [
       "infant",
       "baby",
@@ -789,8 +789,8 @@
   },
   {
     "id": 75,
-    "question": "Domestic flights ka price?",
-    "answer": "Starting from ₹4,500 for popular domestic routes.",
+    "question": "What is the price for domestic flights?",
+    "answer": "Prices start from ₹4,500 for popular domestic routes.",
     "keywords": [
       "domestic",
       "price",
@@ -800,8 +800,8 @@
   },
   {
     "id": 76,
-    "question": "International flights milegi?",
-    "answer": "Haan, international flights bhi book kar sakte hain.",
+    "question": "Are international flights available?",
+    "answer": "Yes, international flights can also be booked on our portal.",
     "keywords": [
       "international",
       "foreign",
@@ -821,8 +821,8 @@
   },
   {
     "id": 78,
-    "question": "Flight booking mein kya features hain?",
-    "answer": "Seat selection, web check-in, infant/child tickets, multi-city options.",
+    "question": "What features are included in flight booking?",
+    "answer": "Seat selection, web check-in, infant/child tickets, and multi-city options.",
     "keywords": [
       "features",
       "flight features"
@@ -830,8 +830,8 @@
   },
   {
     "id": 79,
-    "question": "Web check-in kar sakte hain?",
-    "answer": "Haan, web check-in support available hai.",
+    "question": "Is web check-in available?",
+    "answer": "Yes, web check-in support is available for most airlines.",
     "keywords": [
       "web check-in",
       "checkin",
@@ -840,7 +840,7 @@
   },
   {
     "id": 80,
-    "question": "Flights ka instant confirmation milta hai?",
+    "question": "Do I get instant confirmation for flights?",
     "answer": "Yes! Instant confirmations with transparent pricing.",
     "keywords": [
       "instant",
@@ -850,8 +850,8 @@
   },
   {
     "id": 81,
-    "question": "Cheapest flight kaise dhundein?",
-    "answer": "www.mynexttrip.in/flights pe search karein — Best Price Guarantee ke saath!",
+    "question": "How to find the cheapest flight?",
+    "answer": "Search on www.mynexttrip.in/flights — backed by our Best Price Guarantee!",
     "keywords": [
       "cheapest",
       "sasti",
@@ -860,8 +860,8 @@
   },
   {
     "id": 82,
-    "question": "Baggage allowance kitna hai?",
-    "answer": "Airline policy ke according hota hai. Booking page pe details milenge.",
+    "question": "What is the baggage allowance?",
+    "answer": "It depends on the airline policy. Details will be shown on the booking page.",
     "keywords": [
       "baggage",
       "luggage",
@@ -870,8 +870,8 @@
   },
   {
     "id": 83,
-    "question": "Direct flight milegi?",
-    "answer": "Route ke according direct & connecting dono options available hain.",
+    "question": "Are direct flights available?",
+    "answer": "Both direct and connecting options are available depending on the route.",
     "keywords": [
       "direct",
       "non-stop",
@@ -880,8 +880,8 @@
   },
   {
     "id": 84,
-    "question": "Flight booking mein EMI milega?",
-    "answer": "Payment gateway ke through EMI usually available hai.",
+    "question": "Is EMI available for flight booking?",
+    "answer": "EMI options are usually available through our payment gateways.",
     "keywords": [
       "emi",
       "installment",
@@ -891,7 +891,7 @@
   {
     "id": 85,
     "question": "Group flight booking?",
-    "answer": "Haan, multiple travelers ke liye booking available. Contact expert for group deals.",
+    "answer": "Yes, booking for multiple travelers is available. Contact our expert for group deals.",
     "keywords": [
       "group",
       "bulk",
@@ -900,8 +900,8 @@
   },
   {
     "id": 86,
-    "question": "Holiday packages kahan ke hain?",
-    "answer": "Patna, Ranchi, Kolkata, Nepal, Goa, Kerala, Kashmir & more.",
+    "question": "Where are the holiday packages for?",
+    "answer": "Patna, Ranchi, Kolkata, Nepal, Goa, Kerala, Kashmir, and more.",
     "keywords": [
       "holiday",
       "packages",
@@ -911,8 +911,8 @@
   },
   {
     "id": 87,
-    "question": "Goa package kitne ka hai?",
-    "answer": "Romantic Goa Getaway — Starting at ₹14,999/person. North/South beaches & Churches included.",
+    "question": "How much is the Goa package?",
+    "answer": "Romantic Goa Getaway — Starting at ₹14,999/person. Includes North/South beaches and Churches.",
     "keywords": [
       "goa",
       "package",
@@ -921,8 +921,8 @@
   },
   {
     "id": 88,
-    "question": "Kerala package kitne ka hai?",
-    "answer": "Magical Kerala — Starting at ₹18,500/person. Houseboat in Alleppey & Munnar included.",
+    "question": "How much is the Kerala package?",
+    "answer": "Magical Kerala — Starting at ₹18,500/person. Includes a houseboat in Alleppey and Munnar visit.",
     "keywords": [
       "kerala",
       "package",
@@ -933,8 +933,8 @@
   },
   {
     "id": 89,
-    "question": "Kashmir package kitne ka hai?",
-    "answer": "Paradise on Earth Kashmir — Starting at ₹22,900/person. Shikara ride & Gulmarg included.",
+    "question": "How much is the Kashmir package?",
+    "answer": "Paradise on Earth Kashmir — Starting at ₹22,900/person. Includes a Shikara ride and Gulmarg visit.",
     "keywords": [
       "kashmir",
       "package",
@@ -945,8 +945,8 @@
   },
   {
     "id": 90,
-    "question": "Package mein kya included hai?",
-    "answer": "Stays, Flights, Transfers & Sightseeing — sab included!",
+    "question": "What is included in the package?",
+    "answer": "Stays, Flights, Transfers, and Sightseeing are all included!",
     "keywords": [
       "included",
       "inclusion",
@@ -955,8 +955,8 @@
   },
   {
     "id": 91,
-    "question": "Custom package ban sakta hai?",
-    "answer": "Haan! Contact a Travel Expert for custom packages.",
+    "question": "Can I get a custom package?",
+    "answer": "Yes! Contact a Travel Expert to create a tailor-made package for you.",
     "keywords": [
       "custom",
       "customize",
@@ -967,8 +967,8 @@
   },
   {
     "id": 92,
-    "question": "Honeymoon package hai?",
-    "answer": "Yes! Luxury & privacy ke saath romantic honeymoon packages available.",
+    "question": "Are there honeymoon packages?",
+    "answer": "Yes! We offer romantic honeymoon packages with a focus on luxury and privacy.",
     "keywords": [
       "honeymoon",
       "shaadi",
@@ -978,8 +978,8 @@
   },
   {
     "id": 93,
-    "question": "Adventure package hai?",
-    "answer": "Haan! Hiking, Kayaking & adventure activities wale packages available.",
+    "question": "Are there adventure packages?",
+    "answer": "Yes! We have packages that include hiking, kayaking, and other adventure activities.",
     "keywords": [
       "adventure",
       "trekking",
@@ -989,8 +989,8 @@
   },
   {
     "id": 94,
-    "question": "Family package hai?",
-    "answer": "Yes, kid-friendly family tours available.",
+    "question": "Are family packages available?",
+    "answer": "Yes, we offer kid-friendly family tour packages.",
     "keywords": [
       "family",
       "bachche",
@@ -1001,8 +1001,8 @@
   },
   {
     "id": 95,
-    "question": "Beach package hai?",
-    "answer": "Haan! Sun & sand beach packages — Goa starting ₹14,999.",
+    "question": "Do you have beach packages?",
+    "answer": "Yes! Our sun & sand beach packages for Goa start at ₹14,999.",
     "keywords": [
       "beach",
       "samundar",
@@ -1012,8 +1012,8 @@
   },
   {
     "id": 96,
-    "question": "Pilgrimage package hai?",
-    "answer": "Yes! Patna Sikh Circuit, Nepal Pashupatinath & more pilgrimage packages.",
+    "question": "Are there pilgrimage packages?",
+    "answer": "Yes! We offer Patna Sikh Circuit, Nepal Pashupatinath, and more religious packages.",
     "keywords": [
       "pilgrimage",
       "tirth",
@@ -1023,8 +1023,8 @@
   },
   {
     "id": 97,
-    "question": "Nepal package hai?",
-    "answer": "Haan, Nepal packages available with Hotels Ichchha stay option.",
+    "question": "Do you have Nepal packages?",
+    "answer": "Yes, Nepal packages are available with options for staying at Hotels Ichchha.",
     "keywords": [
       "nepal",
       "package"
@@ -1032,8 +1032,8 @@
   },
   {
     "id": 98,
-    "question": "Kolkata package hai?",
-    "answer": "Yes, Kolkata holiday packages available. Check www.mynexttrip.in/packages.",
+    "question": "Is there a Kolkata package?",
+    "answer": "Yes, Kolkata holiday packages are available. Check www.mynexttrip.in/packages.",
     "keywords": [
       "kolkata",
       "package"
@@ -1042,7 +1042,7 @@
   {
     "id": 99,
     "question": "Patna tour package?",
-    "answer": "Patna tour packages available — heritage sites, hotels & local experiences.",
+    "answer": "Patna tour packages include heritage sites, luxury hotels, and local experiences.",
     "keywords": [
       "patna",
       "tour",
@@ -1052,7 +1052,7 @@
   {
     "id": 100,
     "question": "Ranchi tour package?",
-    "answer": "Ranchi — City of Waterfalls! Tour packages with waterfall visits & nature stays.",
+    "answer": "Explore the City of Waterfalls! Tour packages include waterfall visits and nature stays.",
     "keywords": [
       "ranchi",
       "tour",
@@ -1062,8 +1062,8 @@
   },
   {
     "id": 101,
-    "question": "Package booking kaise karein?",
-    "answer": "www.mynexttrip.in/packages pe jaayen, city select karein, date & guests choose karein.",
+    "question": "How do I book a package?",
+    "answer": "Go to www.mynexttrip.in/packages, select your city, dates, and number of guests.",
     "keywords": [
       "package",
       "book",
@@ -1073,8 +1073,8 @@
   },
   {
     "id": 102,
-    "question": "Holiday themes kya hain?",
-    "answer": "Honeymoon, Family, Adventure, Beach — 4 main themes available.",
+    "question": "What are the holiday themes?",
+    "answer": "Honeymoon, Family, Adventure, and Beach are our 4 main themes.",
     "keywords": [
       "themes",
       "theme",
@@ -1084,8 +1084,8 @@
   },
   {
     "id": 103,
-    "question": "Trending packages kaunse hain?",
-    "answer": "Goa (₹14,999), Kerala (₹18,500) & Kashmir (₹22,900) — top trending!",
+    "question": "What are the trending packages?",
+    "answer": "Goa (₹14,999), Kerala (₹18,500), and Kashmir (₹22,900) are currently trending!",
     "keywords": [
       "trending",
       "popular",
@@ -1095,8 +1095,8 @@
   },
   {
     "id": 104,
-    "question": "Package mein flight included hai?",
-    "answer": "Haan, most packages mein stays, flights, transfers & sightseeing sab included.",
+    "question": "Is the flight included in the package?",
+    "answer": "Yes, most of our packages include stays, flights, transfers, and sightseeing.",
     "keywords": [
       "flight",
       "included",
@@ -1105,8 +1105,8 @@
   },
   {
     "id": 105,
-    "question": "Kashmir safe hai travel ke liye?",
-    "answer": "Yes, verified safe routes with MyNextTrip.",
+    "question": "Is Kashmir safe for travel?",
+    "answer": "Yes, we provide verified and safe travel routes with MyNextTrip.",
     "keywords": [
       "kashmir",
       "safe",
@@ -1115,8 +1115,8 @@
   },
   {
     "id": 106,
-    "question": "Payment options kya hain?",
-    "answer": "UPI, Cards (Debit/Credit), Net Banking — SSL Secured (HTTPS).",
+    "question": "What are the payment options?",
+    "answer": "We accept UPI, Cards (Debit/Credit), and Net Banking via SSL Secured (HTTPS) gateway.",
     "keywords": [
       "payment",
       "pay",
@@ -1127,8 +1127,8 @@
   },
   {
     "id": 107,
-    "question": "EMI available hai?",
-    "answer": "Usually available via payment gateways.",
+    "question": "Is EMI available?",
+    "answer": "Yes, EMI is usually available through our payment gateways.",
     "keywords": [
       "emi",
       "installment",
@@ -1137,8 +1137,8 @@
   },
   {
     "id": 108,
-    "question": "Refund kitne din mein milta hai?",
-    "answer": "7-10 working days mein refund process hota hai.",
+    "question": "How many days for a refund?",
+    "answer": "Refunds are processed within 7-10 working days.",
     "keywords": [
       "refund",
       "money back",
@@ -1148,8 +1148,8 @@
   },
   {
     "id": 109,
-    "question": "Advance payment kitna hai?",
-    "answer": "30% part payment possible hai kuch packages ke liye. Expert se check karein.",
+    "question": "What is the advance payment amount?",
+    "answer": "A 30% partial payment is possible for some packages. Please check with our expert.",
     "keywords": [
       "advance",
       "part payment",
@@ -1159,8 +1159,8 @@
   },
   {
     "id": 110,
-    "question": "GST invoice milta hai?",
-    "answer": "Haan, final checkout price mein taxes included hain. GST invoices provided.",
+    "question": "Do I get a GST invoice?",
+    "answer": "Yes, taxes are included in the final price and GST invoices are provided.",
     "keywords": [
       "gst",
       "tax",
@@ -1170,8 +1170,8 @@
   },
   {
     "id": 111,
-    "question": "International cards accepted?",
-    "answer": "Yes, international cards accepted hain.",
+    "question": "Are international cards accepted?",
+    "answer": "Yes, international cards are accepted on our platform.",
     "keywords": [
       "international card",
       "foreign card",
@@ -1181,8 +1181,8 @@
   },
   {
     "id": 112,
-    "question": "UPI se pay kar sakte hain?",
-    "answer": "Haan! UPI payment fully supported & secure hai.",
+    "question": "Can I pay via UPI?",
+    "answer": "Yes! UPI payment is fully supported and highly secure.",
     "keywords": [
       "upi",
       "gpay",
@@ -1192,8 +1192,8 @@
   },
   {
     "id": 113,
-    "question": "Net banking se pay kar sakte hain?",
-    "answer": "Haan, net banking se payment available hai.",
+    "question": "Can I pay via Net Banking?",
+    "answer": "Yes, Net Banking payment options are available.",
     "keywords": [
       "net banking",
       "netbanking",
@@ -1202,24 +1202,24 @@
   },
   {
     "id": 114,
-    "question": "Credit card se pay kar sakte hain?",
-    "answer": "Haan, credit card payment accepted hai.",
+    "question": "Can I pay with a Credit Card?",
+    "answer": "Yes, credit card payments are accepted.",
     "keywords": [
       "credit card"
     ]
   },
   {
     "id": 115,
-    "question": "Debit card se pay kar sakte hain?",
-    "answer": "Haan, debit card payment accepted hai.",
+    "question": "Can I pay with a Debit Card?",
+    "answer": "Yes, debit card payments are accepted.",
     "keywords": [
       "debit card"
     ]
   },
   {
     "id": 116,
-    "question": "Booking secure hai?",
-    "answer": "100% secure! SSL encryption (HTTPS) se sab transactions protected hain.",
+    "question": "Is my booking secure?",
+    "answer": "100% secure! All transactions are protected by SSL encryption (HTTPS).",
     "keywords": [
       "secure",
       "safe",
@@ -1229,8 +1229,8 @@
   },
   {
     "id": 117,
-    "question": "Payment fail ho gaya?",
-    "answer": "Refund 7-10 working days mein auto-process hoga. Support contact karein: +91 9263554855.",
+    "question": "What if my payment fails?",
+    "answer": "The refund will be auto-processed within 7-10 working days. Contact support: +91 9263554855.",
     "keywords": [
       "payment fail",
       "failed",
@@ -1240,8 +1240,8 @@
   },
   {
     "id": 118,
-    "question": "Hidden charges hain?",
-    "answer": "Nahi! Transparent pricing — jo dikhta hai wahi final price hai.",
+    "question": "Are there any hidden charges?",
+    "answer": "No! We provide transparent pricing — the price you see is the final price.",
     "keywords": [
       "hidden",
       "charges",
@@ -1251,8 +1251,8 @@
   },
   {
     "id": 119,
-    "question": "Discount milega?",
-    "answer": "Haan! Best Price Guarantee + newsletter subscribe karein for exclusive deals.",
+    "question": "Can I get a discount?",
+    "answer": "Yes! Check our Best Price Guarantee and subscribe to our newsletter for exclusive deals.",
     "keywords": [
       "discount",
       "offer",
@@ -1262,8 +1262,8 @@
   },
   {
     "id": 120,
-    "question": "Free cancellation hai?",
-    "answer": "Policy hotel/airline ke according hoti hai. Booking page pe details check karein.",
+    "question": "Is there free cancellation?",
+    "answer": "It depends on the hotel/airline policy. Please check the details on the booking page.",
     "keywords": [
       "free cancellation",
       "cancel free"
@@ -1271,8 +1271,8 @@
   },
   {
     "id": 121,
-    "question": "Booking confirm kaise hoga?",
-    "answer": "Payment complete hone ke baad instant confirmation milega email/SMS pe.",
+    "question": "How will my booking be confirmed?",
+    "answer": "You will receive an instant confirmation via email and SMS once the payment is complete.",
     "keywords": [
       "booking confirm",
       "confirmed",
@@ -1281,8 +1281,8 @@
   },
   {
     "id": 122,
-    "question": "Advance booking kar sakte hain?",
-    "answer": "Haan, advance booking available hai. Calendar se date select karein.",
+    "question": "Can I make an advance booking?",
+    "answer": "Yes, advance booking is available. Just select your future date from the calendar.",
     "keywords": [
       "advance booking",
       "early",
@@ -1291,8 +1291,8 @@
   },
   {
     "id": 123,
-    "question": "Last minute booking?",
-    "answer": "Yes! Last minute deals bhi available hain.",
+    "question": "Can I book at the last minute?",
+    "answer": "Yes! Last-minute deals are also available for spontaneous travelers.",
     "keywords": [
       "last minute",
       "urgent",
@@ -1302,8 +1302,8 @@
   },
   {
     "id": 124,
-    "question": "Group discount milega?",
-    "answer": "Group bookings pe special deals available. Expert se contact karein.",
+    "question": "Is there a group discount?",
+    "answer": "Special deals are available for group bookings. Please contact our expert.",
     "keywords": [
       "group discount",
       "group deal",
@@ -1312,8 +1312,8 @@
   },
   {
     "id": 125,
-    "question": "Cashback milta hai?",
-    "answer": "Payment gateway ke offers ke through cashback possible hai.",
+    "question": "Is there any cashback?",
+    "answer": "Cashback may be available through specific payment gateway offers.",
     "keywords": [
       "cashback",
       "cash back"
@@ -1321,8 +1321,8 @@
   },
   {
     "id": 126,
-    "question": "Account kaise banayein?",
-    "answer": "Login / Sign Up button pe click karein www.mynexttrip.in pe.",
+    "question": "How to create an account?",
+    "answer": "Click the Login / Sign Up button on our homepage at www.mynexttrip.in.",
     "keywords": [
       "account",
       "create",
@@ -1333,8 +1333,8 @@
   },
   {
     "id": 127,
-    "question": "Booking history kahan dikhegi?",
-    "answer": "Dashboard/Profile section mein login ke baad.",
+    "question": "Where can I see my booking history?",
+    "answer": "You can view it in the Dashboard or Profile section after logging in.",
     "keywords": [
       "booking history",
       "past booking",
@@ -1343,8 +1343,8 @@
   },
   {
     "id": 128,
-    "question": "Password bhool gaye?",
-    "answer": "Forgot Password link pe click karein login page pe.",
+    "question": "What if I forgot my password?",
+    "answer": "Click the 'Forgot Password' link on the login page to reset it.",
     "keywords": [
       "password",
       "forgot",
@@ -1354,8 +1354,8 @@
   },
   {
     "id": 129,
-    "question": "Language support kya hai?",
-    "answer": "Primary English, Hindi (Hinglish) chat/WhatsApp pe supported.",
+    "question": "What languages are supported?",
+    "answer": "We primarily support English, with Hindi/Hinglish support available on chat and WhatsApp.",
     "keywords": [
       "language",
       "hindi",
@@ -1365,8 +1365,8 @@
   },
   {
     "id": 130,
-    "question": "Kya login zaroori hai?",
-    "answer": "Search ke liye nahi, booking manage karne ke liye zaroori hai.",
+    "question": "Is login required?",
+    "answer": "Login is not required for searching, but it is necessary to manage your bookings.",
     "keywords": [
       "login",
       "required",
@@ -1375,8 +1375,8 @@
   },
   {
     "id": 131,
-    "question": "Profile edit kar sakte hain?",
-    "answer": "Haan, login ke baad profile section mein edit kar sakte hain.",
+    "question": "Can I edit my profile?",
+    "answer": "Yes, you can update your details in the profile section after logging in.",
     "keywords": [
       "profile",
       "edit",
@@ -1385,8 +1385,8 @@
   },
   {
     "id": 132,
-    "question": "Email notification milta hai?",
-    "answer": "Haan, booking confirmation & updates email pe milte hain.",
+    "question": "Do I get email notifications?",
+    "answer": "Yes, we send booking confirmations and important updates to your email.",
     "keywords": [
       "email",
       "notification",
@@ -1395,8 +1395,8 @@
   },
   {
     "id": 133,
-    "question": "Cookies policy kya hai?",
-    "answer": "Website pe Cookie Policy page available hai. www.mynexttrip.in",
+    "question": "What is the cookies policy?",
+    "answer": "Our detailed Cookie Policy is available on our website at www.mynexttrip.in.",
     "keywords": [
       "cookies",
       "cookie",
@@ -1405,8 +1405,8 @@
   },
   {
     "id": 134,
-    "question": "Terms of Service?",
-    "answer": "Website pe Terms of Service page available hai. www.mynexttrip.in",
+    "question": "What are the Terms of Service?",
+    "answer": "You can find our Terms of Service page on our website at www.mynexttrip.in.",
     "keywords": [
       "terms",
       "service",
@@ -1415,8 +1415,8 @@
   },
   {
     "id": 135,
-    "question": "Chat with Expert kaise karein?",
-    "answer": "Website pe Chat with Expert button available hai, ya WhatsApp +91 9263554855.",
+    "question": "How to chat with an expert?",
+    "answer": "Use the 'Chat with Expert' button on our site or contact us via WhatsApp at +91 9263554855.",
     "keywords": [
       "chat",
       "expert",
@@ -1425,8 +1425,8 @@
   },
   {
     "id": 136,
-    "question": "Data safe hai?",
-    "answer": "Haan, SSL encryption se aapka data fully protected hai.",
+    "question": "Is my data safe?",
+    "answer": "Yes, your data is fully protected with advanced SSL encryption.",
     "keywords": [
       "data",
       "privacy",
@@ -1435,8 +1435,8 @@
   },
   {
     "id": 137,
-    "question": "Multiple bookings ek saath?",
-    "answer": "Haan, multiple bookings kar sakte hain apne account se.",
+    "question": "Can I make multiple bookings at once?",
+    "answer": "Yes, you can manage multiple bookings through your account.",
     "keywords": [
       "multiple",
       "booking",
@@ -1445,8 +1445,8 @@
   },
   {
     "id": 138,
-    "question": "Booking cancel kaise karein?",
-    "answer": "Login karein > Booking History > Cancel option. Ya support contact karein.",
+    "question": "How to cancel a booking?",
+    "answer": "Login to your account, go to Booking History, and select the cancel option, or contact support.",
     "keywords": [
       "cancel booking",
       "how cancel"
@@ -1454,8 +1454,8 @@
   },
   {
     "id": 139,
-    "question": "Feedback kaise dein?",
-    "answer": "Email: mnt.mynexttrip@gmail.com ya WhatsApp pe feedback de sakte hain.",
+    "question": "How to provide feedback?",
+    "answer": "Email us at mnt.mynexttrip@gmail.com or send us a message on WhatsApp.",
     "keywords": [
       "feedback",
       "complaint",
@@ -1464,8 +1464,8 @@
   },
   {
     "id": 140,
-    "question": "Social media pe hain?",
-    "answer": "Haan, MyNextTrip social media pe available hai.",
+    "question": "Is MNT on social media?",
+    "answer": "Yes, follow us on Instagram, Facebook, and Twitter for the latest updates.",
     "keywords": [
       "social media",
       "instagram",
@@ -1476,7 +1476,7 @@
   {
     "id": 141,
     "question": "Delhi to Patna flight price?",
-    "answer": "Starting from ₹4,500 on MyNextTrip.",
+    "answer": "Prices start from ₹4,500 on MyNextTrip.",
     "keywords": [
       "delhi",
       "patna",
@@ -1487,7 +1487,7 @@
   {
     "id": 142,
     "question": "Mumbai to Patna flight price?",
-    "answer": "Check latest fares on www.mynexttrip.in/flights starting ₹5,200.",
+    "answer": "Fares start from approximately ₹5,200. Check latest prices on our portal.",
     "keywords": [
       "mumbai",
       "patna",
@@ -1498,7 +1498,7 @@
   {
     "id": 143,
     "question": "Bangalore to Patna flight price?",
-    "answer": "Fares start from around ₹6,100. Book now for best deals.",
+    "answer": "Fares start from around ₹6,100. Book early for the best deals.",
     "keywords": [
       "bangalore",
       "patna",
@@ -1509,7 +1509,7 @@
   {
     "id": 144,
     "question": "Kolkata to Patna flight price?",
-    "answer": "Budget-friendly flights available on MNT.",
+    "answer": "We offer several budget-friendly flight options from Kolkata to Patna.",
     "keywords": [
       "kolkata",
       "patna",
@@ -1520,7 +1520,7 @@
   {
     "id": 145,
     "question": "Patna to Delhi flight timing?",
-    "answer": "Multiple daily flights available. Check real-time schedule on our flights page.",
+    "answer": "There are multiple daily flights. Check the real-time schedule on our flights page.",
     "keywords": [
       "patna",
       "delhi",
@@ -1531,7 +1531,7 @@
   {
     "id": 146,
     "question": "Ranchi to Delhi flight?",
-    "answer": "Yes, multiple direct and connecting flights available from Ranchi (IXR).",
+    "answer": "Yes, several direct and connecting flights are available from Ranchi (IXR).",
     "keywords": [
       "ranchi",
       "delhi",
@@ -1540,8 +1540,8 @@
   },
   {
     "id": 147,
-    "question": "Motihari se nearest airport?",
-    "answer": "Nearest domestic airport Darbhanga (DBG) ya Patna (PAT) hai. Simara (Nepal) bhi paas hai.",
+    "question": "What is the nearest airport to Motihari?",
+    "answer": "Darbhanga (DBG) and Patna (PAT) are the nearest domestic airports. Simara (Nepal) is also nearby.",
     "keywords": [
       "motihari",
       "airport",
@@ -1550,8 +1550,8 @@
   },
   {
     "id": 148,
-    "question": "Nepal jane ka best tarika?",
-    "answer": "By Road via Raxaul ya By Air to Kathmandu/Simara.",
+    "question": "Best way to travel to Nepal?",
+    "answer": "You can travel by road via Raxaul or by air to Kathmandu or Simara.",
     "keywords": [
       "nepal",
       "how to go",
@@ -1561,7 +1561,7 @@
   {
     "id": 149,
     "question": "MNT helpline number?",
-    "answer": "+91 9263554855.",
+    "answer": "Our primary helpline is +91 9263554855.",
     "keywords": [
       "helpline",
       "number",
@@ -1570,8 +1570,8 @@
   },
   {
     "id": 150,
-    "question": "Kya MNT pe hotel booking safe hai?",
-    "answer": "Bilkul safe hai! Hum sirf verified properties ke saath kaam karte hain.",
+    "question": "Is hotel booking safe on MNT?",
+    "answer": "Absolutely safe! We only partner with verified and trusted properties.",
     "keywords": [
       "hotel",
       "booking",
@@ -1580,8 +1580,8 @@
   },
   {
     "id": 151,
-    "question": "Package customization fee?",
-    "answer": "Customization process bilkul free hai. Expert se consult karein.",
+    "question": "Is there a package customization fee?",
+    "answer": "No, our customization process is completely free for all users.",
     "keywords": [
       "customization",
       "fee",
@@ -1590,8 +1590,8 @@
   },
   {
     "id": 152,
-    "question": "Group tour booking benefits?",
-    "answer": "Group bookings pe extra discounts aur personalized services milti hain.",
+    "question": "What are the benefits of group tour booking?",
+    "answer": "Group bookings come with extra discounts and highly personalized services.",
     "keywords": [
       "group",
       "tour",
@@ -1601,7 +1601,7 @@
   {
     "id": 153,
     "question": "Corporate travel management?",
-    "answer": "Yes, hum corporate clients ke liye end-to-end travel management provide karte hain.",
+    "answer": "Yes, we provide end-to-end travel management for our corporate clients.",
     "keywords": [
       "corporate",
       "travel",
@@ -1611,7 +1611,7 @@
   {
     "id": 154,
     "question": "MNT head office address?",
-    "answer": "123 Travel Lane, Jharkhand, India.",
+    "answer": "Walmi, Khagaul, Patna, Bihar 801505, India.",
     "keywords": [
       "head office",
       "address"
@@ -1629,7 +1629,7 @@
   {
     "id": 156,
     "question": "What makes MNT special?",
-    "answer": "Personalized touch, 24/7 human expert support, and unbeatable prices.",
+    "answer": "Personalized service, 24/7 human expert support, and unbeatable prices.",
     "keywords": [
       "special",
       "unique",
@@ -1638,8 +1638,8 @@
   },
   {
     "id": 157,
-    "question": "Holiday packages in budget?",
-    "answer": "Starting from ₹14,999 for Goa. Visit www.mynexttrip.in/packages.",
+    "question": "Holiday packages on a budget?",
+    "answer": "Starting from ₹14,999 for Goa. Visit www.mynexttrip.in/packages for more.",
     "keywords": [
       "budget",
       "packages",
@@ -1649,7 +1649,7 @@
   {
     "id": 158,
     "question": "Luxury stays in Ranchi?",
-    "answer": "Hotel La Vista aur Mountain View Resort premium experiences provide karte hain.",
+    "answer": "Hotel La Vista and Mountain View Resort offer premium experiences.",
     "keywords": [
       "luxury",
       "ranchi",
@@ -1659,7 +1659,7 @@
   {
     "id": 159,
     "question": "Luxury stays in Patna?",
-    "answer": "Gharonda Hotel aur Hotel The Dev Regency top choices hain.",
+    "answer": "Gharonda Hotel and Hotel The Dev Regency are top premium choices.",
     "keywords": [
       "luxury",
       "patna",
@@ -1669,7 +1669,7 @@
   {
     "id": 160,
     "question": "Nepal luxury hotels?",
-    "answer": "Hotels Ichchha is one of our best luxury partners in Nepal.",
+    "answer": "Hotels Ichchha is one of our top luxury partners in Nepal.",
     "keywords": [
       "luxury",
       "nepal",
@@ -1679,7 +1679,7 @@
   {
     "id": 161,
     "question": "Business trip to Patna?",
-    "answer": "Hotel The Dev Regency is corporate-friendly and near the airport.",
+    "answer": "Hotel The Dev Regency is corporate-friendly and located near the airport.",
     "keywords": [
       "business",
       "trip",
@@ -1689,7 +1689,7 @@
   {
     "id": 162,
     "question": "Family trip to Ranchi?",
-    "answer": "Mountain View Resort is perfect for families with its nature views.",
+    "answer": "Mountain View Resort is ideal for families with its nature views.",
     "keywords": [
       "family",
       "trip",
@@ -1707,8 +1707,8 @@
   },
   {
     "id": 164,
-    "question": "MNT website safe hai?",
-    "answer": "Yes, HTTPS secured and SSL certified.",
+    "question": "Is the MNT website safe?",
+    "answer": "Yes, it is HTTPS secured and SSL certified for your safety.",
     "keywords": [
       "website",
       "safe",
@@ -1717,8 +1717,8 @@
   },
   {
     "id": 165,
-    "question": "How to contact owner?",
-    "answer": "Aap mnt.mynexttrip@gmail.com pe mail kar sakte hain.",
+    "question": "How to contact the owner?",
+    "answer": "You can email us at mnt.mynexttrip@gmail.com for direct inquiries.",
     "keywords": [
       "owner",
       "contact"
@@ -1727,7 +1727,7 @@
   {
     "id": 166,
     "question": "MNT career opportunities?",
-    "answer": "Updates ke liye hamare LinkedIn page ya website footer check karein.",
+    "answer": "Check our LinkedIn page or website footer for the latest job updates.",
     "keywords": [
       "career",
       "jobs",
@@ -1737,7 +1737,7 @@
   {
     "id": 167,
     "question": "MNT logo meaning?",
-    "answer": "Logo travel aur connectivity ko represent karta hai.",
+    "answer": "The logo represents travel, connectivity, and premium exploration.",
     "keywords": [
       "logo",
       "meaning"
@@ -1746,7 +1746,7 @@
   {
     "id": 168,
     "question": "Is MNT on Instagram?",
-    "answer": "Yes, hamare latest travel stories aur deals ke liye humein follow karein.",
+    "answer": "Yes, follow us for the latest travel stories and exclusive deals.",
     "keywords": [
       "instagram",
       "social"
@@ -1755,7 +1755,7 @@
   {
     "id": 169,
     "question": "MNT Facebook page?",
-    "answer": "Search 'MyNextTrip' on Facebook for updates.",
+    "answer": "Search for 'MyNextTrip' on Facebook for news and updates.",
     "keywords": [
       "facebook",
       "social"
@@ -1763,8 +1763,8 @@
   },
   {
     "id": 170,
-    "question": "Support available on Sunday?",
-    "answer": "Yes, 24/7 global support available everyday.",
+    "question": "Is support available on Sunday?",
+    "answer": "Yes, our 24/7 global support is available every day of the week.",
     "keywords": [
       "sunday",
       "support",
@@ -1774,7 +1774,7 @@
   {
     "id": 171,
     "question": "MNT success story?",
-    "answer": "1.5M+ happy customers in a short span is our biggest success.",
+    "answer": "Our biggest success is serving over 1.5 million happy customers.",
     "keywords": [
       "success",
       "story"
@@ -1782,8 +1782,8 @@
   },
   {
     "id": 172,
-    "question": "Litti Chokha kahan milega?",
-    "answer": "Patna mein Litti Chokha bahut famous hai! Maurya Lok ya local food stalls pe try karein.",
+    "question": "Where to find Litti Chokha?",
+    "answer": "Litti Chokha is famous in Patna! Try it at Maurya Lok or local food stalls.",
     "keywords": [
       "litti",
       "chokha",
@@ -1794,8 +1794,8 @@
   },
   {
     "id": 173,
-    "question": "Dhuska kahan milega?",
-    "answer": "Ranchi ka Dhuska aur Pua zaroor try karein! Local markets mein available hai.",
+    "question": "Where to find Dhuska?",
+    "answer": "You must try Ranchi's Dhuska and Pua! They are available in local markets.",
     "keywords": [
       "dhuska",
       "food",
@@ -1806,7 +1806,7 @@
   {
     "id": 174,
     "question": "Best shopping in Patna?",
-    "answer": "Maurya Lok Complex, P&M Mall, aur Boring Road shopping ke liye best hain.",
+    "answer": "Maurya Lok Complex, P&M Mall, and Boring Road are the best spots.",
     "keywords": [
       "shopping",
       "patna",
@@ -1816,7 +1816,7 @@
   {
     "id": 175,
     "question": "Best shopping in Ranchi?",
-    "answer": "Main Road, GEL Church Complex, aur Nucleus Mall visit karein.",
+    "answer": "Visit Main Road, GEL Church Complex, and Nucleus Mall for great shopping.",
     "keywords": [
       "shopping",
       "ranchi",
@@ -1825,8 +1825,8 @@
   },
   {
     "id": 176,
-    "question": "Kesaria Stupa Motihari se kitni door hai?",
-    "answer": "Kesaria Stupa Motihari se lagbhag 35-40km ki doori par hai.",
+    "question": "Distance to Kesaria Stupa from Motihari?",
+    "answer": "Kesaria Stupa is approximately 35-40km away from Motihari city.",
     "keywords": [
       "kesaria",
       "stupa",
@@ -1837,7 +1837,7 @@
   {
     "id": 177,
     "question": "Patna Sahib Gurudwara timing?",
-    "answer": "Usually 4:00 AM se 9:00 PM tak darshan ke liye khula rehta hai.",
+    "answer": "It is usually open for darshan from 4:00 AM to 9:00 PM.",
     "keywords": [
       "patna sahib",
       "timing",
@@ -1846,8 +1846,8 @@
   },
   {
     "id": 178,
-    "question": "Sonepur Mela kab hota hai?",
-    "answer": "Sonepur Mela Kartik Purnima (November) ke aas-paas hota hai, Patna se paas hai.",
+    "question": "When does Sonepur Mela happen?",
+    "answer": "It takes place around Kartik Purnima (November), near Patna.",
     "keywords": [
       "sonepur",
       "mela",
@@ -1857,8 +1857,8 @@
   },
   {
     "id": 179,
-    "question": "Nalanda University kitni door hai?",
-    "answer": "Patna se Nalanda lagbhag 90-100km ki doori par hai.",
+    "question": "How far is Nalanda University?",
+    "answer": "Nalanda is approximately 90-100km away from Patna.",
     "keywords": [
       "nalanda",
       "university",
@@ -1868,8 +1868,8 @@
   },
   {
     "id": 180,
-    "question": "Bodh Gaya kaise jaayen?",
-    "answer": "Patna se Bodh Gaya lagbhag 110km hai, train ya cab se ja sakte hain.",
+    "question": "How to go to Bodh Gaya?",
+    "answer": "It is 110km from Patna. You can go by train or hire a private cab.",
     "keywords": [
       "bodh gaya",
       "gaya",
@@ -1879,8 +1879,8 @@
   },
   {
     "id": 181,
-    "question": "Rajgir mein kya dekhein?",
-    "answer": "Glass Bridge, Ropeway, Shanti Stupa, aur Hot Springs.",
+    "question": "What to see in Rajgir?",
+    "answer": "Visit the Glass Bridge, Ropeway, Shanti Stupa, and Hot Springs.",
     "keywords": [
       "rajgir",
       "glass bridge",
@@ -1890,8 +1890,8 @@
   },
   {
     "id": 182,
-    "question": "Deoghar (Baba Dham) kahan hai?",
-    "answer": "Jharkhand mein hai, Ranchi se lagbhag 250km ki doori par.",
+    "question": "Where is Deoghar (Baba Dham)?",
+    "answer": "It is in Jharkhand, about 250km away from Ranchi.",
     "keywords": [
       "deoghar",
       "baba dham",
@@ -1900,8 +1900,8 @@
   },
   {
     "id": 183,
-    "question": "Netarhat kahan hai?",
-    "answer": "Jharkhand ka 'Queen of Chotanagpur', Ranchi se 150km door beautiful hill station.",
+    "question": "Where is Netarhat?",
+    "answer": "Known as the 'Queen of Chotanagpur', it is a beautiful hill station 150km from Ranchi.",
     "keywords": [
       "netarhat",
       "hill station",
@@ -1911,7 +1911,7 @@
   {
     "id": 184,
     "question": "Betla National Park?",
-    "answer": "Jharkhand ka famous wildlife sanctuary, Ranchi se lagbhag 170km door.",
+    "answer": "A famous wildlife sanctuary in Jharkhand, about 170km from Ranchi.",
     "keywords": [
       "betla",
       "wildlife",
@@ -1921,7 +1921,7 @@
   {
     "id": 185,
     "question": "Patratu Valley Ranchi?",
-    "answer": "Ranchi se 35km door beautiful winding roads aur dam view ke liye famous hai.",
+    "answer": "Famous for its winding roads and dam views, located 35km from Ranchi.",
     "keywords": [
       "patratu",
       "valley",
@@ -1931,7 +1931,7 @@
   {
     "id": 186,
     "question": "Tagore Hill Ranchi?",
-    "answer": "Ranchi city mein hai, sunset views ke liye best spot hai.",
+    "answer": "Located within Ranchi city, it is a top spot for beautiful sunset views.",
     "keywords": [
       "tagore hill",
       "ranchi",
@@ -1941,7 +1941,7 @@
   {
     "id": 187,
     "question": "Jagannath Temple Ranchi?",
-    "answer": "17th century ka historical temple, Dhurwa area mein hill par hai.",
+    "answer": "A historical 17th-century temple located on a hill in the Dhurwa area.",
     "keywords": [
       "jagannath",
       "temple",
@@ -1951,7 +1951,7 @@
   {
     "id": 188,
     "question": "Birsa Zoological Park Ranchi?",
-    "answer": "Ormanjhi mein hai, Ranchi-Ramgarh highway par.",
+    "answer": "It is located in Ormanjhi, along the Ranchi-Ramgarh highway.",
     "keywords": [
       "zoo",
       "birsa",
@@ -1961,7 +1961,7 @@
   {
     "id": 189,
     "question": "MNT travel insurance price?",
-    "answer": "Insurance cost trip duration aur travelers par depend karta hai. Expert se consult karein.",
+    "answer": "Cost depends on duration and travelers. Consult our expert for a quote.",
     "keywords": [
       "insurance",
       "price",
@@ -1971,7 +1971,7 @@
   {
     "id": 190,
     "question": "Group flight booking discount?",
-    "answer": "Yes, hum 10 se zyada logo ke liye special group fares provide karte hain.",
+    "answer": "Yes, we provide special group fares for bookings of more than 10 people.",
     "keywords": [
       "group flight",
       "discount"
@@ -2009,7 +2009,7 @@
   {
     "id": 194,
     "question": "MNT office address?",
-    "answer": "123 Travel Lane, Jharkhand, India.",
+    "answer": "Walmi, Khagaul, Patna, Bihar 801505, India.",
     "keywords": [
       "address",
       "location"
@@ -2037,7 +2037,7 @@
   {
     "id": 197,
     "question": "MNT mission?",
-    "answer": "To provide world-class travel experiences at local prices.",
+    "answer": "To provide world-class travel experiences at competitive local prices.",
     "keywords": [
       "mission",
       "goal"
@@ -2054,8 +2054,8 @@
   },
   {
     "id": 199,
-    "question": "MNT safe to use?",
-    "answer": "Yes, we are highly rated and use industry-standard security.",
+    "question": "Is MNT safe to use?",
+    "answer": "Yes, we are highly rated and utilize industry-standard security protocols.",
     "keywords": [
       "safe",
       "secure"
@@ -2063,8 +2063,8 @@
   },
   {
     "id": 200,
-    "question": "How to get 20% discount?",
-    "answer": "Share your Name and WhatsApp number with me right here!",
+    "question": "How to get a 20% discount?",
+    "answer": "Simply share your name and WhatsApp number with me right here!",
     "keywords": [
       "discount",
       "20%",
@@ -2074,7 +2074,7 @@
   {
     "id": 201,
     "question": "Is MNT real or fake?",
-    "answer": "MNT is 100% real and trusted by millions.",
+    "answer": "MNT is 100% real and trusted by over 1.5 million travelers.",
     "keywords": [
       "real",
       "fake",
@@ -2084,7 +2084,7 @@
   {
     "id": 202,
     "question": "MNT head office?",
-    "answer": "Located in Jharkhand, India.",
+    "answer": "Located in Patna, Bihar, India.",
     "keywords": [
       "head office",
       "location"
@@ -2093,7 +2093,7 @@
   {
     "id": 203,
     "question": "MNT website features?",
-    "answer": "Hotel booking, Flight search, Holiday packages, and Expert consultation.",
+    "answer": "Hotel booking, flight search, holiday packages, and expert consultation.",
     "keywords": [
       "features",
       "website"
@@ -2102,7 +2102,7 @@
   {
     "id": 204,
     "question": "MNT newsletter benefit?",
-    "answer": "Early access to sales and exclusive travel guides.",
+    "answer": "Early access to flash sales and exclusive curated travel guides.",
     "keywords": [
       "newsletter",
       "benefit"
@@ -2111,7 +2111,7 @@
   {
     "id": 205,
     "question": "MNT partners?",
-    "answer": "We partner with leading hotels and airlines worldwide.",
+    "answer": "We partner with leading hotels and airlines globally.",
     "keywords": [
       "partners",
       "collaborations"
