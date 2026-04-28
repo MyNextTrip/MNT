@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Calendar, Users, MapPin, Plane, Building2, Globe, ArrowRight, Volume2, VolumeX } from "lucide-react";
 import Image from "next/image";
@@ -42,7 +42,15 @@ export default function Hero() {
   const [pkgChildren, setPkgChildren] = useState(0);
   const [showPkgGuests, setShowPkgGuests] = useState(false);
 
-  const today = new Date().toLocaleDateString('en-CA');
+  const [today, setToday] = useState("");
+
+  useState(() => {
+    // We can also initialize with a stable value if we want, but useEffect is safer for hydration
+  });
+
+  useEffect(() => {
+    setToday(new Date().toLocaleDateString('en-CA'));
+  }, []);
   const getNextDay = (dateStr: string) => {
     if (!dateStr) return "";
     const d = new Date(dateStr);
@@ -91,6 +99,7 @@ export default function Hero() {
           onClick={() => setIsMuted(!isMuted)}
           className="absolute bottom-8 right-8 z-20 p-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-white/20 transition-all text-white shadow-xl group"
           title={isMuted ? "Unmute" : "Mute"}
+          suppressHydrationWarning
         >
           {isMuted ? (
             <VolumeX className="w-5 h-5 md:w-6 h-6 text-white/80 group-hover:text-white transition-colors" />
@@ -127,6 +136,7 @@ export default function Hero() {
                         ? "bg-primary/10 text-primary shadow-[0_2px_10px_-4px_rgba(0,59,149,0.3)]" 
                         : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
                     )}
+                    suppressHydrationWarning
                   >
                     <Icon className={cn("w-4 h-4", activeTab === tab.id ? "text-primary" : "text-slate-300")} />
                     {t(tab.label)}
@@ -148,6 +158,7 @@ export default function Hero() {
                       "flex flex-col items-center justify-center gap-2 py-4 px-2 transition-all relative",
                       isActive ? "bg-white" : "text-slate-400"
                     )}
+                    suppressHydrationWarning
                   >
                     <div className={cn(
                       "p-2.5 rounded-2xl transition-all",
@@ -193,6 +204,7 @@ export default function Hero() {
                         value={flightFrom}
                         onChange={(e) => setFlightFrom(e.target.value)}
                         className="w-full text-lg md:text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" 
+                        suppressHydrationWarning
                       /> 
                       <Plane className="w-5 h-5 text-slate-300 -rotate-45" />
                     </div>
@@ -200,13 +212,13 @@ export default function Hero() {
                   </div>
                   <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">DESTINATION</p>
-                    <div className="flex justify-between items-center"><input type="text" placeholder="Where to?" className="w-full text-lg md:text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" /> <MapPin className="w-5 h-5 text-slate-300" /></div>
+                    <div className="flex justify-between items-center"><input type="text" placeholder="Where to?" className="w-full text-lg md:text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" suppressHydrationWarning /> <MapPin className="w-5 h-5 text-slate-300" /></div>
                     <p className="text-[10px] md:text-xs font-semibold text-slate-400">Search globally</p>
                   </div>
                   <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">DEPARTURE</p>
                     <div className="flex items-center justify-between relative">
-                      <input type="date" min={today} value={flightDate} onChange={e=>setFlightDate(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                      <input type="date" min={today} value={flightDate} onChange={e=>setFlightDate(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" suppressHydrationWarning />
                       <h3 className="text-lg md:text-xl font-black text-slate-800 truncate">{flightDate ? new Date(flightDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : "Select Date"}</h3>
                       <Calendar className="w-5 h-5 text-slate-300" />
                     </div>
@@ -301,6 +313,7 @@ export default function Hero() {
                         value={hotelLocation}
                         onChange={(e) => setHotelLocation(e.target.value)}
                         className="w-full text-lg md:text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" 
+                        suppressHydrationWarning
                       /> 
                       <Building2 className="w-5 h-5 text-slate-300" />
                     </div>
@@ -309,7 +322,7 @@ export default function Hero() {
                   <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">CHECK-IN</p>
                     <div className="flex items-center justify-between relative">
-                      <input type="date" min={today} value={hotelIn} onChange={e=>handleHotelInChange(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                      <input type="date" min={today} value={hotelIn} onChange={e=>handleHotelInChange(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" suppressHydrationWarning />
                       <h3 className="text-lg md:text-xl font-black text-slate-800 truncate">{hotelIn ? new Date(hotelIn).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : "Select Date"}</h3>
                       <Calendar className="w-5 h-5 text-slate-300" />
                     </div>
@@ -317,7 +330,7 @@ export default function Hero() {
                   <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">CHECK-OUT</p>
                     <div className="flex items-center justify-between relative">
-                      <input type="date" min={minCheckOut} value={hotelOut} onChange={e=>setHotelOut(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                      <input type="date" min={minCheckOut} value={hotelOut} onChange={e=>setHotelOut(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" suppressHydrationWarning />
                       <h3 className="text-lg md:text-xl font-black text-slate-800 truncate">{hotelOut ? new Date(hotelOut).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : "Select Date"}</h3>
                       <Calendar className="w-5 h-5 text-slate-300" />
                     </div>
@@ -407,6 +420,7 @@ export default function Hero() {
                         value={pkgFrom}
                         onChange={(e) => setPkgFrom(e.target.value)}
                         className="w-full text-lg md:text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" 
+                        suppressHydrationWarning
                       /> 
                       <MapPin className="w-5 h-5 text-slate-300" />
                     </div>
@@ -414,13 +428,13 @@ export default function Hero() {
                   </div>
                   <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">DESTINATION</p>
-                    <div className="flex justify-between items-center"><input type="text" placeholder="Where to?" className="w-full text-lg md:text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" /> <Globe className="w-5 h-5 text-slate-300" /></div>
+                    <div className="flex justify-between items-center"><input type="text" placeholder="Where to?" className="w-full text-lg md:text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" suppressHydrationWarning /> <Globe className="w-5 h-5 text-slate-300" /></div>
                     <p className="text-[10px] md:text-xs font-semibold text-slate-400">Trending: Bali, Dubai</p>
                   </div>
                   <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">STARTING DATE</p>
                     <div className="flex items-center justify-between relative">
-                      <input type="date" min={today} value={pkgDate} onChange={e=>setPkgDate(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                      <input type="date" min={today} value={pkgDate} onChange={e=>setPkgDate(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" suppressHydrationWarning />
                       <h3 className="text-lg md:text-xl font-black text-slate-800 truncate">{pkgDate ? new Date(pkgDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : "Select Date"}</h3>
                       <Calendar className="w-5 h-5 text-slate-300" />
                     </div>
@@ -502,6 +516,7 @@ export default function Hero() {
               <button 
                 onClick={handleSearch}
                 className="w-full md:w-auto bg-slate-900 md:bg-gradient-to-r md:from-blue-600 md:to-indigo-600 text-white font-black text-lg md:text-xl py-4.5 md:py-3.5 px-8 md:px-16 rounded-2xl md:rounded-full shadow-[0_20px_40px_-12px_rgba(0,0,0,0.3)] md:shadow-[0_12px_24px_-8px_rgba(37,99,235,0.7)] hover:scale-[1.02] transition-all flex items-center justify-center gap-3 active:scale-95"
+                suppressHydrationWarning
               >
                 {activeTab === 'hotels' ? 'SEARCH HOTELS' : activeTab === 'flights' ? 'SEARCH FLIGHTS' : 'FIND PACKAGES'} 
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

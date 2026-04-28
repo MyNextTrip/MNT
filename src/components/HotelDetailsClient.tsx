@@ -21,10 +21,45 @@ const MEAL_PLANS = [
   { id: 'AP', label: 'AP – American Plan', desc: 'Room + Breakfast + Lunch + Dinner', price: 999, detail: 'All meals included. Best for full-stay convenience.', tip: 'Stay + All meals 🍴' },
 ];
 
-interface HotelDetailsClientProps {
-  id: string;
-  initialHotel: any;
-}
+const getToday = () => {
+  return new Date().toLocaleDateString('en-CA');
+};
+
+const getTomorrow = () => {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toLocaleDateString('en-CA');
+};
+
+const HOTEL_WHATSAPP_MAPPING: Record<string, string> = {
+  "Mountain View Resort": "918102749739",
+  "Hotel La Vista": "918235416130",
+  "Hotel The Dev Regency": "919934306111",
+  "Gharonda Hotel": "917091383111",
+  "Princess Home": "919546633866",
+  "Hotel Chandrashila": "918298400222",
+  "Hotel Friends Inn": "918102232956",
+};
+
+const getHotelWhatsApp = (hotelName: string, address: string) => {
+  // Direct matches
+  for (const [name, phone] of Object.entries(HOTEL_WHATSAPP_MAPPING)) {
+    if (hotelName.toLowerCase().includes(name.toLowerCase())) return phone;
+  }
+  
+  // Special handling for Siddhi Vinayak branches
+  if (hotelName.toLowerCase().includes("siddhi vinayak")) {
+    if (address.toLowerCase().includes("chatauni") || address.toLowerCase().includes("narega")) {
+      return "916287099704";
+    }
+    if (address.toLowerCase().includes("station") || address.toLowerCase().includes("belbawana")) {
+      return "916287099703";
+    }
+    return "916287099704"; // Default to one of them
+  }
+  
+  return null;
+};
 
 function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
   const router = useRouter();
@@ -34,15 +69,13 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
   const [loading, setLoading] = useState(!initialHotel);
   
   // Date State
-  const getToday = () => new Date().toLocaleDateString('en-CA');
-  const getTomorrow = () => {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    return d.toLocaleDateString('en-CA');
-  };
+  const [startDate, setStartDate] = useState(searchParams?.get("checkin") || "");
+  const [endDate, setEndDate] = useState(searchParams?.get("checkout") || "");
 
-  const [startDate, setStartDate] = useState(searchParams?.get("checkin") || getToday());
-  const [endDate, setEndDate] = useState(searchParams?.get("checkout") || getTomorrow());
+  useEffect(() => {
+    if (!startDate) setStartDate(searchParams?.get("checkin") || getToday());
+    if (!endDate) setEndDate(searchParams?.get("checkout") || getTomorrow());
+  }, [searchParams]);
   
   // Slider State
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -364,11 +397,11 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
             />
             {hotel.images.length > 1 && (
               <>
-                <button onClick={handlePrevImage} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all z-10"><ChevronLeft className="w-6 h-6" /></button>
-                <button onClick={handleNextImage} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all z-10"><ChevronRight className="w-6 h-6" /></button>
+                <button onClick={handlePrevImage} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all z-10" suppressHydrationWarning><ChevronLeft className="w-6 h-6" /></button>
+                <button onClick={handleNextImage} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all z-10" suppressHydrationWarning><ChevronRight className="w-6 h-6" /></button>
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
                   {hotel.images.map((_: any, idx: number) => (
-                    <button key={idx} onClick={() => setCurrentImageIndex(idx)} className={cn("h-2 rounded-full transition-all", currentImageIndex === idx ? "w-8 bg-white" : "w-2 bg-white/50")} />
+                    <button key={idx} onClick={() => setCurrentImageIndex(idx)} className={cn("h-2 rounded-full transition-all", currentImageIndex === idx ? "w-8 bg-white" : "w-2 bg-white/50")} suppressHydrationWarning />
                   ))}
                 </div>
               </>
@@ -377,12 +410,30 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
           </div>
         )}
 
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{hotel.owner === "MyNextTrip" ? "Premium Property" : "Verified Partner"}</span>
-            <div className="flex items-center text-amber-500 text-sm font-bold bg-amber-50 px-2 py-1 rounded"><Star className="w-4 h-4 fill-amber-500 mr-1" /> {hotel.owner === "MyNextTrip" ? "5.0" : "4.5"}</div>
+        <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{hotel.owner === "MyNextTrip" ? "Premium Property" : "Verified Partner"}</span>
+              <div className="flex items-center text-amber-500 text-sm font-bold bg-amber-50 px-2 py-1 rounded"><Star className="w-4 h-4 fill-amber-500 mr-1" /> {hotel.owner === "MyNextTrip" ? "5.0" : "4.5"}</div>
+            </div>
+            <h1 className="text-3xl md:text-5xl font-bold font-serif text-slate-900 mb-2">{hotel.hotelName}</h1>
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold font-serif text-slate-900 mb-2">{hotel.hotelName}</h1>
+          
+          {/* WhatsApp Button */}
+          {getHotelWhatsApp(hotel.hotelName, hotel.address) && (
+            <Link 
+              href={`https://wa.me/${getHotelWhatsApp(hotel.hotelName, hotel.address)}?text=Hi, I'm interested in booking a stay at ${hotel.hotelName}. Please provide more details.`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 px-6 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-2xl transition-all shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 group"
+              suppressHydrationWarning
+            >
+              <div className="relative w-6 h-6">
+                <Image src="/images/whatsapp-icon.png" alt="WhatsApp" fill className="object-contain brightness-0 invert" />
+              </div>
+              <span className="text-sm uppercase tracking-wider">Chat with Property</span>
+            </Link>
+          )}
         </div>
 
         <div className="space-y-12">
@@ -403,14 +454,14 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Check-in Date</label>
                    <div className="relative">
                       <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-primary w-5 h-5" />
-                      <input type="date" min={getToday()} value={startDate} onChange={(e) => { setStartDate(e.target.value); if (new Date(e.target.value) >= new Date(endDate)) setEndDate(addDays(e.target.value, 1)); }} className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-slate-700" />
+                      <input type="date" min={getToday()} value={startDate} onChange={(e) => { setStartDate(e.target.value); if (new Date(e.target.value) >= new Date(endDate)) setEndDate(addDays(e.target.value, 1)); }} className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-slate-700" suppressHydrationWarning />
                    </div>
                 </div>
                 <div className="space-y-2">
                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Check-out Date</label>
                    <div className="relative">
                       <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-primary w-5 h-5" />
-                      <input type="date" min={addDays(startDate, 1)} value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-slate-700" />
+                      <input type="date" min={addDays(startDate, 1)} value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-slate-700" suppressHydrationWarning />
                    </div>
                 </div>
                 <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10 flex flex-col justify-center items-center text-center">
@@ -453,7 +504,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
                     </div>
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between border-t pt-6">
                       <div><p className="text-3xl md:text-4xl font-black text-slate-900">₹{(parseInt(room.price) + (MEAL_PLANS.find(p => p.id === (selectedMealPlan[idx] || 'EP'))?.price || 0)) * calculateNights(startDate, endDate)}</p><p className="text-xs font-bold text-slate-400 mt-2">inclusive of all taxes</p></div>
-                      <button onClick={() => handleBookNow(room, idx)} className="w-full sm:w-auto px-8 py-4 bg-slate-900 hover:bg-primary text-white font-bold rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2 group">Book Now <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></button>
+                      <button onClick={() => handleBookNow(room, idx)} className="w-full sm:w-auto px-8 py-4 bg-slate-900 hover:bg-primary text-white font-bold rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2 group" suppressHydrationWarning>Book Now <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></button>
                     </div>
                   </div>
                 ))}
@@ -488,15 +539,15 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
               <h3 className="font-bold text-slate-800 mb-4 text-lg">Write a Review</h3>
               <form onSubmit={handleReviewSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input type="text" placeholder="Your Name" value={reviewForm.userName} onChange={(e) => setReviewForm({...reviewForm, userName: e.target.value})} className="w-full p-3 bg-white border border-slate-200 rounded-xl outline-none" />
-                  <select value={reviewForm.rating} onChange={(e) => setReviewForm({...reviewForm, rating: parseInt(e.target.value, 10)})} className="w-full p-3 bg-white border border-slate-200 rounded-xl outline-none"><option value="5">5 Stars</option><option value="4">4 Stars</option><option value="3">3 Stars</option><option value="2">2 Stars</option><option value="1">1 Star</option></select>
+                  <input type="text" placeholder="Your Name" value={reviewForm.userName} onChange={(e) => setReviewForm({...reviewForm, userName: e.target.value})} className="w-full p-3 bg-white border border-slate-200 rounded-xl outline-none" suppressHydrationWarning />
+                  <select value={reviewForm.rating} onChange={(e) => setReviewForm({...reviewForm, rating: parseInt(e.target.value, 10)})} className="w-full p-3 bg-white border border-slate-200 rounded-xl outline-none" suppressHydrationWarning><option value="5">5 Stars</option><option value="4">4 Stars</option><option value="3">3 Stars</option><option value="2">2 Stars</option><option value="1">1 Star</option></select>
                 </div>
-                <textarea required rows={3} placeholder="Tell us about your stay..." value={reviewForm.text} onChange={(e) => setReviewForm({...reviewForm, text: e.target.value})} className="w-full p-4 bg-white border border-slate-200 rounded-xl outline-none resize-none"></textarea>
+                <textarea required rows={3} placeholder="Tell us about your stay..." value={reviewForm.text} onChange={(e) => setReviewForm({...reviewForm, text: e.target.value})} className="w-full p-4 bg-white border border-slate-200 rounded-xl outline-none resize-none" suppressHydrationWarning></textarea>
                 <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">Photos</label><input type="file" multiple accept="image/*" onChange={(e) => { if(e.target.files) setReviewImages(Array.from(e.target.files)); }} className="w-full mt-1 p-3 bg-white border border-slate-200 rounded-xl" /></div>
-                  <div className="flex-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">Videos</label><input type="file" multiple accept="video/*" onChange={(e) => { if(e.target.files) setReviewVideos(Array.from(e.target.files)); }} className="w-full mt-1 p-3 bg-white border border-slate-200 rounded-xl" /></div>
+                  <div className="flex-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">Photos</label><input type="file" multiple accept="image/*" onChange={(e) => { if(e.target.files) setReviewImages(Array.from(e.target.files)); }} className="w-full mt-1 p-3 bg-white border border-slate-200 rounded-xl" suppressHydrationWarning /></div>
+                  <div className="flex-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">Videos</label><input type="file" multiple accept="video/*" onChange={(e) => { if(e.target.files) setReviewVideos(Array.from(e.target.files)); }} className="w-full mt-1 p-3 bg-white border border-slate-200 rounded-xl" suppressHydrationWarning /></div>
                 </div>
-                <button type="submit" disabled={isSubmittingReview} className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-primary transition-colors disabled:opacity-50">{isSubmittingReview ? "Posting..." : "Submit Review"}</button>
+                <button type="submit" disabled={isSubmittingReview} className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-primary transition-colors disabled:opacity-50" suppressHydrationWarning>{isSubmittingReview ? "Posting..." : "Submit Review"}</button>
               </form>
             </div>
             <div className="space-y-6">
@@ -547,15 +598,15 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
                <div className="space-y-4">
                   <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">1. Guest Information</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <input type="text" placeholder="Guest Full Name" value={guestName} onChange={(e) => setGuestName(e.target.value)} className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-slate-700" />
-                    <input type="tel" placeholder="Guest Mobile No" value={guestPhone} onChange={(e) => setGuestPhone(e.target.value)} className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-slate-700" />
+                    <input type="text" placeholder="Guest Full Name" value={guestName} onChange={(e) => setGuestName(e.target.value)} className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-slate-700" suppressHydrationWarning />
+                    <input type="tel" placeholder="Guest Mobile No" value={guestPhone} onChange={(e) => setGuestPhone(e.target.value)} className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-slate-700" suppressHydrationWarning />
                   </div>
                </div>
                <div className="space-y-4">
                   <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">2. Stay Duration</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <input type="date" value={startDate} onChange={(e) => { setStartDate(e.target.value); if (new Date(e.target.value) >= new Date(endDate)) setEndDate(addDays(e.target.value, 1)); }} className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-slate-700" />
-                    <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-slate-700" />
+                    <input type="date" value={startDate} onChange={(e) => { setStartDate(e.target.value); if (new Date(e.target.value) >= new Date(endDate)) setEndDate(addDays(e.target.value, 1)); }} className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-slate-700" suppressHydrationWarning />
+                    <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-slate-700" suppressHydrationWarning />
                   </div>
                </div>
                <div className="space-y-4">
@@ -571,7 +622,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
             </div>
             <div className="p-8 bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-6">
                <div><p className="text-3xl font-black">₹{(parseInt(selectedRoomForBooking.room.price) + (MEAL_PLANS.find(p => p.id === (selectedMealPlan[selectedRoomForBooking.idx] || 'EP'))?.price || 0)) * calculateNights(startDate, endDate)}</p></div>
-               <button onClick={executeBooking} disabled={isBookingInProgress} className="w-full sm:w-auto px-10 py-5 bg-primary text-white font-black rounded-[20px]">{isBookingInProgress ? "Confirming..." : "Confirm Booking"}</button>
+               <button onClick={executeBooking} disabled={isBookingInProgress} className="w-full sm:w-auto px-10 py-5 bg-primary text-white font-black rounded-[20px]" suppressHydrationWarning>{isBookingInProgress ? "Confirming..." : "Confirm Booking"}</button>
             </div>
           </div>
         </div>

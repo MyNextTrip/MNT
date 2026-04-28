@@ -4,29 +4,46 @@ import TrustFactors from "@/components/TrustFactors";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "MyNextTrip | Premium Travel & Booking Portal",
-  description: "Book luxury hotels, flights and holiday packages at the best prices. Experience seamless travel planning with MyNextTrip.",
+  title: "MNT | Best Travel Agency in Patna & Hotel Booking Ranchi",
+  description: "Book premium stays directly with My Next Trip (MNT). The leading travel portal for direct hotel booking and property listing for owners in Patna, Ranchi, Motihari, and Nepal. Experience seamless MNT Brand hospitality.",
+  keywords: ["MNT Brand", "best travel agency in patna", "hotel booking ranchi", "nepal tour packages from india", "luxury hotels patna", "cheap flights patna", "holiday packages bihar", "travel portal india"],
   openGraph: {
-    title: "MyNextTrip | Premium Travel & Booking Portal",
-    description: "Book luxury hotels, flights and holiday packages at the best prices.",
+    title: "MNT | Premium Travel Agency for Patna, Ranchi & Nepal",
+    description: "Book premium stays directly with My Next Trip (MNT). Direct hotel booking and property listing for owners.",
   },
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "MyNextTrip",
-  "url": "https://mynexttrip.onrender.com",
-  "logo": "https://mynexttrip.onrender.com/logo.png",
+  "@type": "TravelAgency",
+  "name": "MyNextTrip (MNT)",
+  "url": "https://www.mynexttrip.in",
+  "logo": "https://www.mynexttrip.in/images/mnt-logo-new.png",
+  "description": "Premium travel agency and hospitality aggregator in Patna and Ranchi. Specializing in direct hotel bookings and property listing for owners across Bihar, Jharkhand, and Nepal.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Bariatu Road",
+    "addressLocality": "Ranchi",
+    "addressRegion": "Jharkhand",
+    "postalCode": "834001",
+    "addressCountry": "IN"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "23.3441",
+    "longitude": "85.3091"
+  },
   "sameAs": [
-    "https://facebook.com/mynexttrip",
-    "https://twitter.com/mynexttrip",
-    "https://instagram.com/mynexttrip"
+    "https://www.facebook.com/profile.php?id=61575468341367",
+    "https://www.instagram.com/mynexttrip07/",
+    "https://www.youtube.com/channel/UC71Zk6DnIdPEqAkq3-JyFpA"
   ],
   "contactPoint": {
     "@type": "ContactPoint",
-    "telephone": "+91-XXXXXXXXXX",
-    "contactType": "customer service"
+    "telephone": "+91-9263554855",
+    "contactType": "customer service",
+    "areaServed": ["IN", "NP"],
+    "availableLanguage": ["Hindi", "English"]
   }
 };
 
@@ -50,10 +67,16 @@ export default function Home() {
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-8">Ready for Your Next <span className="text-secondary italic">Bucket List</span> Adventure?</h2>
           <p className="text-white/80 max-w-2xl mx-auto mb-10 text-lg">Join 1.5 million travelers who trust MyNextTrip for their most precious memories. Exclusive deals waiting for you.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-primary font-bold px-8 py-4 rounded-full hover:bg-secondary hover:text-gray-900 transition-all shadow-xl hover:-translate-y-1 w-full sm:w-auto">
+            <button 
+              className="bg-white text-primary font-bold px-8 py-4 rounded-full hover:bg-secondary hover:text-gray-900 transition-all shadow-xl hover:-translate-y-1 w-full sm:w-auto"
+              suppressHydrationWarning
+            >
               Explore Holiday Packages
             </button>
-            <button className="bg-transparent border-2 border-white/30 text-white font-bold px-8 py-4 rounded-full hover:bg-white/10 transition-all w-full sm:w-auto">
+            <button 
+              className="bg-transparent border-2 border-white/30 text-white font-bold px-8 py-4 rounded-full hover:bg-white/10 transition-all w-full sm:w-auto"
+              suppressHydrationWarning
+            >
               Contact a Travel Expert
             </button>
           </div>

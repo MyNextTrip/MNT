@@ -5,12 +5,13 @@ import connectToDatabase from "@/lib/mongodb";
 import { Hotel } from "@/lib/models/Hotel";
 
 export const metadata: Metadata = {
-  title: "Premium Hotels in Patna, Ranchi, Motihari & Nepal",
-  description: "Discover curated luxury stays in Patna, Ranchi, Motihari, and Nepal. Book verified hotels with premium amenities at the best prices on MyNextTrip.",
+  title: "Book Hotels in Patna, Ranchi, Motihari & Nepal | MyNextTrip",
+  description: "Find the best deals on hotels in Patna, Ranchi, Motihari, and Nepal. Book luxury hotels, budget stays, and premium resorts with MyNextTrip. 100% verified properties with top amenities.",
+  keywords: ["hotels in patna", "hotels in ranchi", "hotels in motihari", "resorts in nepal", "best hotels in bihar", "luxury stays ranchi", "hotel booking online", "mynexttrip hotels"],
   openGraph: {
-    title: "Premium Hotels | MyNextTrip",
-    description: "Discover curated luxury stays in Patna, Ranchi, Motihari, and Nepal.",
-    url: "https://mynexttrip.onrender.com/hotels",
+    title: "Premium Hotel Booking in Patna, Ranchi & Nepal | MyNextTrip",
+    description: "Discover curated luxury stays in Patna, Ranchi, Motihari, and Nepal. Guaranteed best prices.",
+    url: "https://mynexttrip.in/hotels",
   }
 };
 

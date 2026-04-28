@@ -3,11 +3,12 @@ import Image from "next/image";
 import { Plane, MapPin, ArrowRight, Briefcase, Calendar, Users } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Book Cheap Flights | Domestic & International Air Tickets | MyNextTrip",
-  description: "Find and book the cheapest flights from Patna, Ranchi, and Delhi to destinations worldwide. Fast, secure, and premium flight booking experience on MyNextTrip.",
+  title: "Book Cheap Flights from Patna & Ranchi | MyNextTrip",
+  description: "Get the best deals on domestic and international flight tickets from Patna, Ranchi, and Delhi. Fast, secure, and premium air travel booking experience with MyNextTrip.",
+  keywords: ["cheap flights from patna", "flight ticket booking ranchi", "domestic flights india", "patna to delhi flights", "ranchi to mumbai flights", "air ticket agency patna", "international flights from ranchi", "mynexttrip flights"],
   openGraph: {
-    title: "Book Your Next Flight | MyNextTrip",
-    description: "Premium flight booking service with transparent pricing and instant confirmations.",
+    title: "Book Your Next Flight | Best Air Ticket Deals | MyNextTrip",
+    description: "Premium flight booking service with transparent pricing and instant confirmations for Patna and Ranchi travelers.",
     images: [{ url: "/images/dubai.png" }],
   }
 };

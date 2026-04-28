@@ -60,12 +60,14 @@ export default function Services() {
             <button 
               onClick={prevSlide}
               className="p-2 border border-slate-200 rounded-full hover:bg-primary hover:text-white transition-all shadow-sm"
+              suppressHydrationWarning
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
             <button 
               onClick={nextSlide}
               className="p-2 border border-slate-200 rounded-full hover:bg-primary hover:text-white transition-all shadow-sm"
+              suppressHydrationWarning
             >
               <ChevronRight className="h-5 w-5" />
             </button>

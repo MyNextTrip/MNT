@@ -102,97 +102,110 @@ export default function Header() {
                   <ChevronDown className="h-3 w-3 transition-transform group-hover/hotels:rotate-180" />
                 </Link>
                 
-                <div className="absolute top-full right-0 w-[900px] lg:w-[1100px] bg-white rounded-2xl shadow-2xl border border-slate-100 opacity-0 invisible group-hover/hotels:opacity-100 group-hover/hotels:visible transition-all duration-300 grid grid-cols-4 gap-8 p-8 overflow-hidden cursor-default translate-y-2 group-hover/hotels:translate-y-0 z-50">
+                <div className="absolute top-full left-1/2 -translate-x-1/2 w-[1000px] bg-white rounded-[2rem] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] border border-slate-100 opacity-0 invisible group-hover/hotels:opacity-100 group-hover/hotels:visible transition-all duration-500 grid grid-cols-4 gap-0 p-2 overflow-hidden cursor-default translate-y-4 group-hover/hotels:translate-y-0 z-50">
                   
-                  {/* Column 1: Patna (1-3) */}
-                  <div className="flex flex-col gap-5">
-                    <h3 className="text-[10px] font-black text-primary uppercase tracking-widest border-b pb-2 mb-2">Patna Properties</h3>
-                    
-                    <div className="group/hotel cursor-pointer">
-                      <h4 className="text-sm font-bold text-slate-800 group-hover/hotel:text-primary transition-colors leading-tight">Gharonda Hotel Restaurant Banquet</h4>
-                      <p className="text-[10px] text-slate-500 mt-1 leading-snug"><MapPin className="inline w-3 h-3 mr-0.5 text-primary/50" />Walmi Branch, AIIMS Patna Rd</p>
-                      <p className="text-[10px] text-emerald-600 font-medium mt-1 bg-emerald-50 px-2 py-0.5 rounded w-fit">10km from airport • 8km from station</p>
+                  {/* Patna & Motihari Section */}
+                  <div className="col-span-2 grid grid-cols-2 gap-8 p-8 bg-slate-50/50 rounded-l-[1.5rem]">
+                    <div className="col-span-2 flex items-center justify-between border-b border-slate-200 pb-4 mb-2">
+                       <h3 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
+                         <Building2 className="w-4 h-4 text-primary" /> Bihar Properties
+                       </h3>
+                       <Link href="/hotels?location=Bihar" className="text-[10px] font-bold text-primary hover:underline flex items-center gap-1">
+                         View All <ArrowRight className="w-3 h-3" />
+                       </Link>
                     </div>
 
-                    <div className="group/hotel cursor-pointer">
-                      <h4 className="text-sm font-bold text-slate-800 group-hover/hotel:text-primary transition-colors leading-tight">Hotel The Dev Regency</h4>
-                      <p className="text-[10px] text-slate-500 mt-1 leading-snug"><MapPin className="inline w-3 h-3 mr-0.5 text-primary/50" />Anisabad, Patna</p>
-                      <p className="text-[10px] text-emerald-600 font-medium mt-1 bg-emerald-50 px-2 py-0.5 rounded w-fit">3km from airport • 7km from station</p>
+                    {/* Patna Column */}
+                    <div className="space-y-4">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <MapPin className="w-3 h-3" /> Patna
+                      </p>
+                      <div className="space-y-4">
+                        {[
+                          { name: "Gharonda Hotel", loc: "AIIMS Patna Rd", path: "/hotels?location=Patna" },
+                          { name: "The Dev Regency", loc: "Anisabad", path: "/hotels?location=Patna" },
+                          { name: "Princess Home", loc: "Rajbansi Nagar", path: "/hotels?location=Patna" },
+                          { name: "Hotel Friends Inn", loc: "Jakariyapur", path: "/hotels?location=Patna" }
+                        ].map((hotel, i) => (
+                          <Link key={i} href={hotel.path} className="group/item block">
+                            <h4 className="text-[13px] font-bold text-slate-800 group-hover/item:text-primary transition-colors leading-tight">{hotel.name}</h4>
+                            <p className="text-[9px] text-slate-500 mt-0.5">{hotel.loc}</p>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
 
-                    <div className="group/hotel cursor-pointer">
-                      <h4 className="text-sm font-bold text-slate-800 group-hover/hotel:text-primary transition-colors leading-tight">Princess Home</h4>
-                      <p className="text-[10px] text-slate-500 mt-1 leading-snug"><MapPin className="inline w-3 h-3 mr-0.5 text-primary/50" />Near Energy Park, Rajbansi Nagar, Patna</p>
-                      <p className="text-[10px] text-emerald-600 font-medium mt-1 bg-emerald-50 px-2 py-0.5 rounded w-fit">4km from airport • 5.2km from station</p>
-                    </div>
-                  </div>
-
-                  {/* Column 2: Patna (4-6) */}
-                  <div className="flex flex-col gap-5">
-                    <h3 className="text-[10px] font-black text-transparent opacity-0 uppercase tracking-widest border-b pb-2 mb-2">Spacer</h3>
-
-                    <div className="group/hotel cursor-pointer">
-                      <h4 className="text-sm font-bold text-slate-800 group-hover/hotel:text-primary transition-colors leading-tight">Hotel Friends Inn</h4>
-                      <p className="text-[10px] text-slate-500 mt-1 leading-snug"><MapPin className="inline w-3 h-3 mr-0.5 text-primary/50" />Near Patliputra ISBT, VIP Colony, Jakariyapur</p>
-                      <p className="text-[10px] text-emerald-600 font-medium mt-1 bg-emerald-50 px-2 py-0.5 rounded w-fit">12km from airport • 8.7km from station</p>
-                    </div>
-
-                    <div className="group/hotel cursor-pointer">
-                      <h4 className="text-sm font-bold text-slate-800 group-hover/hotel:text-primary transition-colors leading-tight">Hotel Chandrashila</h4>
-                      <p className="text-[10px] text-slate-500 mt-1 leading-snug"><MapPin className="inline w-3 h-3 mr-0.5 text-primary/50" />Opp Metro Pillar No. 169, Bairiya Zero Mile</p>
-                      <p className="text-[10px] text-emerald-600 font-medium mt-1 bg-emerald-50 px-2 py-0.5 rounded w-fit">0.5km from Patna Bus Stand</p>
-                    </div>
-
-                    <div className="group/hotel cursor-pointer">
-                      <h4 className="text-sm font-bold text-slate-800 group-hover/hotel:text-primary transition-colors leading-tight">Hotel Nandak Grand</h4>
-                      <p className="text-[10px] text-slate-500 mt-1 leading-snug"><MapPin className="inline w-3 h-3 mr-0.5 text-primary/50" />Saguna More, Danapur, Patna</p>
-                      <p className="text-[10px] text-emerald-600 font-medium mt-1 bg-emerald-50 px-2 py-0.5 rounded w-fit">7-8km from airport • 5-6km from station</p>
-                    </div>
-                  </div>
-
-                  {/* Column 3: Ranchi */}
-                  <div className="flex flex-col gap-5">
-                    <h3 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest border-b pb-2 mb-2">Ranchi Properties</h3>
-
-                    <div className="group/hotel cursor-pointer">
-                      <h4 className="text-sm font-bold text-slate-800 group-hover/hotel:text-primary transition-colors leading-tight">Hotel La Vista</h4>
-                      <p className="text-[10px] text-slate-500 mt-1 leading-snug"><MapPin className="inline w-3 h-3 mr-0.5 text-primary/50" />Opp Central University, Ring Road, Manatu</p>
-                      <p className="text-[10px] text-emerald-600 font-medium mt-1 bg-emerald-50 px-2 py-0.5 rounded w-fit">20km from airport • 16km from station</p>
-                    </div>
-
-                    <div className="group/hotel cursor-pointer">
-                      <h4 className="text-sm font-bold text-slate-800 group-hover/hotel:text-primary transition-colors leading-tight">Hotel Harsh Regency</h4>
-                      <p className="text-[10px] text-slate-500 mt-1 leading-snug"><MapPin className="inline w-3 h-3 mr-0.5 text-primary/50" />Subarnarekha Pul, Hatia, Ranchi</p>
-                      <p className="text-[10px] text-emerald-600 font-medium mt-1 bg-emerald-50 px-2 py-0.5 rounded w-fit">8km from airport • 1km from station</p>
-                    </div>
-
-                    <div className="group/hotel cursor-pointer">
-                      <h4 className="text-sm font-bold text-slate-800 group-hover/hotel:text-primary transition-colors leading-tight">Mountain View Resort</h4>
-                      <p className="text-[10px] text-slate-500 mt-1 leading-snug"><MapPin className="inline w-3 h-3 mr-0.5 text-primary/50" />Near DAV School, Bariatu, Ranchi</p>
-                      <p className="text-[10px] text-emerald-600 font-medium mt-1 bg-emerald-50 px-2 py-0.5 rounded w-fit">13km from airport • 8km from station</p>
+                    {/* Motihari Column */}
+                    <div className="space-y-4 border-l border-slate-200 pl-8">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <MapPin className="w-3 h-3" /> Motihari
+                      </p>
+                      <div className="space-y-4">
+                        {[
+                          { name: "Siddhi Vinayak", loc: "Chhatauni", path: "/hotels?location=Motihari" },
+                          { name: "Siddhi Vinayak", loc: "Station Rd", path: "/hotels?location=Motihari" },
+                          { name: "Hotel Crystal", loc: "Motihari Central", path: "/hotels?location=Motihari" }
+                        ].map((hotel, i) => (
+                          <Link key={i} href={hotel.path} className="group/item block">
+                            <h4 className="text-[13px] font-bold text-slate-800 group-hover/item:text-primary transition-colors leading-tight">{hotel.name}</h4>
+                            <p className="text-[9px] text-slate-500 mt-0.5">{hotel.loc}</p>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Column 4: Motihari & Nepal */}
-                  <div className="flex flex-col gap-5">
-                    <h3 className="text-[10px] font-black text-amber-600 uppercase tracking-widest border-b pb-2 mb-2">Motihari & Nepal</h3>
-
-                    <div className="group/hotel cursor-pointer">
-                      <h4 className="text-sm font-bold text-slate-800 group-hover/hotel:text-primary transition-colors leading-tight">Siddhi Vinayak Hotel & Banquet</h4>
-                      <p className="text-[10px] text-slate-500 mt-1 leading-snug"><MapPin className="inline w-3 h-3 mr-0.5 text-primary/50" />Primary Narega Bal Udyan, Chhatauni, Motihari</p>
-                      <p className="text-[10px] text-emerald-600 font-medium mt-1 bg-emerald-50 px-2 py-0.5 rounded w-fit">57km from Simara Airport • 2km from station</p>
+                  {/* Ranchi Section */}
+                  <div className="p-8 border-r border-slate-100">
+                    <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
+                       <h3 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
+                         <TreePine className="w-4 h-4 text-emerald-600" /> Ranchi
+                       </h3>
                     </div>
-
-                    <div className="group/hotel cursor-pointer">
-                      <h4 className="text-sm font-bold text-slate-800 group-hover/hotel:text-primary transition-colors leading-tight">Siddhi Vinayak Hotel & Banquet</h4>
-                      <p className="text-[10px] text-slate-500 mt-1 leading-snug"><MapPin className="inline w-3 h-3 mr-0.5 text-primary/50" />Station Rd, Near Aditya Vision, Belbawana</p>
-                      <p className="text-[10px] text-emerald-600 font-medium mt-1 bg-emerald-50 px-2 py-0.5 rounded w-fit">10km from airport • 3km from station</p>
+                    <div className="space-y-5">
+                      {[
+                        { name: "Hotel La Vista", loc: "Ring Road", path: "/hotels?location=Ranchi" },
+                        { name: "Harsh Regency", loc: "Hatia", path: "/hotels?location=Ranchi" },
+                        { name: "Mountain View", loc: "Bariatu", path: "/hotels?location=Ranchi" }
+                      ].map((hotel, i) => (
+                        <Link key={i} href={hotel.path} className="group/item block">
+                          <h4 className="text-[13px] font-bold text-slate-800 group-hover/item:text-primary transition-colors leading-tight">{hotel.name}</h4>
+                          <p className="text-[9px] text-slate-500 mt-0.5">{hotel.loc}</p>
+                        </Link>
+                      ))}
+                      <Link href="/hotels?location=Ranchi" className="inline-flex items-center gap-2 text-[10px] font-black text-emerald-600 uppercase tracking-widest mt-4 group/btn">
+                        Explore Ranchi <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+                      </Link>
                     </div>
+                  </div>
 
-                    <div className="group/hotel cursor-pointer bg-slate-50 p-2 rounded-lg border border-slate-100">
-                      <h4 className="text-sm font-bold text-slate-800 group-hover/hotel:text-primary transition-colors leading-tight">Hotels Ichchha (Nepal)</h4>
-                      <p className="text-[10px] text-slate-500 mt-1 leading-snug"><MapPin className="inline w-3 h-3 mr-0.5 text-primary/50" />Bara District, Madhesh Province, Nepal</p>
-                      <p className="text-[10px] text-emerald-600 font-medium mt-1 bg-emerald-50 px-2 py-0.5 rounded w-fit">2km from Simara Airport • 15km from railway</p>
+                  {/* Nepal Section */}
+                  <div className="p-8 bg-amber-50/30">
+                    <div className="flex items-center justify-between border-b border-amber-200 pb-4 mb-6">
+                       <h3 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
+                         <Globe className="w-4 h-4 text-amber-600" /> Nepal
+                       </h3>
+                    </div>
+                    <div className="space-y-6">
+                      <Link href="/hotels?location=Nepal" className="group/item block p-4 bg-white rounded-2xl border border-amber-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[9px] font-black text-amber-600 uppercase tracking-widest">Premium Resort</span>
+                          <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                        </div>
+                        <h4 className="text-sm font-black text-slate-900 group-hover/item:text-primary transition-colors leading-tight">Hotels Ichchha</h4>
+                        <p className="text-[10px] text-slate-500 mt-1 leading-snug">Bara District, Madhesh Province, Nepal</p>
+                        <div className="mt-3 flex items-center gap-2">
+                          <span className="text-[9px] font-bold px-2 py-1 bg-amber-100 text-amber-700 rounded-md">Simara Airport: 2km</span>
+                        </div>
+                      </Link>
+
+                      <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-600 to-orange-600 text-white shadow-lg">
+                        <h5 className="text-[11px] font-black uppercase tracking-widest opacity-80 mb-1">Coming Soon</h5>
+                        <p className="text-[13px] font-bold leading-tight">New luxury properties in Kathmandu & Pokhara</p>
+                        <Link href="/hotels?location=Nepal" className="mt-3 inline-flex items-center gap-1 text-[10px] font-black bg-white/20 px-3 py-1.5 rounded-lg hover:bg-white/30 transition-colors">
+                          View Current <ArrowRight className="w-3 h-3" />
+                        </Link>
+                      </div>
                     </div>
                   </div>
 
@@ -207,6 +220,7 @@ export default function Header() {
               <button 
                 onClick={() => setShowListingModal(true)}
                 className="hidden lg:flex items-center gap-2 px-4 py-1.5 text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-full transition-all mr-2"
+                suppressHydrationWarning
               >
                 <Building2 className="w-3.5 h-3.5" />
                 <span>List Your Property</span>
@@ -217,6 +231,7 @@ export default function Header() {
                 <button 
                   onClick={() => setShowLangMenu(!showLangMenu)}
                   className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors py-2"
+                  suppressHydrationWarning
                 >
                   <Globe className="h-4 w-4" />
                   <span className="uppercase">{currentLang.code}</span>
@@ -263,6 +278,7 @@ export default function Header() {
                   <button 
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-md transition-all border border-primary/20 shadow-sm"
+                    suppressHydrationWarning
                   >
                     <div className="w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center text-xs font-bold uppercase">
                       {user.name.charAt(0)}
@@ -288,6 +304,17 @@ export default function Header() {
                           <span>Admin Dashboard</span>
                         </Link>
                       )}
+                      
+                      {user.role === "hotel_admin" && (
+                        <Link
+                          href="/hotel-admin"
+                          onClick={() => setShowUserMenu(false)}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 transition-colors font-medium border-b border-gray-50"
+                        >
+                          <Building2 className="h-4 w-4 text-primary" />
+                          <span>Hotel Dashboard</span>
+                        </Link>
+                      )}
 
                       <Link
                         href="/profile"
@@ -310,7 +337,7 @@ export default function Header() {
                 </div>
               ) : (
                 <Link href="/login">
-                  <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-md transition-all shadow-sm">
+                  <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-md transition-all shadow-sm" suppressHydrationWarning>
                     <User className="h-4 w-4" />
                     <span>{t('nav.login')}</span>
                   </button>
@@ -319,6 +346,7 @@ export default function Header() {
               <button 
                 onClick={() => setIsMobileMenuOpen(true)}
                 className="p-2 hover:bg-gray-100 rounded-full md:hidden"
+                suppressHydrationWarning
               >
                 <Menu className="h-5 w-5" />
               </button>
@@ -335,7 +363,7 @@ export default function Header() {
           <div className="absolute top-0 right-0 w-[85%] max-w-[320px] h-full bg-white/95 backdrop-blur-xl shadow-2xl animate-in slide-in-from-right duration-300 flex flex-col pointer-events-auto overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white/50">
               <span className="font-black text-primary text-xl tracking-tight uppercase">Menu</span>
-              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400">
+              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400" suppressHydrationWarning>
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -391,67 +419,53 @@ export default function Header() {
                   </button>
                   
                   {isMobileHotelsOpen && (
-                    <div className="px-4 py-3 space-y-5 bg-gray-50/80 border-l-2 border-primary/30 ml-3 mt-1 rounded-r-xl max-h-[400px] overflow-y-auto">
-                      <Link href="/hotels" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-center py-2 bg-primary/10 text-primary font-bold rounded-lg text-xs tracking-wider uppercase">
+                    <div className="px-4 py-3 space-y-6 bg-gray-50/80 border-l-2 border-primary/30 ml-3 mt-1 rounded-r-xl max-h-[500px] overflow-y-auto">
+                      <Link href="/hotels" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-center py-2 bg-primary/10 text-primary font-bold rounded-lg text-[10px] tracking-wider uppercase">
                         View Complete Directory
                       </Link>
-                      <div className="space-y-3">
-                        <span className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-1">Patna</span>
-                        <div className="border-b pb-2 mb-2 border-gray-200">
-                           <h4 className="text-xs font-bold text-gray-800">Gharonda Hotel Restaurant Banquet</h4>
-                           <p className="text-[9px] text-gray-500">Walmi Branch, AIIMS Patna Rd (10km from airport)</p>
-                        </div>
-                        <div className="border-b pb-2 mb-2 border-gray-200">
-                           <h4 className="text-xs font-bold text-gray-800">Hotel The Dev Regency</h4>
-                           <p className="text-[9px] text-gray-500">Anisabad (3km from airport)</p>
-                        </div>
-                        <div className="border-b pb-2 mb-2 border-gray-200">
-                           <h4 className="text-xs font-bold text-gray-800">Princess Home</h4>
-                           <p className="text-[9px] text-gray-500">Near Energy Park, Rajbansi Nagar (4km from airport)</p>
-                        </div>
-                        <div className="border-b pb-2 mb-2 border-gray-200">
-                           <h4 className="text-xs font-bold text-gray-800">Hotel Friends Inn</h4>
-                           <p className="text-[9px] text-gray-500">Near Patliputra ISBT (12km from airport)</p>
-                        </div>
-                        <div className="border-b pb-2 mb-2 border-gray-200">
-                           <h4 className="text-xs font-bold text-gray-800">Hotel Chandrashila</h4>
-                           <p className="text-[9px] text-gray-500">Bairiya Zero Mile (0.5km from Bus Stand)</p>
-                        </div>
-                        <div className="border-b pb-2 mb-2 border-gray-200">
-                           <h4 className="text-xs font-bold text-gray-800">Hotel Nandak Grand</h4>
-                           <p className="text-[9px] text-gray-500">Saguna More, Danapur (7-8km from airport)</p>
+                      
+                      {/* Bihar Section */}
+                      <div className="space-y-4">
+                        <span className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2 underline underline-offset-4 decoration-primary/20">Bihar Properties</span>
+                        
+                        <div className="pl-2 space-y-4">
+                           <div className="space-y-2">
+                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Patna</p>
+                             {["Gharonda Hotel", "The Dev Regency", "Princess Home", "Hotel Friends Inn"].map(h => (
+                               <Link key={h} href="/hotels?location=Patna" onClick={() => setIsMobileMenuOpen(false)} className="block text-xs font-bold text-slate-800 hover:text-primary transition-colors border-b border-slate-100 pb-1.5">{h}</Link>
+                             ))}
+                           </div>
+                           
+                           <div className="space-y-2 pt-2">
+                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Motihari</p>
+                             {["Siddhi Vinayak (Chhatauni)", "Siddhi Vinayak (Belbawana)"].map(h => (
+                               <Link key={h} href="/hotels?location=Motihari" onClick={() => setIsMobileMenuOpen(false)} className="block text-xs font-bold text-slate-800 hover:text-primary transition-colors border-b border-slate-100 pb-1.5">{h}</Link>
+                             ))}
+                           </div>
                         </div>
                       </div>
                       
-                      <div className="space-y-3 pt-2">
-                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest flex items-center gap-1">Ranchi</span>
-                        <div className="border-b pb-2 mb-2 border-gray-200">
-                           <h4 className="text-xs font-bold text-gray-800">Hotel La Vista</h4>
-                           <p className="text-[9px] text-gray-500">Ring Road, Manatu (20km from airport)</p>
-                        </div>
-                        <div className="border-b pb-2 mb-2 border-gray-200">
-                           <h4 className="text-xs font-bold text-gray-800">Hotel Harsh Regency</h4>
-                           <p className="text-[9px] text-gray-500">Subarnarekha Pul, Hatia (8km from airport)</p>
-                        </div>
-                        <div className="border-b pb-2 mb-2 border-gray-200">
-                           <h4 className="text-xs font-bold text-gray-800">Mountain View Resort</h4>
-                           <p className="text-[9px] text-gray-500">Near DAV School, Bariatu (13km from airport)</p>
+                      {/* Ranchi Section */}
+                      <div className="space-y-4">
+                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest flex items-center gap-2 underline underline-offset-4 decoration-emerald-200">Ranchi</span>
+                        <div className="pl-2 space-y-3">
+                           {["Hotel La Vista", "Hotel Harsh Regency", "Mountain View Resort"].map(h => (
+                             <Link key={h} href="/hotels?location=Ranchi" onClick={() => setIsMobileMenuOpen(false)} className="block text-xs font-bold text-slate-800 hover:text-primary transition-colors border-b border-slate-100 pb-1.5">{h}</Link>
+                           ))}
                         </div>
                       </div>
 
-                      <div className="space-y-3 pt-2">
-                        <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest flex items-center gap-1">Motihari & Nepal</span>
-                        <div className="border-b pb-2 mb-2 border-gray-200">
-                           <h4 className="text-xs font-bold text-gray-800">Siddhi Vinayak Hotel (Chhatauni)</h4>
-                           <p className="text-[9px] text-gray-500">Primary Narega Bal Udyan (57km from Simara Airport)</p>
-                        </div>
-                        <div className="border-b pb-2 mb-2 border-gray-200">
-                           <h4 className="text-xs font-bold text-gray-800">Siddhi Vinayak Hotel (Belbawana)</h4>
-                           <p className="text-[9px] text-gray-500">Near Aditya Vision (10km from airport)</p>
-                        </div>
-                        <div className="border-b pb-2 mb-2 border-gray-200">
-                           <h4 className="text-xs font-bold text-gray-800">Hotels Ichchha</h4>
-                           <p className="text-[9px] text-gray-500">Bara District, Nepal (2km from Simara Airport)</p>
+                      {/* Nepal Section */}
+                      <div className="space-y-4">
+                        <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest flex items-center gap-2 underline underline-offset-4 decoration-amber-200">Nepal International</span>
+                        <div className="pl-2">
+                           <Link href="/hotels?location=Nepal" onClick={() => setIsMobileMenuOpen(false)} className="block p-3 bg-white rounded-xl border border-amber-100 shadow-sm">
+                             <div className="flex items-center justify-between mb-1">
+                               <h4 className="text-xs font-black text-slate-800">Hotels Ichchha</h4>
+                               <Star className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
+                             </div>
+                             <p className="text-[9px] text-slate-500">Bara District, Nepal (Simara)</p>
+                           </Link>
                         </div>
                       </div>
                     </div>
@@ -550,6 +564,7 @@ export default function Header() {
                  onClick={() => setShowListingModal(false)}
                  disabled={isSubmittingListing}
                  className="p-1.5 hover:bg-slate-200 rounded-full transition-colors text-slate-400 hover:text-slate-700"
+                 suppressHydrationWarning
                >
                  <X className="w-5 h-5" />
                </button>
@@ -565,6 +580,7 @@ export default function Header() {
                     onChange={(e) => setListingForm({...listingForm, hotelName: e.target.value})}
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium"
                     placeholder="Enter hotel name"
+                    suppressHydrationWarning
                   />
                </div>
                
@@ -577,6 +593,7 @@ export default function Header() {
                     onChange={(e) => setListingForm({...listingForm, ownerMobNo: e.target.value})}
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium"
                     placeholder="Enter 10-digit mobile number"
+                    suppressHydrationWarning
                   />
                </div>
 
@@ -589,6 +606,7 @@ export default function Header() {
                     onChange={(e) => setListingForm({...listingForm, hotelAddress: e.target.value})}
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium"
                     placeholder="Enter full hotel address"
+                    suppressHydrationWarning
                   />
                </div>
 
@@ -601,6 +619,7 @@ export default function Header() {
                     onChange={(e) => setListingForm({...listingForm, whatsappNumber: e.target.value})}
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium"
                     placeholder="Enter WhatsApp number"
+                    suppressHydrationWarning
                   />
                </div>
 
@@ -609,6 +628,7 @@ export default function Header() {
                    type="submit" 
                    disabled={isSubmittingListing}
                    className="w-full py-3.5 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/30 flex items-center justify-center gap-2 disabled:opacity-70"
+                   suppressHydrationWarning
                  >
                    {isSubmittingListing ? "Submitting..." : "Submit Inquiry"}
                  </button>

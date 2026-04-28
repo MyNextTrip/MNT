@@ -304,7 +304,11 @@ export default function HotelAdminDashboard() {
         <div className="max-w-[1920px] mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             {/* Logo/Hotel Info */}
-            <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setActiveTab("dashboard")}
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity text-left"
+              aria-label="Back to Dashboard"
+            >
               <div className="bg-amber-400 p-2 rounded-xl text-indigo-900 shadow-lg shadow-amber-400/20">
                 <Building2 className="w-5 h-5 font-black" />
               </div>
@@ -314,7 +318,7 @@ export default function HotelAdminDashboard() {
                 </h1>
                 <p className="text-[9px] font-black tracking-[.2em] text-amber-400 uppercase opacity-80 mt-1">Property Management</p>
               </div>
-            </div>
+            </button>
 
             {/* Date Display */}
             <div className="hidden lg:flex items-center gap-3 px-4 py-2 bg-indigo-950/50 rounded-xl border border-indigo-700/50">

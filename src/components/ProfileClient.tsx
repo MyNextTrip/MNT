@@ -8,7 +8,8 @@ import {
   User as UserIcon, Mail, Calendar, MapPin, Building2, 
   ChevronRight, ArrowLeft, Loader2,
   Ticket, CheckCircle2, AlertCircle, 
-  Coffee, CreditCard, Banknote, HelpCircle, Clock
+  Coffee, CreditCard, Banknote, HelpCircle, Clock,
+  LayoutDashboard
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -187,7 +188,33 @@ export default function ProfileClient() {
                       <span className="font-bold text-slate-900">{bookings.length}</span>
                    </div>
                 </div>
-                <Button variant="outline" className="w-full mt-8 rounded-2xl border-slate-200 text-slate-600 font-bold h-12">Edit Profile</Button>
+                 <Button variant="outline" className="w-full mt-8 rounded-2xl border-slate-200 text-slate-600 font-bold h-12">Edit Profile</Button>
+                 
+                 {/* Admin Management Sections */}
+                 {(user?.role === "hotel_admin" || user?.role === "admin") && (
+                   <div className="mt-8 p-6 bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden relative group transition-all hover:shadow-xl hover:border-indigo-200 text-left">
+                     <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+                     <div className="relative z-10">
+                         <div className="flex items-center gap-4 mb-6">
+                             <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-600/20 group-hover:scale-110 transition-transform">
+                                 <LayoutDashboard className="w-6 h-6" />
+                             </div>
+                             <div>
+                                 <h3 className="font-black text-slate-900 tracking-tight text-sm">Admin Portal</h3>
+                                 <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">Management Suite</p>
+                             </div>
+                         </div>
+                         <p className="text-xs text-slate-500 font-medium leading-relaxed mb-6">
+                             Access your {user?.role === "admin" ? "site" : "property"} management dashboard to handle bookings and system settings.
+                         </p>
+                         <Link href={user?.role === "admin" ? "/admin" : "/hotel-admin"}>
+                             <Button className="w-full bg-slate-900 hover:bg-indigo-600 text-white font-black rounded-2xl h-12 flex items-center justify-center gap-2 transition-all">
+                                 Launch Dashboard <ChevronRight className="w-4 h-4" />
+                             </Button>
+                         </Link>
+                     </div>
+                   </div>
+                 )}
               </div>
             </div>
           </aside>

@@ -4,11 +4,12 @@ import { MapPin, Building2, Star, TreePine, Map, Camera, Briefcase, ShieldCheck,
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Top Travel Destinations in Bihar & Jharkhand | MyNextTrip",
-  description: "Explore the best travel destinations including Patna, Ranchi, and more. Discover heritage sites, waterfalls, and premium stays with MyNextTrip.",
+  title: "Top Tourist Destinations in Bihar, Jharkhand & Nepal | MyNextTrip",
+  description: "Discover the best tourist places in Patna, Ranchi, and Nepal. Explore heritage sites, stunning waterfalls, and premium holiday destinations with MyNextTrip. Your local travel guide for Bihar & Jharkhand.",
+  keywords: ["tourist places in patna", "waterfalls in ranchi", "bihar tourism", "jharkhand destinations", "nepal sightseeing", "heritage sites bihar", "ranchi tourism", "mynexttrip destinations"],
   openGraph: {
-    title: "Explore Extraordinary Destinations | MyNextTrip",
-    description: "Curated experiences and premium stays across Bihar, Jharkhand, and beyond.",
+    title: "Explore Extraordinary Travel Destinations | MyNextTrip",
+    description: "Curated experiences and premium stays across Bihar, Jharkhand, Nepal and beyond. Find your next adventure.",
     images: [{ url: "/images/goa.png" }],
   }
 };

@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import MNTChatBot from "@/components/MNTChatBot";
 
 import { LanguageProvider } from "@/lib/LanguageContext";
 
@@ -18,13 +19,13 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://mynexttrip.onrender.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://www.mynexttrip.in"),
   title: {
-    default: "MyNextTrip | Premium Travel & Booking Portal",
+    default: "MNT | Direct Hotel Booking & Property Listing Bihar, Jharkhand, Nepal",
     template: "%s | MyNextTrip"
   },
-  description: "Experience luxury travel with MyNextTrip. Book flights, hotels, and holiday packages at best prices in Patna, Ranchi, Motihari and Nepal.",
-  keywords: ["travel", "hotels", "booking", "patna hotels", "ranchi hotels", "luxury travel", "mynexttrip"],
+  description: "Book premium stays directly with My Next Trip (MNT). The leading travel portal for direct hotel booking and property listing for owners in Patna, Ranchi, Motihari, and Nepal. Experience seamless MNT Brand hospitality.",
+  keywords: ["MNT Brand", "My Next Trip Hotel Booking", "Direct Booking Engine Bihar", "Property Listing for Owners Ranchi", "Nepal Travel Packages MNT", "patna hotels", "ranchi hotels"],
   authors: [{ name: "MyNextTrip Team" }],
   creator: "MyNextTrip",
   publisher: "MyNextTrip",
@@ -36,10 +37,10 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IE",
-    url: "https://mynexttrip.onrender.com",
-    siteName: "MyNextTrip",
-    title: "MyNextTrip | Premium Travel & Booking Portal",
-    description: "Experience luxury travel with MyNextTrip. Book flights, hotels, and holiday packages at best prices.",
+    url: "https://www.mynexttrip.in",
+    siteName: "MyNextTrip (MNT)",
+    title: "MNT | Direct Hotel Booking & Property Listing Bihar, Jharkhand, Nepal",
+    description: "Book premium stays directly with My Next Trip (MNT). The leading travel portal for direct hotel booking and property listing for owners.",
     images: [
       {
         url: "/images/og-image.png",
@@ -81,13 +82,47 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${playfair.variable} font-sans`}>
         <LanguageProvider>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                "name": "My Next Trip (MNT)",
+                "alternateName": "MNT Travel",
+                "url": "https://www.mynexttrip.in",
+                "logo": "https://www.mynexttrip.in/images/mnt-logo-new.png",
+                "contactPoint": {
+                  "@type": "ContactPoint",
+                  "telephone": "+91-92635-54855",
+                  "contactType": "customer service",
+                  "areaServed": ["IN", "NP"],
+                  "availableLanguage": ["en", "hi"]
+                },
+                "address": {
+                  "@type": "PostalAddress",
+                  "streetAddress": "Bariatu Road",
+                  "addressLocality": "Ranchi",
+                  "addressRegion": "Jharkhand",
+                  "postalCode": "834001",
+                  "addressCountry": "IN"
+                },
+                "sameAs": [
+                  "https://www.facebook.com/profile.php?id=61575468341367",
+                  "https://www.instagram.com/mynexttrip07/",
+                  "https://www.youtube.com/channel/UC71Zk6DnIdPEqAkq3-JyFpA"
+                ]
+              })
+            }}
+          />
           <Header />
           <main>{children}</main>
           <Footer />
           <WhatsAppButton />
+          <MNTChatBot />
         </LanguageProvider>
       </body>
     </html>

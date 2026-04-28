@@ -150,6 +150,7 @@ function HotelsList({ initialHotels }: HotelsListClientProps) {
                   router.push(bookingUrl);
                 }}
                 className="flex items-center justify-center py-3 bg-emerald-600 text-white font-black rounded-xl text-xs uppercase tracking-widest hover:bg-emerald-700 shadow-md hover:shadow-emerald-200 transition-all active:scale-95"
+                suppressHydrationWarning
               >
                 Book Now
               </button>

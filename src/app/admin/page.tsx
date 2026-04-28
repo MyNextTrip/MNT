@@ -9,7 +9,7 @@ import {
   ChevronDown, ChevronUp, Wifi, Coffee, Clock, Shirt, 
   Smartphone, Sparkles, Dumbbell, Waves, Heart, Baby, 
   Briefcase, Utensils, ConciergeBell, Dog, Map, Leaf,
-  Navigation, Monitor, Zap, Menu, X, Key, Copy, Check, Save, Loader2
+  Navigation, Monitor, Zap, Menu, X, Key, Copy, Check, Save, Loader2, MessageSquareText, Phone
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +27,8 @@ export default function AdminDashboard() {
   const [loadingBookings, setLoadingBookings] = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [loadingInquiries, setLoadingInquiries] = useState(false);
+  const [allChatbotUsers, setAllChatbotUsers] = useState<any[]>([]);
+  const [loadingChatbotUsers, setLoadingChatbotUsers] = useState(false);
   const [editHotelId, setEditHotelId] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [hotelToDelete, setHotelToDelete] = useState<string | null>(null);
@@ -166,6 +168,21 @@ export default function AdminDashboard() {
     }
   };
 
+  const fetchChatbotUsers = async () => {
+    setLoadingChatbotUsers(true);
+    try {
+      const res = await fetch("/api/admin/chatbot-users");
+      const data = await res.json();
+      if (data.success) {
+        setAllChatbotUsers(data.users);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingChatbotUsers(false);
+    }
+  };
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -256,6 +273,7 @@ export default function AdminDashboard() {
         fetchBookings();
         fetchUsers();
         fetchHotelInquiries();
+        fetchChatbotUsers();
       } else if (activeTab === 'all-properties') {
         fetchHotels();
       } else if (activeTab === 'bookings') {
@@ -264,6 +282,8 @@ export default function AdminDashboard() {
         fetchUsers();
       } else if (activeTab === 'inquiries') {
         fetchHotelInquiries();
+      } else if (activeTab === 'chatbot-users') {
+        fetchChatbotUsers();
       }
     }
   }, [isAuthorized, activeTab]);
@@ -475,7 +495,8 @@ export default function AdminDashboard() {
             { id: 'all-properties', label: 'All Properties', icon: Building2 },
             { id: 'bookings', label: 'Bookings', icon: Calendar },
             { id: 'users', label: 'Users', icon: Users },
-            { id: 'inquiries', label: 'Hotel Inquiries', icon: Building2 }
+            { id: 'inquiries', label: 'Hotel Inquiries', icon: Building2 },
+            { id: 'chatbot-users', label: 'Chatbot Users', icon: MessageSquareText }
           ].map((tab) => (
             <button 
               key={tab.id}
@@ -573,6 +594,18 @@ export default function AdminDashboard() {
                 <div>
                   <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Hotel Inquiries</p>
                   <p className="text-3xl font-black text-slate-900">{allHotelInquiries.length}</p>
+                </div>
+              </div>
+              <div 
+                 onClick={() => setActiveTab('chatbot-users')}
+                 className="bg-white p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex items-center gap-4 cursor-pointer hover:shadow-lg transition-all border-l-4 border-l-primary"
+              >
+                <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
+                  <MessageSquareText className="w-7 h-7" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Chatbot Leads</p>
+                  <p className="text-3xl font-black text-slate-900">{allChatbotUsers.length}</p>
                 </div>
               </div>
             </div>
@@ -1256,6 +1289,89 @@ export default function AdminDashboard() {
                   </table>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'chatbot-users' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4">
+            <header className="mb-8">
+              <h1 className="text-3xl font-black text-slate-900">Chatbot Leads</h1>
+              <p className="text-slate-500 mt-2 font-medium">View users who shared their details with MNT Chatbot.</p>
+            </header>
+
+            <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50/50 border-b border-slate-100">
+                      <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">User Detail</th>
+                      <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">WhatsApp Contact</th>
+                      <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Captured On</th>
+                      <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {loadingChatbotUsers ? (
+                      <tr><td colSpan={4} className="p-8 text-center text-slate-500 flex flex-col items-center gap-2"><Loader2 className="w-6 h-6 animate-spin text-primary" /> Loading leads...</td></tr>
+                    ) : allChatbotUsers.length === 0 ? (
+                      <tr><td colSpan={4} className="p-8 text-center text-slate-500 font-medium">No leads captured via chatbot yet.</td></tr>
+                    ) : (
+                      allChatbotUsers.map((u: any) => (
+                        <tr key={u._id} className="hover:bg-slate-50/50 transition-colors group">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center font-black group-hover:scale-110 transition-transform">
+                                {u.name.charAt(0)}
+                              </div>
+                              <p className="font-black text-slate-900">{u.name}</p>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <a 
+                              href={`https://wa.me/${u.whatsapp.replace(/[^0-9]/g, '')}`} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-bold transition-colors"
+                            >
+                              <Phone className="w-4 h-4" />
+                              {u.whatsapp}
+                            </a>
+                          </td>
+                          <td className="px-6 py-4">
+                            <p className="text-sm font-bold text-slate-700">{new Date(u.timestamp).toLocaleDateString()}</p>
+                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{new Date(u.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <button 
+                              onClick={async () => {
+                                if (window.confirm("Are you sure you want to delete this lead?")) {
+                                  try {
+                                    const res = await fetch("/api/admin/chatbot-users", {
+                                      method: "DELETE",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ id: u._id })
+                                    });
+                                    const data = await res.json();
+                                    if (data.success) {
+                                      fetchChatbotUsers();
+                                    }
+                                  } catch (err) {
+                                    console.error(err);
+                                  }
+                                }
+                              }}
+                              className="p-2 text-red-400 hover:text-white hover:bg-red-500 rounded-lg transition-all"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
