@@ -14,6 +14,11 @@ import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 import { HotelDetailsSkeleton } from "./Skeletons";
 
+interface HotelDetailsClientProps {
+  id: string;
+  initialHotel?: any;
+}
+
 const MEAL_PLANS = [
   { id: 'EP', label: 'EP – European Plan', desc: 'Room Only', price: 0, detail: 'No meals included. Best for guests who prefer eating outside.', tip: 'Only stay 🛏️' },
   { id: 'CP', label: 'CP – Continental Plan', desc: 'Room + Breakfast', price: 249, detail: 'Includes daily breakfast. Lunch & dinner not included.', tip: 'Stay + Morning 🍳' },

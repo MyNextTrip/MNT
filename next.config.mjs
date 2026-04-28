@@ -3,11 +3,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  experimental: {
-    turbo: {
-      // Agar error barkarar rahe, to ye line root folder set karne mein help karegi
-      root: '.', 
-    },
+  turbopack: {
+    // If errors persist, this helps set the root folder
+    root: '.', 
   },
 };
 
