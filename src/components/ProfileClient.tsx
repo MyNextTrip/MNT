@@ -104,7 +104,7 @@ export default function ProfileClient() {
       head: [['Guest Information', 'Property Details']],
       body: [[
         `Name: ${booking.guestName || booking.userName}\nPhone: ${booking.guestPhone || 'N/A'}\nEmail: ${booking.userEmail || user?.email}`,
-        `Hotel: ${booking.hotelName}\nRoom: ${booking.roomType}\nLocation: ${booking.hotelAddress || 'N/A'}`
+        `Hotel: ${booking.hotelName}\nRoom: ${booking.roomType} (x${booking.roomsCount || 1})\nLocation: ${booking.hotelAddress || 'N/A'}`
       ]],
       theme: 'plain',
       headStyles: { fillColor: [241, 245, 249], textColor: [71, 85, 105], fontStyle: 'bold', fontSize: 10 },
@@ -270,7 +270,7 @@ export default function ProfileClient() {
                           <div className="flex-1">
                              <h3 className="text-2xl font-black text-slate-900 group-hover:text-primary transition-colors leading-tight mb-2">{booking.hotelName}</h3>
                              <div className="space-y-2 mt-4">
-                                 <p className="flex items-center gap-2 text-slate-500 font-medium text-sm"><Building2 className="w-4 h-4 text-primary/60" /> {booking.roomType}</p>
+                                 <p className="flex items-center gap-2 text-slate-500 font-medium text-sm"><Building2 className="w-4 h-4 text-primary/60" /> {booking.roomType} {booking.roomsCount > 1 && <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-black">{booking.roomsCount} Rooms</span>}</p>
                                  <p className="flex items-center gap-2 text-slate-500 font-medium text-[11px] mt-2 bg-slate-50/50 p-2 rounded-xl border border-slate-100"><UserIcon className="w-3.5 h-3.5 text-primary/40" /> <span className="font-bold text-slate-700">Guest:</span> {booking.guestName || booking.userName}</p>
                              </div>
                           </div>

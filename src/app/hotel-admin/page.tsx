@@ -1195,7 +1195,7 @@ export default function HotelAdminDashboard() {
                              <span className="text-xs font-black text-indigo-600 px-2 py-0.5 bg-indigo-50 rounded">
                                {roomAssignments[b._id] ? `R${virtualRooms.find(r => r.id === roomAssignments[b._id])?.roomNumber}` : '—'}
                              </span>
-                             <span className="text-[10px] font-bold text-slate-500 uppercase">{b.roomType}</span>
+                             <span className="text-[10px] font-bold text-slate-500 uppercase">{b.roomType} (×{b.roomsCount || 1})</span>
                           </div>
                         </td>
                         <td className="px-8 py-6">

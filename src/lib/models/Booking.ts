@@ -23,6 +23,7 @@ const BookingSchema = new mongoose.Schema({
   hotelName: { type: String, required: true },
   hotelAddress: { type: String, required: true },
   roomType: { type: String, required: true },
+  roomsCount: { type: Number, default: 1 },
   hasBreakfast: { type: Boolean, default: false },
   mealPlan: { 
     type: String, 

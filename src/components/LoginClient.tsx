@@ -8,11 +8,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ email: "", password: "", confirmPassword: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isResetMode, setIsResetMode] = useState(false);
 
   useEffect(() => {
     if (searchParams?.get("registered") === "true") {
@@ -27,27 +28,49 @@ function LoginContent() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Login failed: ${text.substring(0, 100)}`);
-      }
-      const data = await res.json();
+      if (isResetMode) {
+        if (formData.password !== formData.confirmPassword) {
+          throw new Error("Passwords do not match");
+        }
+        if (formData.password.length < 6) {
+          throw new Error("Password must be at least 6 characters");
+        }
 
-      localStorage.setItem("user", JSON.stringify(data.user));
-      
-      if (data.user.role === 'admin') {
-        window.location.href = "/admin";
-      } else if (data.user.role === 'hotel_admin') {
-        window.location.href = "/hotel-admin";
+        const res = await fetch("/api/auth/reset-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: formData.email, password: formData.password }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Reset failed");
+
+        setSuccessMsg("Password updated successfully! You can now log in.");
+        setIsResetMode(false);
+        setFormData({ ...formData, password: "", confirmPassword: "" });
       } else {
-        const callbackUrl = searchParams?.get('callbackUrl');
-        window.location.href = callbackUrl ? decodeURIComponent(callbackUrl) : "/";
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: formData.email, password: formData.password }),
+        });
+        
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`Login failed: ${text.substring(0, 100)}`);
+        }
+        const data = await res.json();
+
+        localStorage.setItem("user", JSON.stringify(data.user));
+        
+        if (data.user.role === 'admin') {
+          window.location.href = "/admin";
+        } else if (data.user.role === 'hotel_admin') {
+          window.location.href = "/hotel-admin";
+        } else {
+          const callbackUrl = searchParams?.get('callbackUrl');
+          window.location.href = callbackUrl ? decodeURIComponent(callbackUrl) : "/";
+        }
       }
     } catch (err: any) {
       setError(err.message);
@@ -69,8 +92,12 @@ function LoginContent() {
       <div className="w-full max-w-md relative z-10">
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl p-8 sm:p-10">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-white tracking-tight mb-2">Welcome Back</h1>
-            <p className="text-indigo-200/80">Login to access your dashboard.</p>
+            <h1 className="text-3xl font-bold text-white tracking-tight mb-2">
+              {isResetMode ? "Reset Password" : "Welcome Back"}
+            </h1>
+            <p className="text-indigo-200/80">
+              {isResetMode ? "Enter your email and new password." : "Login to access your dashboard."}
+            </p>
           </div>
 
           {successMsg && (
@@ -96,10 +123,14 @@ function LoginContent() {
               </div>
             </div>
 
-            <div className="mb-6">
+            <div className="mb-4">
               <div className="flex justify-between items-center mb-1.5">
-                <label className="block text-sm font-medium text-indigo-100" htmlFor="password">Password</label>
-                <a href="#" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Forgot password?</a>
+                <label className="block text-sm font-medium text-indigo-100" htmlFor="password">
+                  {isResetMode ? "New Password" : "Password"}
+                </label>
+                {!isResetMode && (
+                  <button type="button" onClick={() => setIsResetMode(true)} className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Forgot password?</button>
+                )}
               </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none border-0"><Lock className="h-5 w-5 text-indigo-300/70" /></div>
@@ -108,9 +139,23 @@ function LoginContent() {
               </div>
             </div>
 
+            {isResetMode && (
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-indigo-100 mb-1.5" htmlFor="confirmPassword">Confirm New Password</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none border-0"><CheckCircle2 className="h-5 w-5 text-indigo-300/70" /></div>
+                  <input id="confirmPassword" name="confirmPassword" type={showPassword ? "text" : "password"} required value={formData.confirmPassword} onChange={handleChange} className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-black/20 text-white placeholder-indigo-200/50 outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all" placeholder="••••••••" />
+                </div>
+              </div>
+            )}
+
             <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 transition-all disabled:opacity-70 group">
-              {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : (<>Sign In <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" /></>)}
+              {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : (<>{isResetMode ? "Update Password" : "Sign In"} <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" /></>)}
             </button>
+
+            {isResetMode && (
+              <button type="button" onClick={() => setIsResetMode(false)} className="w-full text-center text-sm text-indigo-400 hover:text-indigo-300 mt-2">Back to Login</button>
+            )}
           </form>
 
           <div className="mt-8 text-center text-sm text-indigo-200/70">Don't have an account? <Link href="/signup" className="font-medium text-indigo-400 hover:text-indigo-300 transition-colors">Sign up</Link></div>

@@ -101,6 +101,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
   const [showAdminAlert, setShowAdminAlert] = useState(false);
   const [isRoomsVisible, setIsRoomsVisible] = useState(true);
   const [expandedImage, setExpandedImage] = useState<string | null>(null);
+  const [roomCount, setRoomCount] = useState(1);
 
   useEffect(() => {
     const fetchHotel = async () => {
@@ -221,6 +222,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
       return;
     }
     setSelectedRoomForBooking({ room, idx });
+    setRoomCount(1);
     setShowPaymentModal(true);
   };
 
@@ -268,7 +270,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
       const roomPrice = parseInt(room.price);
       const mealPlanId = selectedMealPlan[idx] || 'EP';
       const mealPlanPrice = MEAL_PLANS.find(p => p.id === mealPlanId)?.price || 0;
-      const totalAmount = (roomPrice + mealPlanPrice) * nights;
+      const totalAmount = (roomPrice + mealPlanPrice) * nights * roomCount;
       const bookingSource = paymentType === 'PayAtHotel' ? 'Pay@Hotel' : paymentType === 'Partial' ? 'online 30% paid (partially)' : 'prepaid';
       
       if (paymentType === 'PayAtHotel') {
@@ -283,6 +285,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
             hotelName: hotel.hotelName,
             hotelAddress: hotel.address,
             roomType: room.type,
+            roomsCount: roomCount,
             mealPlan: mealPlanId,
             hasBreakfast: mealPlanId !== 'EP',
             totalAmount,
@@ -313,6 +316,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
         hotelName: hotel.hotelName,
         hotelAddress: hotel.address,
         roomType: room.type,
+        roomsCount: roomCount,
         mealPlan: mealPlanId,
         hasBreakfast: mealPlanId !== 'EP',
         totalAmount,
@@ -614,8 +618,32 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
                     <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-slate-700" suppressHydrationWarning />
                   </div>
                </div>
-               <div className="space-y-4">
-                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">3. Payment Preference</h4>
+                <div className="space-y-4">
+                   <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">3. Room Configuration</h4>
+                   <div className="flex items-center justify-between p-6 bg-slate-50 border border-slate-100 rounded-2xl">
+                     <div>
+                       <p className="font-black text-slate-900 uppercase tracking-widest text-[10px] mb-1">Number of Rooms</p>
+                       <p className="text-slate-500 text-xs font-medium">Book multiple rooms at once.</p>
+                     </div>
+                     <div className="flex items-center gap-6 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                       <button 
+                         onClick={() => setRoomCount(prev => Math.max(1, prev - 1))}
+                         className="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-900 font-black rounded-lg hover:bg-primary hover:text-white transition-all text-xl"
+                       >
+                         -
+                       </button>
+                       <span className="text-2xl font-black text-slate-900 min-w-[30px] text-center">{roomCount}</span>
+                       <button 
+                         onClick={() => setRoomCount(prev => Math.min(10, prev + 1))}
+                         className="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-900 font-black rounded-lg hover:bg-primary hover:text-white transition-all text-xl"
+                       >
+                         +
+                       </button>
+                     </div>
+                   </div>
+                </div>
+                <div className="space-y-4">
+                   <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">4. Payment Preference</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                      {['PayAtHotel', 'Partial', 'Prepaid'].map((m: any) => (
                        <div key={m} onClick={() => setSelectedPaymentMethod(m)} className={cn("cursor-pointer p-4 rounded-[20px] border-2 transition-all text-center", selectedPaymentMethod === m ? "bg-primary/5 border-primary" : "bg-slate-50 border-transparent")}>
@@ -626,7 +654,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
                </div>
             </div>
             <div className="p-8 bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-6">
-               <div><p className="text-3xl font-black">₹{(parseInt(selectedRoomForBooking.room.price) + (MEAL_PLANS.find(p => p.id === (selectedMealPlan[selectedRoomForBooking.idx] || 'EP'))?.price || 0)) * calculateNights(startDate, endDate)}</p></div>
+                <div><p className="text-3xl font-black">₹{(parseInt(selectedRoomForBooking.room.price) + (MEAL_PLANS.find(p => p.id === (selectedMealPlan[selectedRoomForBooking.idx] || 'EP'))?.price || 0)) * calculateNights(startDate, endDate) * roomCount}</p></div>
                <button onClick={executeBooking} disabled={isBookingInProgress} className="w-full sm:w-auto px-10 py-5 bg-primary text-white font-black rounded-[20px]" suppressHydrationWarning>{isBookingInProgress ? "Confirming..." : "Confirm Booking"}</button>
             </div>
           </div>

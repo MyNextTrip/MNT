@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
         hotelName: notes.hotelName,
         hotelAddress: notes.hotelAddress,
         roomType: notes.roomType,
+        roomsCount: notes.roomsCount,
         mealPlan: notes.mealPlan,
         hasBreakfast: notes.hasBreakfast,
         totalAmount: notes.totalAmount,
