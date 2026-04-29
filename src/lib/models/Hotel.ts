@@ -4,6 +4,7 @@ const RoomSchema = new mongoose.Schema({
   type: { type: String, required: true },
   price: { type: String, required: true },
   count: { type: Number, required: true, default: 1 },
+  roomNumbers: { type: String },
   image: { type: String }
 });
 

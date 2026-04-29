@@ -23,14 +23,18 @@ export async function GET(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const { bookingId, status } = await req.json();
+    const { bookingId, status, assignedRoomNumber, paymentMethod } = await req.json();
 
     if (!bookingId || !status) {
       return NextResponse.json({ success: false, message: 'Booking ID and status are required' }, { status: 400 });
     }
 
     await connectToDatabase();
-    const booking = await Booking.findByIdAndUpdate(bookingId, { reservationStatus: status }, { new: true });
+    const updateData: any = { reservationStatus: status };
+    if (assignedRoomNumber) updateData.assignedRoomNumber = assignedRoomNumber;
+    if (paymentMethod) updateData.paymentMethod = paymentMethod;
+
+    const booking = await Booking.findByIdAndUpdate(bookingId, updateData, { new: true });
 
     if (!booking) {
       return NextResponse.json({ success: false, message: 'Booking not found' }, { status: 404 });

@@ -28,6 +28,9 @@ export default function HotelAdminDashboard() {
   const [hotelData, setHotelData] = useState<any>(null);
   const [virtualRooms, setVirtualRooms] = useState<any[]>([]);
   const [roomAssignments, setRoomAssignments] = useState<Record<string, string>>({}); // bookingId -> roomId
+  const [checkInForm, setCheckInForm] = useState<{ bookingId: string, roomNumber: string, paymentMethod: string } | null>(null);
+  const [resFilter, setResFilter] = useState('All');
+  const [resSearch, setResSearch] = useState('');
 
   
   const [loadingStats, setLoadingStats] = useState(false);
@@ -143,11 +146,22 @@ export default function HotelAdminDashboard() {
   useEffect(() => {
     if (hotelData?.rooms) {
       const rooms: any[] = [];
+      let globalRoomCounter = 100;
+
       hotelData.rooms.forEach((type: any, typeIdx: number) => {
-        for (let i = 1; i <= (type.count || 0); i++) {
-          const roomNumber = `${100 + typeIdx + 1}${i.toString().padStart(2, '0')}`;
+        const assignedNumbers = type.roomNumbers 
+          ? type.roomNumbers.split(',').map((s: string) => s.trim()).filter((s: string) => s !== "")
+          : [];
+
+        const count = assignedNumbers.length > 0 ? assignedNumbers.length : (type.count || 0);
+
+        for (let i = 1; i <= count; i++) {
+          const roomNumber = assignedNumbers.length > 0 
+            ? assignedNumbers[i-1] 
+            : (globalRoomCounter++).toString();
+
           rooms.push({
-            id: `${type.type}-${i}`,
+            id: `${type.type}-${i}-${roomNumber}`,
             roomType: type.type,
             roomNumber,
             price: type.price
@@ -186,12 +200,12 @@ export default function HotelAdminDashboard() {
   }, [virtualRooms, bookings]);
 
 
-  const handleUpdateBookingStatus = async (bookingId: string, status: string) => {
+  const handleUpdateBookingStatus = async (bookingId: string, status: string, additionalData: any = {}) => {
     try {
       const res = await fetch('/api/hotel-admin/bookings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookingId, status })
+        body: JSON.stringify({ bookingId, status, ...additionalData })
       });
       if (!res.ok) {
         const text = await res.text();
@@ -215,7 +229,17 @@ export default function HotelAdminDashboard() {
   const handleUpdateRoom = (index: number, field: string, value: any) => {
     if (!hotelData) return;
     const newRooms = [...hotelData.rooms];
-    newRooms[index] = { ...newRooms[index], [field]: value };
+    let newValue = value;
+    
+    // Sync count if roomNumbers is updated
+    if (field === 'roomNumbers') {
+      const numbers = value.split(',').map((s: string) => s.trim()).filter((s: string) => s !== "");
+      if (numbers.length > 0) {
+        newRooms[index] = { ...newRooms[index], count: numbers.length };
+      }
+    }
+    
+    newRooms[index] = { ...newRooms[index], [field]: newValue };
     setHotelData({ ...hotelData, rooms: newRooms });
   };
 
@@ -641,17 +665,20 @@ export default function HotelAdminDashboard() {
                                                     {b.paymentType || 'PayAtHotel'}
                                                 </span>
                                                 <div className="flex flex-col gap-0.5 mt-0.5">
-                                                    {(b.paymentType === 'PayAtHotel' || !b.paymentType) && (
+                                                    {(b.paymentType === 'PayAtHotel' || !b.paymentType) && b.reservationStatus !== 'Checked-In' && (
                                                         <span className="text-[10px] font-bold text-indigo-600">Due: ₹{b.totalAmount?.toLocaleString()}</span>
                                                     )}
                                                     {b.paymentType === 'Partial' && (
                                                         <>
                                                             <span className="text-[10px] font-bold text-emerald-600">Paid: ₹{b.paidAmount?.toLocaleString()}</span>
-                                                            <span className="text-[10px] font-bold text-amber-600">Due: ₹{b.balanceAmount?.toLocaleString()}</span>
+                                                            {b.reservationStatus !== 'Checked-In' && <span className="text-[10px] font-bold text-amber-600">Due: ₹{b.balanceAmount?.toLocaleString()}</span>}
                                                         </>
                                                     )}
                                                     {b.paymentType === 'Prepaid' && (
                                                         <span className="text-[10px] font-bold text-emerald-600">Paid: ₹{b.totalAmount?.toLocaleString()}</span>
+                                                    )}
+                                                    {b.paymentMethod && (
+                                                        <span className="text-[9px] font-black text-emerald-600 uppercase mt-1 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 w-fit">Recvd via: {b.paymentMethod}</span>
                                                     )}
                                                 </div>
                                             </div>
@@ -660,30 +687,106 @@ export default function HotelAdminDashboard() {
                                             <span className={cn(
                                                 "text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider border",
                                                 b.reservationStatus === 'Confirmed' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                                b.reservationStatus === 'Checked-In' ? "bg-indigo-50 text-indigo-600 border-indigo-100" :
                                                 b.reservationStatus === 'Pending' ? "bg-amber-50 text-amber-600 border-amber-100" :
                                                 "bg-red-50 text-red-600 border-red-100"
                                             )}>
                                                 {b.reservationStatus}
                                             </span>
+                                            {b.assignedRoomNumber && (
+                                                <p className="text-[9px] font-bold text-indigo-500 mt-1 uppercase tracking-tighter">Room: {b.assignedRoomNumber}</p>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="flex gap-2">
-                                                {b.reservationStatus === 'Pending' && (
-                                                    <button 
-                                                        onClick={() => handleUpdateBookingStatus(b._id, 'Confirmed')}
-                                                        className="p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors shadow-sm"
-                                                        title="Confirm Booking"
-                                                    >
-                                                        <CheckCircle2 className="w-4 h-4" />
-                                                    </button>
+                                            <div className="flex flex-col gap-2">
+                                                {checkInForm?.bookingId === b._id ? (
+                                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 min-w-[180px] animate-in zoom-in-95 duration-200">
+                                                        <div className="space-y-1">
+                                                            <label className="text-[9px] font-black text-slate-400 uppercase">Room Number</label>
+                                                            <input 
+                                                                type="text"
+                                                                placeholder="e.g. 102, 203"
+                                                                value={checkInForm.roomNumber}
+                                                                onChange={(e) => setCheckInForm({ ...checkInForm, roomNumber: e.target.value })}
+                                                                className="w-full text-[10px] font-bold p-1.5 bg-white border border-slate-200 rounded-lg outline-none"
+                                                            />
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <label className="text-[9px] font-black text-slate-400 uppercase">Payment Method</label>
+                                                            <select 
+                                                                value={checkInForm.paymentMethod}
+                                                                onChange={(e) => setCheckInForm({ ...checkInForm, paymentMethod: e.target.value })}
+                                                                className="w-full text-[10px] font-bold p-1.5 bg-white border border-slate-200 rounded-lg outline-none"
+                                                            >
+                                                                <option value="">Select Method</option>
+                                                                <option value="Cash">Cash</option>
+                                                                <option value="Partially">Partially</option>
+                                                                <option value="Online">Online</option>
+                                                                <option value="QR">QR Code</option>
+                                                            </select>
+                                                        </div>
+                                                        <div className="flex gap-1.5 pt-1">
+                                                            <button 
+                                                                onClick={() => {
+                                                                    if (!checkInForm.roomNumber || !checkInForm.paymentMethod) return alert("Please select both room and payment method");
+                                                                    handleUpdateBookingStatus(b._id, 'Checked-In', { 
+                                                                        assignedRoomNumber: checkInForm.roomNumber, 
+                                                                        paymentMethod: checkInForm.paymentMethod 
+                                                                    });
+                                                                    setCheckInForm(null);
+                                                                }}
+                                                                className="flex-1 bg-indigo-600 text-white text-[9px] font-black py-1.5 rounded-lg hover:bg-indigo-700 uppercase"
+                                                            >
+                                                                Done
+                                                            </button>
+                                                            <button onClick={() => setCheckInForm(null)} className="flex-1 bg-slate-200 text-slate-600 text-[9px] font-black py-1.5 rounded-lg hover:bg-slate-300 uppercase">Cancel</button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex gap-2">
+                                                        {(b.reservationStatus === 'Confirmed' || b.reservationStatus === 'Checked-In') && (
+                                                            <button 
+                                                                onClick={() => {
+                                                                    if (b.reservationStatus === 'Checked-In') {
+                                                                        if (window.confirm("Are you want to update checkIn?")) {
+                                                                            setCheckInForm({ 
+                                                                                bookingId: b._id, 
+                                                                                roomNumber: b.assignedRoomNumber || '', 
+                                                                                paymentMethod: b.paymentMethod || '' 
+                                                                            });
+                                                                        }
+                                                                    } else {
+                                                                        setCheckInForm({ bookingId: b._id, roomNumber: '', paymentMethod: '' });
+                                                                    }
+                                                                }}
+                                                                className={cn(
+                                                                    "px-3 py-1.5 text-[10px] font-black rounded-lg transition-colors shadow-sm uppercase tracking-wider",
+                                                                    b.reservationStatus === 'Checked-In' 
+                                                                        ? "bg-slate-100 text-slate-600 hover:bg-slate-200" 
+                                                                        : "bg-indigo-600 text-white hover:bg-indigo-700"
+                                                                )}
+                                                            >
+                                                                {b.reservationStatus === 'Checked-In' ? 'Update' : 'Check-In'}
+                                                            </button>
+                                                        )}
+                                                        {b.reservationStatus === 'Pending' && (
+                                                            <button 
+                                                                onClick={() => handleUpdateBookingStatus(b._id, 'Confirmed')}
+                                                                className="p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors shadow-sm"
+                                                                title="Confirm Booking"
+                                                            >
+                                                                <CheckCircle2 className="w-4 h-4" />
+                                                            </button>
+                                                        )}
+                                                        <button 
+                                                            onClick={() => handleUpdateBookingStatus(b._id, 'Cancelled')}
+                                                            className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-colors border border-red-100"
+                                                            title="Cancel Booking"
+                                                        >
+                                                            <X className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
                                                 )}
-                                                <button 
-                                                    onClick={() => handleUpdateBookingStatus(b._id, 'Cancelled')}
-                                                    className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-colors border border-red-100"
-                                                    title="Cancel Booking"
-                                                >
-                                                    <X className="w-4 h-4" />
-                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -729,7 +832,7 @@ export default function HotelAdminDashboard() {
                 ) : (
                     <div className="grid grid-cols-1 gap-6">
                         {hotelData?.rooms?.map((room: any, idx: number) => (
-                            <div key={idx} className="flex flex-col lg:flex-row gap-6 items-end lg:items-center bg-slate-50/50 p-6 rounded-2xl border border-slate-100 hover:border-amber-200 transition-colors group relative">
+                            <div key={idx} className="flex flex-col lg:flex-row gap-4 items-end lg:items-center bg-slate-50/50 p-6 rounded-2xl border border-slate-100 hover:border-amber-200 transition-colors group relative">
                                 <div className="flex-1 w-full space-y-2">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Room Category</label>
                                     <div className="relative">
@@ -738,7 +841,7 @@ export default function HotelAdminDashboard() {
                                             type="text"
                                             value={room.type}
                                             onChange={(e) => handleUpdateRoom(idx, 'type', e.target.value)}
-                                            className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all font-bold text-slate-700"
+                                            className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all font-bold text-slate-700"
                                         />
                                     </div>
                                 </div>
@@ -750,17 +853,30 @@ export default function HotelAdminDashboard() {
                                             type="number"
                                             value={room.price}
                                             onChange={(e) => handleUpdateRoom(idx, 'price', e.target.value)}
-                                            className="w-full pl-10 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-black text-slate-800"
+                                            className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-black text-slate-800"
                                         />
                                     </div>
                                 </div>
-                                <div className="w-full lg:w-40 space-y-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-blue-600">Quantity</label>
+                                <div className="w-full lg:w-64 space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-indigo-600">Assign Room Numbers</label>
+                                    <div className="relative">
+                                        <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 w-4 h-4" />
+                                        <input 
+                                            type="text"
+                                            placeholder="e.g. 101, 102, 105"
+                                            value={room.roomNumbers || ''}
+                                            onChange={(e) => handleUpdateRoom(idx, 'roomNumbers', e.target.value)}
+                                            className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-bold text-slate-700"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="w-full lg:w-24 space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-blue-600">Qty</label>
                                     <input 
                                         type="number"
                                         value={room.count}
                                         onChange={(e) => handleUpdateRoom(idx, 'count', Number(e.target.value))}
-                                        className="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-bold text-slate-700"
+                                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-bold text-slate-700"
                                     />
                                 </div>
                                 <div className="w-full lg:w-48 space-y-2">
@@ -882,7 +998,7 @@ export default function HotelAdminDashboard() {
                                   )}
                                 >
                                   <p className="text-[10px] font-black uppercase tracking-tighter truncate">
-                                    {booking.guestName}
+                                    {booking.guestName || booking.userName}
                                   </p>
                                 </div>
                               );
@@ -976,7 +1092,7 @@ export default function HotelAdminDashboard() {
                       {currentBooking && (
                         <div className="mt-4 pt-4 border-t border-slate-50">
                           <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Guest</p>
-                          <p className="text-xs font-bold text-slate-800 truncate">{currentBooking.guestName}</p>
+                          <p className="text-xs font-bold text-slate-800 truncate">{currentBooking.guestName || currentBooking.userName}</p>
                         </div>
                       )}
                     </div>
@@ -1008,11 +1124,15 @@ export default function HotelAdminDashboard() {
             <div className="bg-white rounded-[2rem] shadow-xl border border-slate-100 overflow-hidden">
               <div className="p-6 border-b border-slate-50 bg-slate-50/30 flex flex-wrap gap-4 items-center justify-between">
                 <div className="flex gap-2">
-                  {['All', 'Confirmed', 'Pending', 'Cancelled'].map(filter => (
-                    <button key={filter} className={cn(
-                      "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
-                      filter === 'All' ? "bg-slate-900 text-white shadow-md" : "text-slate-500 hover:bg-white hover:shadow-sm"
-                    )}>
+                  {['All', 'Confirmed', 'Checked-In', 'Pending', 'Cancelled'].map(filter => (
+                    <button 
+                      key={filter} 
+                      onClick={() => setResFilter(filter)}
+                      className={cn(
+                        "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+                        filter === resFilter ? "bg-slate-900 text-white shadow-md" : "text-slate-500 hover:bg-white hover:shadow-sm"
+                      )}
+                    >
                       {filter}
                     </button>
                   ))}
@@ -1020,8 +1140,11 @@ export default function HotelAdminDashboard() {
                 <div className="relative w-full lg:w-72">
                   <FileSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input 
-                    type="text" placeholder="Search guests, rooms..." 
-                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500/20 outline-none transition-all"
+                    type="text" 
+                    placeholder="Search guests, IDs..." 
+                    value={resSearch}
+                    onChange={(e) => setResSearch(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500/20 outline-none transition-all font-bold"
                   />
                 </div>
               </div>
@@ -1039,15 +1162,25 @@ export default function HotelAdminDashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
-                    {bookings.map(b => (
+                    {bookings
+                      .filter(b => {
+                        const matchesFilter = resFilter === 'All' || b.reservationStatus === resFilter;
+                        const searchStr = resSearch.toLowerCase();
+                        const matchesSearch = 
+                          (b.bookingId || '').toLowerCase().includes(searchStr) || 
+                          (b.guestName || b.userName || '').toLowerCase().includes(searchStr) ||
+                          (b.roomType || '').toLowerCase().includes(searchStr);
+                        return matchesFilter && matchesSearch;
+                      })
+                      .map(b => (
                       <tr key={b._id} className="hover:bg-slate-50/50 transition-colors group">
                         <td className="px-8 py-6">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-black text-xs">
-                              {b.guestName.charAt(0)}
+                              {(b.guestName || b.userName || '?').charAt(0)}
                             </div>
                             <div>
-                              <p className="font-black text-slate-900 text-sm leading-none">{b.guestName}</p>
+                              <p className="font-black text-slate-900 text-sm leading-none">{b.guestName || b.userName}</p>
                               <p className="text-[10px] font-bold text-slate-500 mt-1.5">{b.guestPhone || b.userEmail}</p>
                             </div>
                           </div>
@@ -1068,8 +1201,8 @@ export default function HotelAdminDashboard() {
                           <p className="text-xs font-black text-slate-900">₹{b.totalAmount?.toLocaleString()}</p>
                           <p className={cn(
                             "text-[9px] font-black uppercase mt-1",
-                            b.paymentStatus === 'Paid' ? "text-emerald-500" : "text-amber-500"
-                          )}>{b.paymentStatus}</p>
+                            (b.paymentMethod || b.paymentStatus) === 'Paid' || b.paymentMethod ? "text-emerald-500" : "text-amber-500"
+                          )}>{b.paymentMethod || b.paymentStatus}</p>
                         </td>
                         <td className="px-8 py-6">
                            <span className={cn(

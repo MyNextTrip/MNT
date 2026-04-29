@@ -285,7 +285,24 @@ export default function ProfileClient() {
                           <div className="space-y-1"><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><Calendar className="w-3 h-3" /> Check-in</p><p className="text-sm font-bold text-slate-900">{new Date(booking.checkInDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</p></div>
                           <div className="space-y-1"><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><Calendar className="w-3 h-3" /> Check-out</p><p className="text-sm font-bold text-slate-900">{new Date(booking.checkOutDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</p></div>
                           <div className="space-y-1"><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><Clock className="w-3 h-3" /> Duration</p><p className="text-sm font-bold text-slate-900">{booking.numberOfNights || 1} Night(s)</p></div>
-                          <div className="space-y-1"><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3" /> Status</p><p className={cn("text-sm font-black", booking.reservationStatus === 'Cancelled' ? "text-red-500" : "text-emerald-600")}>{booking.reservationStatus || 'Confirmed'}</p></div>
+                           <div className="space-y-1">
+                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3" /> Status</p>
+                              <div className="flex flex-col gap-1">
+                                 <p className={cn(
+                                   "text-sm font-black", 
+                                   booking.reservationStatus === 'Cancelled' ? "text-red-500" : 
+                                   booking.reservationStatus === 'Checked-In' ? "text-indigo-600" : "text-emerald-600"
+                                 )}>
+                                   {booking.reservationStatus || 'Confirmed'}
+                                 </p>
+                                 {booking.reservationStatus === 'Checked-In' && booking.assignedRoomNumber && (
+                                   <span className="text-[10px] font-bold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded w-fit border border-indigo-100">Room: {booking.assignedRoomNumber}</span>
+                                 )}
+                                 {booking.paymentMethod && (
+                                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-tighter">Paid via: {booking.paymentMethod}</span>
+                                 )}
+                              </div>
+                           </div>
                        </div>
                        <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
                           <Link href={`/hotels/${booking.hotelId}`} className="text-xs font-black text-slate-400 hover:text-primary uppercase tracking-widest">View Hotel</Link>

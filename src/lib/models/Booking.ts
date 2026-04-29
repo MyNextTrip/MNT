@@ -48,10 +48,12 @@ const BookingSchema = new mongoose.Schema({
   checkOutDate: { type: Date, required: true },
   numberOfNights: { type: Number, required: true },
   bookingSource: { type: String, required: true },
+  assignedRoomNumber: { type: String },
+  paymentMethod: { type: String },
   reservationStatus: { 
     type: String, 
     default: 'Confirmed',
-    enum: ['Confirmed', 'Pending', 'Cancelled', 'No-show']
+    enum: ['Confirmed', 'Pending', 'Cancelled', 'No-show', 'Checked-In']
   },
   bookingDate: { type: Date, default: Date.now }
 }, { timestamps: true, collection: 'bookings' });
