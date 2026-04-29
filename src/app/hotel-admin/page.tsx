@@ -699,23 +699,23 @@ export default function HotelAdminDashboard() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col gap-2">
-                                                {checkInForm?.bookingId === b._id ? (
+                                                {checkInForm?.bookingId === b._id && (
                                                     <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 min-w-[180px] animate-in zoom-in-95 duration-200">
                                                         <div className="space-y-1">
                                                             <label className="text-[9px] font-black text-slate-400 uppercase">Room Number</label>
                                                             <input 
                                                                 type="text"
                                                                 placeholder="e.g. 102, 203"
-                                                                value={checkInForm.roomNumber}
-                                                                onChange={(e) => setCheckInForm({ ...checkInForm, roomNumber: e.target.value })}
+                                                                value={checkInForm?.roomNumber || ''}
+                                                                onChange={(e) => setCheckInForm(prev => prev ? { ...prev, roomNumber: e.target.value } : null)}
                                                                 className="w-full text-[10px] font-bold p-1.5 bg-white border border-slate-200 rounded-lg outline-none"
                                                             />
                                                         </div>
                                                         <div className="space-y-1">
                                                             <label className="text-[9px] font-black text-slate-400 uppercase">Payment Method</label>
                                                             <select 
-                                                                value={checkInForm.paymentMethod}
-                                                                onChange={(e) => setCheckInForm({ ...checkInForm, paymentMethod: e.target.value })}
+                                                                value={checkInForm?.paymentMethod || ''}
+                                                                onChange={(e) => setCheckInForm(prev => prev ? { ...prev, paymentMethod: e.target.value } : null)}
                                                                 className="w-full text-[10px] font-bold p-1.5 bg-white border border-slate-200 rounded-lg outline-none"
                                                             >
                                                                 <option value="">Select Method</option>
@@ -728,7 +728,7 @@ export default function HotelAdminDashboard() {
                                                         <div className="flex gap-1.5 pt-1">
                                                             <button 
                                                                 onClick={() => {
-                                                                    if (!checkInForm.roomNumber || !checkInForm.paymentMethod) return alert("Please select both room and payment method");
+                                                                    if (!checkInForm?.roomNumber || !checkInForm?.paymentMethod) return alert("Please select both room and payment method");
                                                                     handleUpdateBookingStatus(b._id, 'Checked-In', { 
                                                                         assignedRoomNumber: checkInForm.roomNumber, 
                                                                         paymentMethod: checkInForm.paymentMethod 
@@ -742,7 +742,8 @@ export default function HotelAdminDashboard() {
                                                             <button onClick={() => setCheckInForm(null)} className="flex-1 bg-slate-200 text-slate-600 text-[9px] font-black py-1.5 rounded-lg hover:bg-slate-300 uppercase">Cancel</button>
                                                         </div>
                                                     </div>
-                                                ) : (
+                                                )}
+                                                {checkInForm?.bookingId !== b._id && (
                                                     <div className="flex gap-2">
                                                         {(b.reservationStatus === 'Confirmed' || b.reservationStatus === 'Checked-In') && (
                                                             <button 
