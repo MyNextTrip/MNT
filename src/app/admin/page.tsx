@@ -29,6 +29,7 @@ export default function AdminDashboard() {
   const [loadingInquiries, setLoadingInquiries] = useState(false);
   const [allChatbotUsers, setAllChatbotUsers] = useState<any[]>([]);
   const [loadingChatbotUsers, setLoadingChatbotUsers] = useState(false);
+  const [checkInForm, setCheckInForm] = useState<{ bookingId: string, roomNumber: string, paymentMethod: string } | null>(null);
   const [editHotelId, setEditHotelId] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [hotelToDelete, setHotelToDelete] = useState<string | null>(null);
@@ -315,6 +316,31 @@ export default function AdminDashboard() {
       console.error("Failed to fetch bookings:", e);
     } finally {
       setLoadingBookings(false);
+    }
+  };
+
+  const handleUpdateBookingStatus = async (bookingId: string, status: string, additionalData: any = {}) => {
+    try {
+      const res = await fetch('/api/hotel-admin/bookings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingId, status, ...additionalData })
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Update booking status failed with status ${res.status}: ${text.substring(0, 100)}`);
+      }
+      const data = await res.json();
+      if (data.success) {
+        setAllBookings(prev => prev.map(b => b._id === bookingId ? { 
+            ...b, 
+            reservationStatus: status,
+            ...additionalData,
+            paymentStatus: (status === 'Checked-In' && additionalData.paymentMethod) ? 'Paid' : b.paymentStatus
+        } : b));
+      }
+    } catch (e) {
+      console.error("Failed to update booking:", e);
     }
   };
 
@@ -1102,6 +1128,7 @@ export default function AdminDashboard() {
                       <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Stay Duration</th>
                       <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Payment & Status</th>
                       <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Booking Date</th>
+                      <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -1169,6 +1196,112 @@ export default function AdminDashboard() {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <p className="font-bold text-slate-700 text-sm">{new Date(b.createdAt).toLocaleDateString()}</p>
                             <p className="text-[10px] text-slate-400 font-medium">{new Date(b.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex flex-col gap-2">
+                                {checkInForm?.bookingId === b._id && (
+                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 min-w-[180px] animate-in zoom-in-95 duration-200">
+                                        <div className="space-y-1">
+                                            <label className="text-[9px] font-black text-slate-400 uppercase">Room Number</label>
+                                            <input 
+                                                type="text"
+                                                placeholder="e.g. 102, 203"
+                                                value={checkInForm?.roomNumber || ''}
+                                                onChange={(e) => setCheckInForm(prev => prev ? { ...prev, roomNumber: e.target.value } : null)}
+                                                className="w-full text-[10px] font-bold p-1.5 bg-white border border-slate-200 rounded-lg outline-none text-slate-700"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-[9px] font-black text-slate-400 uppercase">Payment Method</label>
+                                            <select 
+                                                value={checkInForm?.paymentMethod || ''}
+                                                onChange={(e) => setCheckInForm(prev => prev ? { ...prev, paymentMethod: e.target.value } : null)}
+                                                className="w-full text-[10px] font-bold p-1.5 bg-white border border-slate-200 rounded-lg outline-none text-slate-700"
+                                            >
+                                                <option value="">Select Method</option>
+                                                <option value="Cash">Cash</option>
+                                                <option value="Partially">Partially</option>
+                                                <option value="Online">Online</option>
+                                                <option value="QR">QR Code</option>
+                                            </select>
+                                        </div>
+                                        {checkInForm?.paymentMethod === 'QR' && (
+                                            <div className="flex flex-col items-center gap-2 p-3 bg-white rounded-xl border border-indigo-100 mt-1 animate-in zoom-in-95">
+                                                <p className="text-[9px] font-black text-indigo-600 uppercase tracking-widest">Scan to Pay</p>
+                                                <div className="w-24 h-24 bg-slate-50 rounded-lg flex items-center justify-center p-1 border border-slate-100">
+                                                    <img 
+                                                        src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=MNT-Booking-Payment" 
+                                                        alt="Payment QR" 
+                                                        className="w-full h-full object-contain"
+                                                    />
+                                                </div>
+                                                <p className="text-[8px] font-bold text-slate-400">Merchant: MyNextTrip</p>
+                                            </div>
+                                        )}
+                                        <div className="flex gap-1.5 pt-1">
+                                            <button 
+                                                onClick={() => {
+                                                    if (!checkInForm?.roomNumber || !checkInForm?.paymentMethod) return alert("Please select both room and payment method");
+                                                    handleUpdateBookingStatus(b._id, 'Checked-In', { 
+                                                        assignedRoomNumber: checkInForm.roomNumber, 
+                                                        paymentMethod: checkInForm.paymentMethod 
+                                                    });
+                                                    setCheckInForm(null);
+                                                }}
+                                                className="flex-1 bg-indigo-600 text-white text-[9px] font-black py-1.5 rounded-lg hover:bg-indigo-700 uppercase"
+                                            >
+                                                Done
+                                            </button>
+                                            <button onClick={() => setCheckInForm(null)} className="flex-1 bg-slate-200 text-slate-600 text-[9px] font-black py-1.5 rounded-lg hover:bg-slate-300 uppercase">Cancel</button>
+                                        </div>
+                                    </div>
+                                )}
+                                {checkInForm?.bookingId !== b._id && (
+                                    <div className="flex gap-2">
+                                        {(b.reservationStatus === 'Confirmed' || b.reservationStatus === 'Checked-In') && (
+                                            <button 
+                                                onClick={() => {
+                                                    if (b.reservationStatus === 'Checked-In') {
+                                                        if (window.confirm("Are you want to update checkIn?")) {
+                                                            setCheckInForm({ 
+                                                                bookingId: b._id, 
+                                                                roomNumber: b.assignedRoomNumber || '', 
+                                                                paymentMethod: b.paymentMethod || '' 
+                                                            });
+                                                        }
+                                                    } else {
+                                                        setCheckInForm({ bookingId: b._id, roomNumber: '', paymentMethod: '' });
+                                                    }
+                                                }}
+                                                className={cn(
+                                                    "px-3 py-1.5 text-[10px] font-black rounded-lg transition-colors shadow-sm uppercase tracking-wider",
+                                                    b.reservationStatus === 'Checked-In' 
+                                                        ? "bg-slate-100 text-slate-600 hover:bg-slate-200" 
+                                                        : "bg-indigo-600 text-white hover:bg-indigo-700"
+                                                )}
+                                            >
+                                                {b.reservationStatus === 'Checked-In' ? 'Update' : 'Check-In'}
+                                            </button>
+                                        )}
+                                        {b.reservationStatus === 'Pending' && (
+                                            <button 
+                                                onClick={() => handleUpdateBookingStatus(b._id, 'Confirmed')}
+                                                className="p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors shadow-sm"
+                                                title="Confirm Booking"
+                                            >
+                                                <CheckCircle2 className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                        <button 
+                                            onClick={() => handleUpdateBookingStatus(b._id, 'Cancelled')}
+                                            className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-colors border border-red-100"
+                                            title="Cancel Booking"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                           </td>
                         </tr>
                       ))

@@ -299,7 +299,18 @@ export default function ProfileClient() {
                                    <span className="text-[10px] font-bold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded w-fit border border-indigo-100">Room: {booking.assignedRoomNumber}</span>
                                  )}
                                  {booking.paymentMethod && (
-                                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-tighter">Paid via: {booking.paymentMethod}</span>
+                                   <div className="flex flex-col gap-2 mt-1">
+                                      <span className="text-[9px] font-black text-slate-500 uppercase tracking-tighter">Paid via: {booking.paymentMethod}</span>
+                                      {booking.paymentMethod === 'QR' && (
+                                        <div className="p-2 bg-white rounded-xl border border-indigo-100 w-fit animate-in zoom-in-95">
+                                          <img 
+                                            src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=MNT-Booking-Payment" 
+                                            alt="Payment QR" 
+                                            className="w-16 h-16 object-contain"
+                                          />
+                                        </div>
+                                      )}
+                                   </div>
                                  )}
                               </div>
                            </div>

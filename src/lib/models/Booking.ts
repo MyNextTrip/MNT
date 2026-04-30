@@ -9,19 +9,19 @@ const BookingSchema = new mongoose.Schema({
   userId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Signup',
-    required: true 
+    required: false 
   },
-  userName: { type: String, required: true },
-  userEmail: { type: String, required: true },
+  userName: { type: String, required: false },
+  userEmail: { type: String, required: false },
   guestName: { type: String, required: true },
-  guestPhone: { type: String, required: true },
+  guestPhone: { type: String, required: false },
   hotelId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Hotel',
     required: true 
   },
   hotelName: { type: String, required: true },
-  hotelAddress: { type: String, required: true },
+  hotelAddress: { type: String, required: false },
   roomType: { type: String, required: true },
   roomsCount: { type: Number, default: 1 },
   hasBreakfast: { type: Boolean, default: false },
@@ -54,7 +54,7 @@ const BookingSchema = new mongoose.Schema({
   reservationStatus: { 
     type: String, 
     default: 'Confirmed',
-    enum: ['Confirmed', 'Pending', 'Cancelled', 'No-show', 'Checked-In']
+    enum: ['Confirmed', 'Pending', 'Cancelled', 'No-show', 'Checked-In', 'Confirm Booking', 'Unfirm Booking Inquiry', 'Online failed Booking', 'Hold Confirm Booking', 'Hold Unconfirm Booking']
   },
   bookingDate: { type: Date, default: Date.now }
 }, { timestamps: true, collection: 'bookings' });

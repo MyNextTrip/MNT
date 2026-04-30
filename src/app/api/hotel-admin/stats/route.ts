@@ -37,7 +37,7 @@ export async function GET(req: Request) {
     let departingTodayCount = 0;
 
     bookings.forEach(b => {
-        if (b.reservationStatus !== 'Confirmed') return;
+        if (b.reservationStatus !== 'Confirmed' && b.reservationStatus !== 'Checked-In') return;
         
         const ci = new Date(b.checkInDate); ci.setHours(0, 0, 0, 0);
         const co = new Date(b.checkOutDate); co.setHours(0, 0, 0, 0);
