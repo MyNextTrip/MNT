@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import { Signup } from '@/lib/models/Signup';
+import { compare, hash } from 'bcryptjs';
 
 export async function POST(req: Request) {
   try {
@@ -32,7 +33,15 @@ export async function POST(req: Request) {
       );
     }
 
-    const isPasswordValid = user.password === password;
+    let isPasswordValid = await compare(password, user.password);
+    
+    // Backward compatibility for plain text passwords
+    if (!isPasswordValid && user.password === password) {
+      isPasswordValid = true;
+      // Auto-migrate to hashed password
+      user.password = await hash(password, 10);
+      await user.save();
+    }
 
     if (!isPasswordValid) {
       return NextResponse.json(

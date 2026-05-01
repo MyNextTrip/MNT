@@ -56,6 +56,8 @@ const BookingSchema = new mongoose.Schema({
     default: 'Confirmed',
     enum: ['Confirmed', 'Pending', 'Cancelled', 'No-show', 'Checked-In', 'Confirm Booking', 'Unfirm Booking Inquiry', 'Online failed Booking', 'Hold Confirm Booking', 'Hold Unconfirm Booking']
   },
+  businessSource: { type: String },
+  companyName: { type: String },
   bookingDate: { type: Date, default: Date.now }
 }, { timestamps: true, collection: 'bookings' });
 

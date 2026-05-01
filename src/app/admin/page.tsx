@@ -8,10 +8,13 @@ import {
   LogOut, Users, Calendar, BedDouble, Trash2, Pencil,
   ChevronDown, ChevronUp, Wifi, Coffee, Clock, Shirt, 
   Smartphone, Sparkles, Dumbbell, Waves, Heart, Baby, 
-  Briefcase, Utensils, ConciergeBell, Dog, Map, Leaf,
-  Navigation, Monitor, Zap, Menu, X, Key, Copy, Check, Save, Loader2, MessageSquareText, Phone
+  Briefcase, Utensils, ConciergeBell, Dog,
+  Navigation as NavigationIcon, Monitor, Zap, Menu, X, Key, Copy, Check, Save, Loader2, MessageSquareText, Phone, CheckCircle2,
+  Map as MapIcon, Leaf, CalendarCheck, Search, FileDown
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -40,6 +43,7 @@ export default function AdminDashboard() {
   const [isSavingCreds, setIsSavingCreds] = useState(false);
   const [isLoadingCreds, setIsLoadingCreds] = useState(false);
   const [isExistingCreds, setIsExistingCreds] = useState(false);
+  const [resSearch, setResSearch] = useState("");
   
   // Form State
   const [imageMode, setImageMode] = useState<'url' | 'upload'>('url');
@@ -56,6 +60,82 @@ export default function AdminDashboard() {
     owner: "MyNextTrip",
     mapUrl: ""
   });
+
+  const generateReservationPDF = (booking: any) => {
+    const doc = new jsPDF();
+    
+    // Header - Modern Design
+    doc.setFillColor(15, 23, 42); // slate-900
+    doc.rect(0, 0, 210, 40, 'F');
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("CONFIRMATION VOUCHER", 150, 25);
+
+    // Add Logo in Top Left
+    try {
+      const logoUrl = "/images/mnt-logo-new.png";
+      doc.addImage(logoUrl, 'PNG', 15, 8, 24, 24);
+    } catch (e) {
+      console.error("Logo could not be added to PDF:", e);
+      doc.setFontSize(24);
+      doc.setFont("helvetica", "bold");
+      doc.text("MyNextTrip", 20, 25);
+    }
+    
+    // Property Details
+    doc.setTextColor(30, 41, 59);
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text(booking.hotelName || "Your Property", 20, 55);
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Property Reservation ID: " + (booking.bookingId || "N/A"), 20, 62);
+    
+    // Guest Information Box
+    doc.setDrawColor(241, 245, 249);
+    doc.setFillColor(248, 250, 252);
+    doc.roundedRect(20, 75, 170, 45, 3, 3, 'FD');
+    
+    doc.setFont("helvetica", "bold");
+    doc.text("GUEST INFORMATION", 25, 85);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Name: ${booking.guestName || booking.userName}`, 25, 95);
+    doc.text(`Phone: ${booking.guestPhone || 'N/A'}`, 25, 102);
+    doc.text(`Email: ${booking.userEmail || 'N/A'}`, 25, 109);
+    
+    doc.setFont("helvetica", "bold");
+    doc.text("STAY DETAILS", 110, 85);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Check-in: ${new Date(booking.checkInDate).toLocaleDateString()}`, 110, 95);
+    doc.text(`Check-out: ${new Date(booking.checkOutDate).toLocaleDateString()}`, 110, 102);
+    doc.text(`Room: ${booking.roomType} (x${booking.roomsCount || 1})`, 110, 109);
+    
+    // Financial Summary Table
+    autoTable(doc, {
+      startY: 130,
+      head: [['Description', 'Amount']],
+      body: [
+        ['Room Charges', `INR ${(booking.totalAmount - (booking.totalAmount * 0.12)).toFixed(2)}`],
+        ['Taxes (GST)', `INR ${(booking.totalAmount * 0.12).toFixed(2)}`],
+        [{ content: 'Total Paid Amount', styles: { fontStyle: 'bold' } }, { content: `INR ${booking.totalAmount}`, styles: { fontStyle: 'bold' } }]
+      ],
+      headStyles: { fillColor: [79, 70, 229], textColor: 255 },
+      theme: 'grid',
+      margin: { left: 20, right: 20 }
+    });
+    
+    // Footer
+    const finalY = (doc as any).lastAutoTable.finalY + 20;
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text("Thank you for choosing MyNextTrip. Please present this voucher at the time of check-in.", 20, finalY);
+    doc.text("For support, contact property admin or visit mynexttrip.in", 20, finalY + 5);
+    
+    doc.save(`Reservation_${booking.bookingId || 'Voucher'}.pdf`);
+  };
 
   const handleAddUrl = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
@@ -520,6 +600,7 @@ export default function AdminDashboard() {
             { id: 'add-hotel', label: editHotelId ? 'Edit Hotel' : 'Add Hotel', icon: PlusCircle },
             { id: 'all-properties', label: 'All Properties', icon: Building2 },
             { id: 'bookings', label: 'Bookings', icon: Calendar },
+            { id: 'reservations', label: 'Reservations', icon: CalendarCheck },
             { id: 'users', label: 'Users', icon: Users },
             { id: 'inquiries', label: 'Hotel Inquiries', icon: Building2 },
             { id: 'chatbot-users', label: 'Chatbot Users', icon: MessageSquareText }
@@ -1309,6 +1390,145 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        )}
+        {activeTab === 'reservations' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4">
+            <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-black text-slate-900">Platform Reservations</h1>
+                <p className="text-slate-500 mt-2 font-medium">Grouped by hotel property and status.</p>
+              </div>
+              <div className="relative w-full md:w-96">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input 
+                  type="text"
+                  placeholder="Search Booking ID, Guest, or Hotel..."
+                  value={resSearch}
+                  onChange={(e) => setResSearch(e.target.value)}
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary/10 transition-all shadow-sm"
+                />
+              </div>
+            </header>
+
+            <div className="space-y-12">
+              {loadingBookings ? (
+                <div className="p-12 text-center text-slate-500">
+                  <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+                  Fetching all reservations...
+                </div>
+              ) : allBookings.length === 0 ? (
+                <div className="bg-white p-12 rounded-3xl text-center text-slate-500 border border-dashed">
+                  No reservations found on the platform.
+                </div>
+              ) : (
+                // Group by Hotel Name
+                Object.entries(
+                  allBookings
+                    .filter(b => {
+                      const searchStr = resSearch.toLowerCase();
+                      return (
+                        (b.bookingId || '').toLowerCase().includes(searchStr) ||
+                        (b.guestName || b.userName || '').toLowerCase().includes(searchStr) ||
+                        (b.hotelName || '').toLowerCase().includes(searchStr) ||
+                        (b.userEmail || '').toLowerCase().includes(searchStr)
+                      );
+                    })
+                    .reduce((groups: any, booking: any) => {
+                    const hotel = booking.hotelName || "Uncategorized Hotel";
+                    if (!groups[hotel]) groups[hotel] = [];
+                    groups[hotel].push(booking);
+                    return groups;
+                  }, {})
+                ).map(([hotelName, bookings]: [string, any]) => (
+                  <div key={hotelName} className="space-y-4">
+                    <div className="flex items-center gap-3 px-2">
+                      <div className="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center">
+                        <Building2 className="w-5 h-5" />
+                      </div>
+                      <h2 className="text-xl font-black text-slate-800 tracking-tight">{hotelName}</h2>
+                      <span className="bg-slate-100 text-slate-500 px-3 py-1 rounded-full text-xs font-bold">{bookings.length} total</span>
+                    </div>
+
+                    <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                          <thead>
+                            <tr className="bg-slate-50/50 border-b border-slate-100">
+                              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Guest & Stay Info</th>
+                              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Room Details</th>
+                              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Financials</th>
+                              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Booking Source</th>
+                              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {bookings.map((b: any) => (
+                              <tr key={b._id} className="hover:bg-slate-50/50 transition-colors">
+                                <td className="px-6 py-4">
+                                  <div className="flex flex-col">
+                                    <div className="flex items-center gap-2">
+                                       <span className="font-black text-[10px] text-primary bg-primary/5 px-2 py-0.5 rounded border border-primary/10">{b.bookingId}</span>
+                                       <p className="font-black text-slate-900">{b.guestName || b.userName}</p>
+                                    </div>
+                                    <p className="text-[10px] text-slate-500 font-bold ml-12">{b.guestPhone || 'No Phone'}</p>
+                                    <div className="mt-2 flex items-center gap-2 text-[10px] font-bold text-slate-400 ml-12">
+                                      <Calendar className="w-3 h-3" />
+                                      {new Date(b.checkInDate).toLocaleDateString()} - {new Date(b.checkOutDate).toLocaleDateString()}
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4">
+                                  <div className="flex flex-col">
+                                    <p className="text-xs font-black text-slate-700">{b.roomType}</p>
+                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Qty: {b.roomsCount || 1}</p>
+                                    {b.assignedRoomNumber && (
+                                      <span className="mt-1 px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-black w-fit">ROOM {b.assignedRoomNumber}</span>
+                                    )}
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4">
+                                  <div className="flex flex-col">
+                                    <p className="font-black text-slate-900 text-sm">₹{b.totalAmount}</p>
+                                    <p className={`text-[9px] font-black uppercase ${b.paymentStatus === 'Paid' ? 'text-emerald-500' : 'text-amber-500'}`}>{b.paymentStatus}</p>
+                                    {b.paymentMethod && <p className="text-[8px] text-slate-400 font-bold">Method: {b.paymentMethod}</p>}
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4">
+                                  <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${
+                                    b.reservationStatus === 'Cancelled' ? 'bg-red-100 text-red-600' : 
+                                    b.reservationStatus === 'Checked-In' ? 'bg-indigo-100 text-indigo-600' : 'bg-emerald-100 text-emerald-600'
+                                  }`}>
+                                    {b.reservationStatus || 'Confirmed'}
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4">
+                                  <div className="flex flex-col">
+                                    <p className="text-[10px] font-black text-slate-700">{b.bookingSource || 'Direct'}</p>
+                                    {b.businessSource && <p className="text-[8px] text-slate-400 font-bold uppercase">{b.businessSource}</p>}
+                                    {b.companyName && <p className="text-[8px] text-indigo-500 font-bold italic">{b.companyName}</p>}
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 text-right">
+                                  <button 
+                                    onClick={() => generateReservationPDF(b)}
+                                    className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all border border-transparent hover:border-indigo-100"
+                                    title="Download Voucher"
+                                  >
+                                    <FileDown className="w-4 h-4" />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}

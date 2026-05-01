@@ -69,14 +69,22 @@ export default function ProfileClient() {
     doc.rect(0, 0, 210, 40, 'F');
     
     doc.setTextColor(37, 99, 235);
-    doc.setFontSize(24);
-    doc.setFont("helvetica", "bold");
-    doc.text("MNT | NEXTMYTRIP", 20, 25);
+    
+    // Add Logo in Top Left
+    try {
+      const logoUrl = "/images/mnt-logo-new.png";
+      doc.addImage(logoUrl, 'PNG', 15, 8, 24, 24);
+    } catch (e) {
+      console.error("Logo could not be added to Receipt:", e);
+      doc.setFontSize(24);
+      doc.setFont("helvetica", "bold");
+      doc.text("MNT | MyNextTrip", 20, 25);
+    }
     
     doc.setFontSize(10);
     doc.setTextColor(100);
     doc.setFont("helvetica", "normal");
-    doc.text("Premium Travel & Hotel Bookings", 20, 32);
+    doc.text("Premium Travel & Hotel Bookings", 42, 28);
 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(16);

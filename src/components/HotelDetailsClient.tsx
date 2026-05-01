@@ -6,12 +6,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { 
   MapPin, Star, Building2, IndianRupee, Loader2, Check, 
   ArrowLeft, ChevronLeft, ChevronRight, UploadCloud, MessageSquare, PlayCircle,
-  BedDouble, Calendar, Coffee, Info, X, LogIn, Lock, Phone, CreditCard, Wallet, User as UserIcon, Clock, ShieldAlert
+  BedDouble, Calendar, Coffee, Info, X, LogIn, Lock, Phone, CreditCard, Wallet, User as UserIcon, Clock, ShieldAlert,
+  ChevronDown
 } from "lucide-react";
 import Link from "next/link";
 import Script from "next/script";
 import { cn } from "@/lib/utils";
-import { ChevronDown } from "lucide-react";
+
 import { HotelDetailsSkeleton } from "./Skeletons";
 
 interface HotelDetailsClientProps {

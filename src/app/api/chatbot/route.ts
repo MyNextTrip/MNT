@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { JWT } from "google-auth-library";
 import kbData from "@/data/knowledgeBase.json";
+import connectToDatabase from "@/lib/mongodb";
+import ChatbotUser from "@/lib/models/ChatbotUser";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
@@ -64,8 +66,7 @@ function findLocalMatch(query: string) {
   return highestScore >= 4 ? bestMatch : null;
 }
 
-import connectToDatabase from "@/lib/mongodb";
-import ChatbotUser from "@/lib/models/ChatbotUser";
+
 
 async function saveLeadData(name: string, whatsapp: string) {
   try {

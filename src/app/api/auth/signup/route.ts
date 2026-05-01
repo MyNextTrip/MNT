@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import { Signup } from '@/lib/models/Signup';
+import { hash } from 'bcryptjs';
 
 export async function POST(req: Request) {
   try {
@@ -24,10 +25,11 @@ export async function POST(req: Request) {
       );
     }
 
+    const hashedPassword = await hash(password, 10);
     const newUser = await Signup.create({
       name,
       email,
-      password,
+      password: hashedPassword,
     });
 
     return NextResponse.json(

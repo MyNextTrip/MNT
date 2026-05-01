@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import { Signup } from '@/lib/models/Signup';
+import { hash } from 'bcryptjs';
 
 export async function POST(req: Request) {
   try {
@@ -18,7 +19,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
     }
 
-    user.password = password;
+    const hashedPassword = await hash(password, 10);
+    user.password = hashedPassword;
     await user.save();
 
     return NextResponse.json({ success: true, message: 'Password updated successfully' });

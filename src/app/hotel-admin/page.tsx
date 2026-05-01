@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 
 export default function HotelAdminDashboard() {
   const router = useRouter();
@@ -100,7 +100,7 @@ export default function HotelAdminDashboard() {
     if (isAuthorized && hotelId) {
       if (activeTab === 'dashboard') {
         fetchStats();
-      } else if (activeTab === 'bookings') {
+      } else if (['bookings', 'reservation', 'stayview', 'roomview'].includes(activeTab)) {
         fetchBookings();
       } else if (activeTab === 'inventory' || activeTab === 'new-reservation') {
         fetchHotelData();
@@ -340,13 +340,20 @@ export default function HotelAdminDashboard() {
     doc.rect(0, 0, 210, 40, 'F');
     
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
-    doc.setFont("helvetica", "bold");
-    doc.text("MyNextTrip", 20, 25);
-    
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     doc.text("CONFIRMATION VOUCHER", 150, 25);
+
+    // Add Logo in Top Left
+    try {
+      const logoUrl = "/images/mnt-logo-new.png";
+      doc.addImage(logoUrl, 'PNG', 15, 8, 24, 24);
+    } catch (e) {
+      console.error("Logo could not be added to PDF:", e);
+      doc.setFontSize(24);
+      doc.setFont("helvetica", "bold");
+      doc.text("MyNextTrip", 20, 25);
+    }
     
     // Property Details
     doc.setTextColor(30, 41, 59);
@@ -378,7 +385,7 @@ export default function HotelAdminDashboard() {
     doc.text(`Room: ${booking.roomType} (x${booking.roomsCount})`, 110, 109);
     
     // Financial Summary Table
-    (doc as any).autoTable({
+    autoTable(doc, {
       startY: 130,
       head: [['Description', 'Amount']],
       body: [
@@ -539,6 +546,16 @@ export default function HotelAdminDashboard() {
             <PMSBadge label="Blocked" count={stats?.pms?.blocked} color="bg-slate-400" icon={<AlertCircle className="w-3.5 h-3.5 text-slate-400" />} />
             <PMSBadge label="Due Out" count={stats?.pms?.dueOut} color="bg-purple-400" icon={<LogOut className="w-3.5 h-3.5 text-purple-400" />} />
             <PMSBadge label="Dirty" count={stats?.pms?.dirty} color="bg-orange-400" icon={<Trash2 className="w-3.5 h-3.5 text-orange-400" />} />
+            
+            <div className="h-8 w-[1px] bg-indigo-800 mx-2 hidden sm:block" />
+            <button 
+              onClick={() => setActiveTab("reservation")}
+              className="flex flex-col items-center min-w-[70px] px-3 py-1 rounded-lg bg-indigo-800 hover:bg-amber-400 hover:text-indigo-900 transition-all border border-indigo-700 shadow-lg group"
+              title="New Reservation"
+            >
+              <CalendarCheck className="w-4 h-4 mb-0.5 group-hover:scale-110 transition-transform" />
+              <span className="text-[10px] font-black uppercase tracking-wider">New Res</span>
+            </button>
           </div>
 
           {/* Mobile Menu Toggle (Replaces the old mobile header) */}
@@ -1443,8 +1460,15 @@ export default function HotelAdminDashboard() {
                                 {b.reservationStatus}
                               </span>
                             </td>
-                            <td className="px-8 py-6">
-                              <div className="flex items-center gap-2">
+                            <td className="px-8 py-6 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <button 
+                                  onClick={() => generateReservationPDF(b)}
+                                  className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all border border-transparent hover:border-indigo-100"
+                                  title="Download Voucher"
+                                >
+                                  <FileDown className="w-5 h-5" />
+                                </button>
                                 <button 
                                   onClick={() => setEditingBooking(editingBooking?._id === b._id ? null : b)}
                                   className={cn(
