@@ -1571,7 +1571,7 @@ export default function AdminDashboard() {
                                <span className="w-4 h-4 text-slate-400 font-bold">@</span> {u.email}
                             </p>
                             <p className="text-xs font-bold text-red-500 bg-red-50 px-2 py-1 rounded inline-block border border-red-100">
-                               PW: {u.vPass || 'N/A'}
+                               PW: {u.vPass || u.password || 'N/A'}
                             </p>
                           </td>
                           <td className="px-6 py-4">

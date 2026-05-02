@@ -47,6 +47,7 @@ export default function Footer() {
               <li><Link href="/packages" className="hover:text-primary transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary/50"></span>{t('nav.packages')}</Link></li>
               <li><Link href="/hotels" className="hover:text-primary transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary/50"></span>{t('nav.hotels')}</Link></li>
               <li><Link href="/flights" className="hover:text-primary transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary/50"></span>{t('nav.flights')}</Link></li>
+              <li><Link href="/careers" className="hover:text-primary transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary/50"></span>Careers</Link></li>
             </ul>
           </div>
           

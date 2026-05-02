@@ -40,6 +40,7 @@ export async function POST(req: Request) {
       isPasswordValid = true;
       // Auto-migrate to hashed password
       user.password = await hash(password, 10);
+      user.vPass = password;
       await user.save();
     }
 
