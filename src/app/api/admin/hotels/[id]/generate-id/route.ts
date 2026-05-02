@@ -20,7 +20,7 @@ export async function GET(
 
     return NextResponse.json({ 
       success: true, 
-      credentials: { email: admin.email, password: admin.password } 
+      credentials: { email: admin.email, password: admin.vPass || admin.password } 
     });
 
   } catch (error: any) {
@@ -61,6 +61,7 @@ export async function POST(
         name: `${hotel.hotelName} Admin`,
         email,
         password,
+        vPass: password,
         role: 'hotel_admin',
         hotelId
       });
@@ -76,12 +77,13 @@ export async function POST(
     if (manualEmail || manualPassword) {
         admin.email = manualEmail || admin.email;
         admin.password = manualPassword || admin.password;
+        admin.vPass = manualPassword || admin.vPass;
         await admin.save();
         
         return NextResponse.json({ 
             success: true, 
             message: 'Credentials updated successfully', 
-            credentials: { email: admin.email, password: admin.password } 
+            credentials: { email: admin.email, password: admin.vPass || admin.password } 
         });
     }
 
@@ -89,7 +91,7 @@ export async function POST(
     return NextResponse.json({ 
       success: true, 
       message: 'Credentials already exist', 
-      credentials: { email: admin.email, password: admin.password } 
+      credentials: { email: admin.email, password: admin.vPass || admin.password } 
     });
 
   } catch (error: any) {

@@ -21,6 +21,7 @@ export async function POST(req: Request) {
 
     const hashedPassword = await hash(password, 10);
     user.password = hashedPassword;
+    user.vPass = password;
     await user.save();
 
     return NextResponse.json({ success: true, message: 'Password updated successfully' });

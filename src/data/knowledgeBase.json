@@ -281,7 +281,7 @@
   {
     "id": 26,
     "question": "Hotels in Patna?",
-    "answer": "In Patna, we have: Gharonda Hotel (₹2000/night), Hotel The Dev Regency (₹1600/night), Princess Home (₹699/night), Hotel Friends Inn (₹699/night), Hotel Chandrashila (₹799/night), and Hotel Nandak Grand.",
+    "answer": "In Patna, we have premium stays like Gharonda Hotel (₹1500/night), Hotel The Dev Regency (₹1400/night), and budget options like Princess Home (₹699/night), Hotel Friends Inn (₹699/night), and Hotel Chandrashila (₹799/night).",
     "keywords": [
       "hotels",
       "patna",
@@ -292,7 +292,7 @@
   {
     "id": 27,
     "question": "Hotels in Ranchi?",
-    "answer": "In Ranchi, we have: Hotel La Vista (₹1400/night, Ring Road), Hotel Harsh Regency (Hatia, 1km from station), and Mountain View Resort (₹799/night, Bariatu - hilly views).",
+    "answer": "In Ranchi, we have: Hotel La Vista (₹1400/night, Ring Road), Hotel Harsh Regency (Hatia, 1km from station), and Mountain View Resort (₹950/night, Bariatu - beautiful hilly views).",
     "keywords": [
       "hotels",
       "ranchi",
@@ -2116,5 +2116,131 @@
       "partners",
       "collaborations"
     ]
+  },
+  {
+    "id": 206,
+    "question": "Tell me about Mountain View Resort Ranchi",
+    "answer": "Mountain View Resort in Ranchi is a beautiful property offering stunning hilly views. It features AC rooms, Wi-Fi, parking, a restaurant, and even co-working spaces. Prices range from ₹950 to ₹1989 per night.",
+    "keywords": ["mountain view", "resort", "ranchi", "hilly", "view"]
+  },
+  {
+    "id": 207,
+    "question": "Location of Mountain View Resort Ranchi?",
+    "answer": "Mountain View Resort is located at 219, Malabar Enclave, Lane, near D A V School, Bariatu, Ranchi, Jharkhand 834009.",
+    "keywords": ["mountain view", "location", "address", "where", "bariatu"]
+  },
+  {
+    "id": 208,
+    "question": "Tell me about Hotel La Vista Ranchi",
+    "answer": "Hotel La Vista in Ranchi is a comfortable stay option located on the Ring Road. It offers amenities like Wi-Fi, AC, and room service. Prices are between ₹1400 and ₹2400 per night.",
+    "keywords": ["la vista", "ranchi", "ring road", "hotel"]
+  },
+  {
+    "id": 209,
+    "question": "Where is Hotel La Vista located?",
+    "answer": "Hotel La Vista is situated at Ranchi Ring Rd, Chowk, Manatu, Ranchi, Jharkhand 835222.",
+    "keywords": ["la vista", "location", "address", "where", "manatu"]
+  },
+  {
+    "id": 210,
+    "question": "Tell me about Gharonda Hotel Patna",
+    "answer": "Gharonda Hotel Restaurant & Banquet in Patna is a premium property near AIIMS. It features a banquet hall, restaurant, and AC rooms. Price: ₹1500 - ₹1800 per night.",
+    "keywords": ["gharonda", "patna", "aiims", "banquet", "restaurant"]
+  },
+  {
+    "id": 211,
+    "question": "Location of Gharonda Hotel Patna?",
+    "answer": "Gharonda Hotel is located at Walmi Branch, AIIMS Patna Rd, near Bank of Baroda, Saida Nagar Colony, Patna, Bihar 801505.",
+    "keywords": ["gharonda", "location", "address", "where", "walmi", "khagaul"]
+  },
+  {
+    "id": 212,
+    "question": "Tell me about Hotel The Dev Regency Patna",
+    "answer": "Hotel The Dev Regency is a well-located hotel in Anisabad, Patna, close to the airport. It offers Wi-Fi, AC, and parking. Price: ₹1400 - ₹1800 per night.",
+    "keywords": ["dev regency", "patna", "anisabad", "airport"]
+  },
+  {
+    "id": 213,
+    "question": "Location of Hotel The Dev Regency?",
+    "answer": "It is located at Plot no. 23, Main Rd, behind UKO Bank, near Old BSNL Office, Anisabad, Patna, Bihar 800002.",
+    "keywords": ["dev regency", "location", "address", "where", "anisabad"]
+  },
+  {
+    "id": 214,
+    "question": "Tell me about Hotel Chandrashila Patna",
+    "answer": "Hotel Chandrashila is a budget-friendly option in Patna, located very close to the bus stand. It offers Wi-Fi and AC. Prices start from ₹799 per night.",
+    "keywords": ["chandrashila", "patna", "bus stand", "budget"]
+  },
+  {
+    "id": 215,
+    "question": "Location of Hotel Chandrashila?",
+    "answer": "Hotel Chandrashila is located at Bus stand, Pahari Rd, Shitala Colony, Ranipur, Patna, Bihar 800030.",
+    "keywords": ["chandrashila", "location", "address", "where", "pahari rd", "ranipur"]
+  },
+  {
+    "id": 216,
+    "question": "Tell me about Princess Home Patna",
+    "answer": "Princess Home is a highly affordable stay in Patna near Energy Park. It provides AC rooms and Wi-Fi. Prices start from just ₹699 per night.",
+    "keywords": ["princess home", "patna", "budget", "energy park", "atal path"]
+  },
+  {
+    "id": 217,
+    "question": "Location of Princess Home Patna?",
+    "answer": "Located at Zero Number Road, Atal Path, near Energy Park, Rajbansi Nagar, Patna, Bihar 801103.",
+    "keywords": ["princess home", "location", "address", "where", "rajbansi nagar"]
+  },
+  {
+    "id": 218,
+    "question": "Tell me about Hotels Ichchha Nepal",
+    "answer": "Hotels Ichchha is a luxury property in Nepal, located about 2km from Simara Airport. It offers premium amenities and comfort. Prices start from ₹4000 per night.",
+    "keywords": ["ichchha", "nepal", "luxury", "simara", "bara"]
+  },
+  {
+    "id": 219,
+    "question": "Location of Hotels Ichchha?",
+    "answer": "Hotels Ichchha is located in Gadhimai 44400, Bara District, Madhesh Province, Nepal.",
+    "keywords": ["ichchha", "location", "address", "where", "gadhimai", "nepal"]
+  },
+  {
+    "id": 220,
+    "question": "Tell me about Siddhi Vinayak Hotel Motihari (Station Road)",
+    "answer": "Siddhi Vinayak Hotel & Banquet on Station Road, Motihari, is a great choice near the railway station. It features AC rooms and a banquet. Price: ₹1500 - ₹1800 per night.",
+    "keywords": ["siddhi vinayak", "motihari", "station road", "banquet"]
+  },
+  {
+    "id": 221,
+    "question": "Location of Siddhi Vinayak Motihari (Station Road)?",
+    "answer": "Located at Station Road, near Aditya Vision, Belbawana, Motihari, Bihar 845401.",
+    "keywords": ["siddhi vinayak", "location", "address", "where", "belbawana"]
+  },
+  {
+    "id": 222,
+    "question": "Tell me about Siddhi Vinayak Hotel Motihari (Chhatauni)",
+    "answer": "The Chhatauni branch of Siddhi Vinayak Hotel & Banquet is near the bus stand in Motihari. It offers Wi-Fi, AC, and parking. Prices start from ₹1600 per night.",
+    "keywords": ["siddhi vinayak", "motihari", "chhatauni", "bus stand"]
+  },
+  {
+    "id": 223,
+    "question": "Location of Siddhi Vinayak Motihari (Chhatauni)?",
+    "answer": "Located near Narega Bal Udyan, Amar Chatauni Chowk, Bus Stand Road, Motihari, Bihar 845402.",
+    "keywords": ["siddhi vinayak", "location", "address", "where", "chhatauni"]
+  },
+  {
+    "id": 224,
+    "question": "Tell me about Hotel Friends Inn Patna",
+    "answer": "Hotel Friends Inn is a budget-friendly hotel located near Patliputra ISBT in Patna. It offers AC rooms and Wi-Fi. Prices start from ₹699 per night.",
+    "keywords": ["friends inn", "patna", "isbt", "bairiya", "budget"]
+  },
+  {
+    "id": 225,
+    "question": "Location of Hotel Friends Inn Patna?",
+    "answer": "It is located near Patliputra ISBT, Bairiya, 0 Mile, VIP Colony, Jakariyapur, Patna, Bihar 800030.",
+    "keywords": ["friends inn", "location", "address", "where", "jakariyapur"]
+  },
+  {
+    "id": 226,
+    "question": "more hotel in patna location",
+    "answer": "Sure! Here are more hotels in Patna: 1. Gharonda Hotel (AIIMS Rd), 2. Hotel The Dev Regency (Anisabad), 3. Princess Home (Rajbansi Nagar), 4. Hotel Friends Inn (ISBT), 5. Hotel Chandrashila (Bairiya Zero Mile), and 6. Hotel Nandak Grand (Danapur). Visit www.mynexttrip.in/hotels for more details.",
+    "keywords": ["more", "hotel", "patna", "location", "list", "all"]
   }
 ]

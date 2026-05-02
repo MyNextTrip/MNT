@@ -110,9 +110,33 @@ export async function POST(req: Request) {
       bookingSource: bookingSource || 'Direct',
       businessSource: businessSource || 'Walk In',
       companyName,
-      createdAt: new Date(),
       numberOfNights: Math.max(1, Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24)))
     };
+
+    // If userEmail is provided, check if a user account exists. If not, create one.
+    if (userEmail && userEmail.trim() !== "") {
+      try {
+        const { Signup } = await import('@/lib/models/Signup');
+        const { hash } = await import('bcryptjs');
+        
+        const existingUser = await Signup.findOne({ email: userEmail.toLowerCase() });
+        if (!existingUser) {
+          const defaultPassword = "mnt" + (guestPhone || "123456").toString().slice(-6);
+          const hashedPassword = await hash(defaultPassword, 10);
+          
+          await Signup.create({
+            name: guestName,
+            email: userEmail.toLowerCase(),
+            password: hashedPassword,
+            vPass: defaultPassword,
+            role: 'user'
+          });
+          console.log("Created new user account for guest:", userEmail);
+        }
+      } catch (userError) {
+        console.error("Failed to create user account for guest:", userError);
+      }
+    }
 
     console.log("Final booking data for MongoDB:", bookingData);
     const newBooking = await Booking.create(bookingData);

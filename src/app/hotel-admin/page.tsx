@@ -11,7 +11,7 @@ import {
   PlusCircle, Save, Loader2, User, Users, Bed,
   LayoutGrid, DoorOpen, CalendarCheck, Tags, Globe, UserCheck, Wallet, Sparkles, Moon, ShoppingBag, Key, BarChart3, FileDown,
   ChevronRight, Wand2, Gift, Slash, FileSearch, Contact, CreditCard, Backpack, Briefcase, Compass, UserPlus, Building, Receipt, Monitor, CheckSquare, Hammer, ListTodo, History, Plus,
-  MoveHorizontal, Replace, ArrowLeftRight, Ban, LayoutList, Printer, Send
+  MoveHorizontal, Replace, ArrowLeftRight, Ban, LayoutList, Printer, Send, Search
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
@@ -54,6 +54,7 @@ export default function HotelAdminDashboard() {
     rooms: [{ type: "", rate: 0 }]
   });
   const [editingBooking, setEditingBooking] = useState<any>(null);
+  const [expandedGuest, setExpandedGuest] = useState<string | null>(null);
 
   
   const [loadingStats, setLoadingStats] = useState(false);
@@ -816,6 +817,16 @@ export default function HotelAdminDashboard() {
                 <h1 className="text-3xl font-black text-slate-900">Manage Bookings</h1>
                 <p className="text-slate-500 mt-2 font-medium">Review and update guest reservations.</p>
               </div>
+              <div className="relative w-full max-w-xs">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input 
+                  type="text" 
+                  placeholder="Search Booking ID..." 
+                  value={resSearch}
+                  onChange={(e) => setResSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-sm"
+                />
+              </div>
             </header>
 
             <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
@@ -826,6 +837,7 @@ export default function HotelAdminDashboard() {
                                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Booking ID</th>
                                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Guest Info</th>
                                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Dates / Room</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Source / Company</th>
                                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Payment</th>
                                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</th>
                                 <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Actions</th>
@@ -833,22 +845,31 @@ export default function HotelAdminDashboard() {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loadingBookings ? (
-                                <tr><td colSpan={5} className="p-8 text-center text-slate-500"><Loader2 className="animate-spin w-6 h-6 inline-block mr-2"/>Loading bookings...</td></tr>
-                            ) : bookings.length === 0 ? (
-                                <tr><td colSpan={5} className="p-8 text-center text-slate-500">No bookings yet for your property.</td></tr>
+                                <tr><td colSpan={7} className="p-8 text-center text-slate-500"><Loader2 className="animate-spin w-6 h-6 inline-block mr-2"/>Loading bookings...</td></tr>
+                            ) : bookings.filter(b => b.bookingId?.toLowerCase().includes(resSearch.toLowerCase())).length === 0 ? (
+                                <tr><td colSpan={7} className="p-8 text-center text-slate-500">No bookings matching "{resSearch}" found.</td></tr>
                             ) : (
-                                bookings.map((b) => (
+                                bookings
+                                  .filter(b => b.bookingId?.toLowerCase().includes(resSearch.toLowerCase()))
+                                  .map((b) => (
                                     <tr key={b._id} className="hover:bg-slate-50/50 transition-colors">
                                         <td className="px-6 py-4">
                                             <span className="text-xs font-black text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-100 uppercase">{b.bookingId || b._id.substring(b._id.length - 8)}</span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <p className="font-bold text-slate-900">{b.userName}</p>
+                                            <p className="font-bold text-slate-900">{b.guestName || b.userName}</p>
                                             <p className="text-[10px] font-medium text-slate-500">{b.userEmail}</p>
+                                            <p className="text-[10px] font-bold text-indigo-600 mt-1">{b.guestPhone || 'No Phone'}</p>
                                         </td>
                                         <td className="px-6 py-4">
                                             <p className="text-xs font-bold text-slate-800">{new Date(b.checkInDate).toLocaleDateString()} - {new Date(b.checkOutDate).toLocaleDateString()}</p>
                                             <p className="text-[10px] text-slate-500 mt-1">{b.roomType} × {b.roomsCount || 1}</p>
+                                            <p className="text-[9px] text-slate-400 mt-0.5">Booked: {new Date(b.createdAt).toLocaleDateString()}</p>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <p className="text-[10px] font-black text-slate-700 uppercase tracking-tight">{b.bookingSource || 'Direct'}</p>
+                                            {b.companyName && <p className="text-[9px] font-medium text-slate-500 mt-1">Co: {b.companyName}</p>}
+                                            {b.businessSource && <p className="text-[9px] font-medium text-slate-400">Biz: {b.businessSource}</p>}
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col gap-1.5">
@@ -1001,6 +1022,197 @@ export default function HotelAdminDashboard() {
                                         </td>
                                     </tr>
                                 ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'guestdb' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4">
+            <header className="mb-8 flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-black text-slate-900">Guest Database</h1>
+                <p className="text-slate-500 mt-2 font-medium">Historical record of all guests who stayed at your property.</p>
+              </div>
+              <button 
+                onClick={() => {
+                  const gdb = Array.from(
+                    bookings.reduce((map, b) => {
+                      const key = b.userEmail || b.guestPhone || b.guestName;
+                      if (!map.has(key)) {
+                        map.set(key, {
+                          name: b.guestName || b.userName,
+                          email: b.userEmail,
+                          phone: b.guestPhone,
+                          totalBookings: 0,
+                          totalSpent: 0,
+                          lastStay: b.checkOutDate,
+                        });
+                      }
+                      const guest = map.get(key);
+                      guest.totalBookings += 1;
+                      guest.totalSpent += b.totalAmount || 0;
+                      if (new Date(b.checkOutDate) > new Date(guest.lastStay)) {
+                        guest.lastStay = b.checkOutDate;
+                      }
+                      return map;
+                    }, new Map()).values()
+                  );
+
+                  const headers = ["Guest Name", "Email", "Phone", "Total Bookings", "Total Spent (INR)", "Last Stay"];
+                  const rows = gdb.map((g: any) => [
+                    `"${g.name}"`,
+                    `"${g.email || 'N/A'}"`,
+                    `"${g.phone || 'N/A'}"`,
+                    `"${g.totalBookings}"`,
+                    `"${g.totalSpent}"`,
+                    `"${new Date(g.lastStay).toLocaleDateString()}"`
+                  ]);
+                  
+                  const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+                  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement("a");
+                  link.setAttribute("href", url);
+                  link.setAttribute("download", `Guest_Database_${hotelName.replace(/ /g, '_')}.csv`);
+                  link.click();
+                }}
+                className="flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+              >
+                <FileDown className="w-5 h-5" /> Download CSV
+              </button>
+            </header>
+
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="bg-slate-50/50 border-b border-slate-100">
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Guest Identity</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Contact Details</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Visit Frequency</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Total Revenue</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Last Visit</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                            {bookings.length === 0 ? (
+                                <tr><td colSpan={5} className="p-12 text-center text-slate-400 font-medium italic">Your guest database will populate as you receive bookings.</td></tr>
+                            ) : (
+                                Array.from(
+                                  bookings.reduce((map, b) => {
+                                    const key = b.userEmail || b.guestPhone || b.guestName;
+                                    if (!map.has(key)) {
+                                      map.set(key, {
+                                        name: b.guestName || b.userName,
+                                        email: b.userEmail,
+                                        phone: b.guestPhone,
+                                        totalBookings: 0,
+                                        totalSpent: 0,
+                                        lastStay: b.checkOutDate,
+                                      });
+                                    }
+                                    const guest = map.get(key);
+                                    guest.totalBookings += 1;
+                                    guest.totalSpent += b.totalAmount || 0;
+                                    if (new Date(b.checkOutDate) > new Date(guest.lastStay)) {
+                                      guest.lastStay = b.checkOutDate;
+                                    }
+                                    return map;
+                                  }, new Map()).values()
+                                ).map((guest: any, idx: number) => {
+                                    const guestKey = guest.email || guest.phone || guest.name;
+                                    return (
+                                    <Fragment key={idx}>
+                                    <tr 
+                                      onClick={() => setExpandedGuest(expandedGuest === guestKey ? null : guestKey)}
+                                      className={cn(
+                                        "hover:bg-slate-50/50 transition-colors cursor-pointer",
+                                        expandedGuest === guestKey && "bg-indigo-50/30"
+                                      )}
+                                    >
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-black text-sm uppercase">
+                                                    {guest.name?.charAt(0)}
+                                                </div>
+                                                <div>
+                                                  <p className="font-bold text-slate-900">{guest.name}</p>
+                                                  {expandedGuest === guestKey ? <ChevronUp className="w-3 h-3 text-indigo-500 mt-1"/> : <ChevronDown className="w-3 h-3 text-slate-400 mt-1"/>}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <p className="text-[11px] font-medium text-slate-600 flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 text-slate-400"/> {guest.email || 'N/A'}</p>
+                                            <p className="text-[11px] font-bold text-indigo-600 mt-1 flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-indigo-400"/> {guest.phone || 'N/A'}</p>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-[10px] font-black uppercase border border-amber-100">
+                                                <History className="w-3 h-3"/> {guest.totalBookings} Stay(s)
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <p className="font-black text-slate-900 flex items-center gap-1">
+                                                <IndianRupee className="w-3.5 h-3.5 text-emerald-500"/> {guest.totalSpent.toLocaleString()}
+                                            </p>
+                                        </td>
+                                        <td className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-tighter">
+                                            {new Date(guest.lastStay).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                        </td>
+                                    </tr>
+                                    {expandedGuest === guestKey && (
+                                      <tr>
+                                        <td colSpan={5} className="bg-slate-50/50 p-6 border-b border-indigo-100/50">
+                                           <div className="animate-in slide-in-from-top-2 duration-300">
+                                              <div className="flex items-center justify-between mb-4">
+                                                <h4 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] flex items-center gap-2">
+                                                  <Calendar className="w-3.5 h-3.5" /> Complete Stay History
+                                                </h4>
+                                                <span className="text-[9px] font-bold text-slate-400">Total Bookings: {guest.totalBookings}</span>
+                                              </div>
+                                              <div className="grid gap-3">
+                                                 {bookings
+                                                   .filter(b => (b.userEmail || b.guestPhone || b.guestName) === guestKey)
+                                                   .sort((a, b) => new Date(b.checkInDate).getTime() - new Date(a.checkInDate).getTime())
+                                                   .map((history) => (
+                                                    <div key={history._id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between hover:border-indigo-200 transition-colors">
+                                                       <div className="flex items-center gap-4">
+                                                          <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
+                                                            <BedDouble className="w-5 h-5" />
+                                                          </div>
+                                                          <div>
+                                                            <p className="text-sm font-bold text-slate-900">{history.roomType} <span className="text-[10px] text-slate-400 ml-1">× {history.roomsCount}</span></p>
+                                                            <p className="text-[10px] font-medium text-slate-500 mt-0.5">
+                                                              {new Date(history.checkInDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })} - {new Date(history.checkOutDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                              <span className="mx-2">•</span>
+                                                              {history.numberOfNights} Night(s)
+                                                            </p>
+                                                          </div>
+                                                       </div>
+                                                       <div className="text-right">
+                                                          <p className="text-sm font-black text-slate-900">₹{history.totalAmount?.toLocaleString()}</p>
+                                                          <div className="flex items-center gap-2 justify-end mt-1">
+                                                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{history.bookingId}</span>
+                                                            <span className={cn(
+                                                              "text-[8px] font-black uppercase px-2 py-0.5 rounded-full border",
+                                                              history.reservationStatus === 'Confirmed' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                                              history.reservationStatus === 'Checked-In' ? "bg-indigo-50 text-indigo-600 border-indigo-100" : "bg-slate-50 text-slate-600 border-slate-100"
+                                                            )}>{history.reservationStatus}</span>
+                                                          </div>
+                                                       </div>
+                                                    </div>
+                                                 ))}
+                                              </div>
+                                           </div>
+                                        </td>
+                                      </tr>
+                                    )}
+                                    </Fragment>
+                                    );
+                                  })
                             )}
                         </tbody>
                     </table>
@@ -1831,7 +2043,7 @@ export default function HotelAdminDashboard() {
         )}
 
         {['rates', 'distribution', 'guest', 'cashiering', 'housekeeping', 'nightaudit', 'b2b', 'netlocks', 'reports', 'exported', 
-          'ratewizard', 'packages', 'stopsell', 'channellogs', 'guestdb', 'unsettled', 'lostfound', 'travelagent', 'businesssource', 'salesperson', 'companydb', 'expensevoucher', 'pos', 'housestatus', 'maintenanceblock', 'workorder', 'nightaudit_main', 'nightauditlog', 'inserttransaction'].includes(activeTab) && (
+          'ratewizard', 'packages', 'stopsell', 'channellogs', 'unsettled', 'lostfound', 'travelagent', 'businesssource', 'salesperson', 'companydb', 'expensevoucher', 'pos', 'housestatus', 'maintenanceblock', 'workorder', 'nightaudit_main', 'nightauditlog', 'inserttransaction'].includes(activeTab) && (
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-slate-400 animate-in fade-in zoom-in-95">
               <div className="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mb-8 border-4 border-white shadow-xl">
                   <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
