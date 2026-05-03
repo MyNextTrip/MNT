@@ -1306,19 +1306,7 @@ export default function AdminDashboard() {
                                                 <option value="QR">QR Code</option>
                                             </select>
                                         </div>
-                                        {checkInForm?.paymentMethod === 'QR' && (
-                                            <div className="flex flex-col items-center gap-2 p-3 bg-white rounded-xl border border-indigo-100 mt-1 animate-in zoom-in-95">
-                                                <p className="text-[9px] font-black text-indigo-600 uppercase tracking-widest">Scan to Pay</p>
-                                                <div className="w-24 h-24 bg-slate-50 rounded-lg flex items-center justify-center p-1 border border-slate-100">
-                                                    <img 
-                                                        src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=MNT-Booking-Payment" 
-                                                        alt="Payment QR" 
-                                                        className="w-full h-full object-contain"
-                                                    />
-                                                </div>
-                                                <p className="text-[8px] font-bold text-slate-400">Merchant: MyNextTrip</p>
-                                            </div>
-                                        )}
+
                                         <div className="flex gap-1.5 pt-1">
                                             <button 
                                                 onClick={() => {

@@ -55,6 +55,7 @@ export default function HotelAdminDashboard() {
   });
   const [editingBooking, setEditingBooking] = useState<any>(null);
   const [expandedGuest, setExpandedGuest] = useState<string | null>(null);
+  const [checkOutConfirm, setCheckOutConfirm] = useState<any | null>(null);
 
   
   const [loadingStats, setLoadingStats] = useState(false);
@@ -851,7 +852,16 @@ export default function HotelAdminDashboard() {
                             ) : (
                                 bookings
                                   .filter(b => b.bookingId?.toLowerCase().includes(resSearch.toLowerCase()))
-                                  .map((b) => (
+                                  .map((b) => {
+                                    const checkInDate = new Date(b.checkInDate);
+                                    checkInDate.setHours(0,0,0,0);
+                                    const todayDate = new Date();
+                                    todayDate.setHours(0,0,0,0);
+                                    const isAfterArrival = todayDate >= checkInDate;
+                                    const isPast11AM = new Date().getHours() >= 11;
+                                    const isNoShow = isAfterArrival && isPast11AM && b.reservationStatus === 'Confirmed';
+
+                                    return (
                                     <tr key={b._id} className="hover:bg-slate-50/50 transition-colors">
                                         <td className="px-6 py-4">
                                             <span className="text-xs font-black text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-100 uppercase">{b.bookingId || b._id.substring(b._id.length - 8)}</span>
@@ -903,12 +913,13 @@ export default function HotelAdminDashboard() {
                                         <td className="px-6 py-4">
                                             <span className={cn(
                                                 "text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider border",
+                                                isNoShow ? "bg-rose-600 text-white border-rose-600" :
                                                 b.reservationStatus === 'Confirmed' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
                                                 b.reservationStatus === 'Checked-In' ? "bg-indigo-50 text-indigo-600 border-indigo-100" :
                                                 b.reservationStatus === 'Pending' ? "bg-amber-50 text-amber-600 border-amber-100" :
                                                 "bg-red-50 text-red-600 border-red-100"
                                             )}>
-                                                {b.reservationStatus}
+                                                {isNoShow ? 'No-Show' : b.reservationStatus}
                                             </span>
                                             {b.assignedRoomNumber && (
                                                 <p className="text-[9px] font-bold text-indigo-500 mt-1 uppercase tracking-tighter">Room: {b.assignedRoomNumber}</p>
@@ -942,19 +953,7 @@ export default function HotelAdminDashboard() {
                                                                 <option value="QR">QR Code</option>
                                                             </select>
                                                         </div>
-                                                        {checkInForm?.paymentMethod === 'QR' && (
-                                                            <div className="flex flex-col items-center gap-2 p-3 bg-white rounded-xl border border-indigo-100 mt-1 animate-in zoom-in-95">
-                                                                <p className="text-[9px] font-black text-indigo-600 uppercase tracking-widest">Scan to Pay</p>
-                                                                <div className="w-28 h-28 bg-slate-50 rounded-lg flex items-center justify-center p-1 border border-slate-100">
-                                                                    <img 
-                                                                        src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=MNT-Booking-Payment" 
-                                                                        alt="Payment QR" 
-                                                                        className="w-full h-full object-contain"
-                                                                    />
-                                                                </div>
-                                                                <p className="text-[8px] font-bold text-slate-400">Merchant: MyNextTrip</p>
-                                                            </div>
-                                                        )}
+
                                                         <div className="flex gap-1.5 pt-1">
                                                             <button 
                                                                 onClick={() => {
@@ -974,54 +973,76 @@ export default function HotelAdminDashboard() {
                                                     </div>
                                                 )}
                                                 {checkInForm?.bookingId !== b._id && (
-                                                    <div className="flex gap-2">
-                                                        {(b.reservationStatus === 'Confirmed' || b.reservationStatus === 'Checked-In') && (
-                                                            <button 
-                                                                onClick={() => {
-                                                                    if (b.reservationStatus === 'Checked-In') {
-                                                                        if (window.confirm("Are you want to update checkIn?")) {
-                                                                            setCheckInForm({ 
-                                                                                bookingId: b._id, 
-                                                                                roomNumber: b.assignedRoomNumber || '', 
-                                                                                paymentMethod: b.paymentMethod || '' 
-                                                                            });
-                                                                        }
-                                                                    } else {
-                                                                        setCheckInForm({ bookingId: b._id, roomNumber: '', paymentMethod: '' });
-                                                                    }
-                                                                }}
-                                                                className={cn(
-                                                                    "px-3 py-1.5 text-[10px] font-black rounded-lg transition-colors shadow-sm uppercase tracking-wider",
-                                                                    b.reservationStatus === 'Checked-In' 
-                                                                        ? "bg-slate-100 text-slate-600 hover:bg-slate-200" 
-                                                                        : "bg-indigo-600 text-white hover:bg-indigo-700"
+                                                    <div className="flex gap-2 items-center">
+                                                        {isNoShow ? (
+                                                            <div className="flex flex-col items-center gap-1">
+                                                                <span className="text-[10px] font-black text-white bg-rose-600 px-4 py-2 rounded-lg shadow-lg shadow-rose-100 uppercase tracking-widest animate-pulse border-2 border-rose-500">NoShow</span>
+                                                                <p className="text-[8px] font-black text-rose-500 uppercase">System Flagged</p>
+                                                            </div>
+                                                        ) : (
+                                                            <>
+                                                                {(b.reservationStatus === 'Confirmed' || b.reservationStatus === 'Checked-In') && (
+                                                                    <div className="flex gap-1.5">
+                                                                        <button 
+                                                                            onClick={() => {
+                                                                                if (b.reservationStatus === 'Checked-In') {
+                                                                                    if (window.confirm("Are you want to update checkIn?")) {
+                                                                                        setCheckInForm({ 
+                                                                                            bookingId: b._id, 
+                                                                                            roomNumber: b.assignedRoomNumber || '', 
+                                                                                            paymentMethod: b.paymentMethod || '' 
+                                                                                        });
+                                                                                    }
+                                                                                } else {
+                                                                                    setCheckInForm({ bookingId: b._id, roomNumber: '', paymentMethod: '' });
+                                                                                }
+                                                                            }}
+                                                                            className={cn(
+                                                                                "px-3 py-1.5 text-[10px] font-black rounded-lg transition-colors shadow-sm uppercase tracking-wider",
+                                                                                b.reservationStatus === 'Checked-In' 
+                                                                                    ? "bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200" 
+                                                                                    : "bg-indigo-600 text-white hover:bg-indigo-700"
+                                                                            )}
+                                                                        >
+                                                                            {b.reservationStatus === 'Checked-In' ? 'Update' : 'Check-In'}
+                                                                        </button>
+                                                                        {b.reservationStatus === 'Checked-In' && (
+                                                                            <button 
+                                                                                onClick={() => setCheckOutConfirm(b)}
+                                                                                className="px-3 py-1.5 text-[10px] font-black rounded-lg bg-rose-600 text-white hover:bg-rose-700 transition-colors shadow-sm uppercase tracking-wider"
+                                                                            >
+                                                                                Check-Out
+                                                                            </button>
+                                                                        )}
+                                                                    </div>
                                                                 )}
-                                                            >
-                                                                {b.reservationStatus === 'Checked-In' ? 'Update' : 'Check-In'}
-                                                            </button>
+                                                                {b.reservationStatus === 'Pending' && (
+                                                                    <button 
+                                                                        onClick={() => handleUpdateBookingStatus(b._id, 'Confirmed')}
+                                                                        className="p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors shadow-sm"
+                                                                        title="Confirm Booking"
+                                                                    >
+                                                                        <CheckCircle2 className="w-4 h-4" />
+                                                                    </button>
+                                                                )}
+                                                                {b.reservationStatus !== 'Checked-Out' && b.reservationStatus !== 'Checked-In' && (
+                                                                    <button 
+                                                                        onClick={() => handleUpdateBookingStatus(b._id, 'Cancelled')}
+                                                                        className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-colors border border-red-100"
+                                                                        title="Cancel Booking"
+                                                                    >
+                                                                        <X className="w-4 h-4" />
+                                                                    </button>
+                                                                )}
+                                                            </>
                                                         )}
-                                                        {b.reservationStatus === 'Pending' && (
-                                                            <button 
-                                                                onClick={() => handleUpdateBookingStatus(b._id, 'Confirmed')}
-                                                                className="p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors shadow-sm"
-                                                                title="Confirm Booking"
-                                                            >
-                                                                <CheckCircle2 className="w-4 h-4" />
-                                                            </button>
-                                                        )}
-                                                        <button 
-                                                            onClick={() => handleUpdateBookingStatus(b._id, 'Cancelled')}
-                                                            className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-colors border border-red-100"
-                                                            title="Cancel Booking"
-                                                        >
-                                                            <X className="w-4 h-4" />
-                                                        </button>
                                                     </div>
                                                 )}
                                             </div>
                                         </td>
                                     </tr>
-                                ))
+                                    );
+                                  })
                             )}
                         </tbody>
                     </table>
@@ -1395,7 +1416,7 @@ export default function HotelAdminDashboard() {
                           
                           {/* Booking Bars */}
                           {bookings
-                            .filter(b => roomAssignments[b._id] === room.id && b.reservationStatus !== 'Cancelled')
+                            .filter(b => roomAssignments[b._id] === room.id && !['Cancelled', 'Checked-Out', 'No-Show'].includes(b.reservationStatus))
                             .map(booking => {
                               const checkIn = new Date(booking.checkInDate);
                               const checkOut = new Date(booking.checkOutDate);
@@ -1465,7 +1486,7 @@ export default function HotelAdminDashboard() {
                 today.setHours(0, 0, 0, 0);
                 
                 const currentBooking = bookings.find(b => {
-                  if (b.reservationStatus === 'Cancelled') return false;
+                  if (['Cancelled', 'Checked-Out', 'No-Show'].includes(b.reservationStatus)) return false;
                   
                   // Check if this room is explicitly assigned to this booking
                   if (b.assignedRoomNumber) {
@@ -1486,7 +1507,7 @@ export default function HotelAdminDashboard() {
                 });
 
                 const upcomingBooking = !currentBooking && bookings.find(b => {
-                  if (b.reservationStatus === 'Cancelled') return false;
+                  if (['Cancelled', 'Checked-Out', 'No-Show'].includes(b.reservationStatus)) return false;
 
                   // Check if this room is explicitly assigned to this booking
                   if (b.assignedRoomNumber) {
@@ -2059,7 +2080,76 @@ export default function HotelAdminDashboard() {
           </div>
         )}
       </main>
+
+      {/* Check-Out Confirmation Modal */}
+      {checkOutConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-[32px] shadow-2xl border border-slate-100 w-full max-w-md overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-300">
+            <div className="relative h-32 bg-rose-600 flex items-center justify-center">
+              <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
+              <div className="bg-white/20 p-4 rounded-full backdrop-blur-md">
+                 <LogOut className="w-10 h-10 text-white" />
+              </div>
+              <button 
+                onClick={() => setCheckOutConfirm(null)}
+                className="absolute top-6 right-6 text-white/80 hover:text-white transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="p-8">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl font-black text-slate-900">Guest Check-Out</h2>
+                <p className="text-slate-500 font-medium text-sm mt-1">Review guest details before confirming departure.</p>
+              </div>
+              
+              <div className="space-y-4 bg-slate-50 p-6 rounded-3xl border border-slate-100 mb-8">
+                <div className="flex justify-between items-center pb-3 border-b border-slate-200/50">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Booking ID</span>
+                  <span className="text-xs font-black text-amber-600 bg-amber-100/50 px-2 py-0.5 rounded uppercase">#{checkOutConfirm.bookingId || checkOutConfirm._id.substring(checkOutConfirm._id.length - 8)}</span>
+                </div>
+                <div className="flex justify-between items-center pb-3 border-b border-slate-200/50">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Guest Name</span>
+                  <span className="text-xs font-black text-slate-900">{checkOutConfirm.guestName || checkOutConfirm.userName}</span>
+                </div>
+                <div className="flex justify-between items-center pb-3 border-b border-slate-200/50">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Mobile</span>
+                  <span className="text-xs font-bold text-indigo-600">{checkOutConfirm.guestPhone || 'N/A'}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email</span>
+                  <span className="text-xs font-bold text-slate-600">{checkOutConfirm.userEmail || 'N/A'}</span>
+                </div>
+              </div>
+
+              <div className="text-center mb-8">
+                 <p className="text-lg font-black text-slate-800">Are you sure checkOut?</p>
+                 <p className="text-xs font-medium text-slate-400 mt-1">This will vacate room {checkOutConfirm.assignedRoomNumber} and settle the stay.</p>
+              </div>
+
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setCheckOutConfirm(null)}
+                  className="flex-1 h-12 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all uppercase text-xs"
+                >
+                  Not Now
+                </button>
+                <button 
+                  onClick={() => {
+                    handleUpdateBookingStatus(checkOutConfirm._id, 'Checked-Out');
+                    setCheckOutConfirm(null);
+                  }}
+                  className="flex-1 h-12 bg-rose-600 text-white font-black rounded-2xl hover:bg-rose-700 shadow-lg shadow-rose-200 transition-all uppercase text-xs"
+                >
+                  Confirm Check-Out
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   </div>
-  );
+);
 }
