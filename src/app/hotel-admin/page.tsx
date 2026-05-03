@@ -11,7 +11,7 @@ import {
   PlusCircle, Save, Loader2, User, Users, Bed,
   LayoutGrid, DoorOpen, CalendarCheck, Tags, Globe, UserCheck, Wallet, Sparkles, Moon, ShoppingBag, Key, BarChart3, FileDown,
   ChevronRight, Wand2, Gift, Slash, FileSearch, Contact, CreditCard, Backpack, Briefcase, Compass, UserPlus, Building, Receipt, Monitor, CheckSquare, Hammer, ListTodo, History, Plus,
-  MoveHorizontal, Replace, ArrowLeftRight, Ban, LayoutList, Printer, Send, Search
+  MoveHorizontal, Replace, ArrowLeftRight, Ban, LayoutList, Printer, Send, Search, Mail, Phone
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";

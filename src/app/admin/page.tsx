@@ -1324,8 +1324,8 @@ export default function AdminDashboard() {
                                                 onClick={() => {
                                                     if (!checkInForm?.roomNumber || !checkInForm?.paymentMethod) return alert("Please select both room and payment method");
                                                     handleUpdateBookingStatus(b._id, 'Checked-In', { 
-                                                        assignedRoomNumber: checkInForm.roomNumber, 
-                                                        paymentMethod: checkInForm.paymentMethod 
+                                                        assignedRoomNumber: checkInForm?.roomNumber || '', 
+                                                        paymentMethod: checkInForm?.paymentMethod || '' 
                                                     });
                                                     setCheckInForm(null);
                                                 }}
