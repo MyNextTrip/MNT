@@ -29,31 +29,11 @@ export async function PUT(
     const params = await props.params;
     const hotelId = params.id;
     
-    // Process FormData for multimedia support
-    const formData = await req.formData();
-    const roomsString = formData.get('rooms') as string;
-    const rooms = JSON.parse(roomsString);
+    // Process JSON body for Base64 image support
+    const { rooms } = await req.json();
 
     if (!rooms) {
       return NextResponse.json({ success: false, message: 'Rooms data is required' }, { status: 400 });
-    }
-
-    const { mkdir, writeFile } = await import('fs/promises');
-    const path = await import('path');
-    const uploadDir = path.join(process.cwd(), 'public/uploads');
-    try { await mkdir(uploadDir, { recursive: true }); } catch (e) {}
-
-    // Intercept physical room-specific uploads from hotel admin
-    for (let i = 0; i < rooms.length; i++) {
-        const roomFile = formData.get(`roomImage_${i}`) as File;
-        if (roomFile && roomFile.name) {
-            const bytes = await roomFile.arrayBuffer();
-            const buffer = Buffer.from(bytes);
-            const fileName = `room-${Date.now()}-${roomFile.name.replace(/\s+/g, '-')}`;
-            const filePath = path.join(uploadDir, fileName);
-            await writeFile(filePath, buffer);
-            rooms[i].image = `/uploads/${fileName}`;
-        }
     }
 
     await connectToDatabase();

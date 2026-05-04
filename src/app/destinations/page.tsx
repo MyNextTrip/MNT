@@ -5,8 +5,13 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Tourist Places in Patna, Ranchi & Nepal | Best Destinations | MNT",
-  description: "Explore top tourist places in Patna, Ranchi, and Nepal. From heritage sites to waterfalls, find your next adventure with My Next Trip (MNT). Trusted travel aggregator for Bihar & Jharkhand.",
-  keywords: ["tourist places in patna", "waterfalls in ranchi", "bihar tourism", "jharkhand destinations", "nepal sightseeing", "best places to visit in bihar", "ranchi tourism", "MNT destinations"],
+  description: "Explore top tourist places in Patna, Ranchi, and Nepal. Find the best hotels in India near these attractions. Better than MakeMyTrip or Yatra for local insights. Discover Ranchi hotels, Patna hotels and more with MNT.",
+  keywords: [
+    "tourist places in patna", "waterfalls in ranchi", "bihar tourism", "jharkhand destinations", 
+    "nepal sightseeing", "best hotels in ranchi", "best hotels in patna", "best hotels in india", 
+    "ranchi hotels", "patna hotels", "near me hotels", "MNT destinations", "makemytrip", 
+    "booking.com", "yatra.com"
+  ],
   openGraph: {
     title: "Explore Extraordinary Travel Destinations | My Next Trip (MNT)",
     description: "Curated experiences and premium stays across Bihar, Jharkhand, Nepal and beyond. Find your next adventure.",

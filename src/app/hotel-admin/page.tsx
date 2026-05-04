@@ -11,7 +11,7 @@ import {
   PlusCircle, Save, Loader2, User, Users, Bed,
   LayoutGrid, DoorOpen, CalendarCheck, Tags, Globe, UserCheck, Wallet, Sparkles, Moon, ShoppingBag, Key, BarChart3, FileDown,
   ChevronRight, Wand2, Gift, Slash, FileSearch, Contact, CreditCard, Backpack, Briefcase, Compass, UserPlus, Building, Receipt, Monitor, CheckSquare, Hammer, ListTodo, History, Plus,
-  MoveHorizontal, Replace, ArrowLeftRight, Ban, LayoutList, Printer, Send, Search, Mail, Phone
+  MoveHorizontal, Replace, ArrowLeftRight, Ban, LayoutList, Printer, Send, Search, Mail, Phone, Eye
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
@@ -292,32 +292,50 @@ export default function HotelAdminDashboard() {
     setHotelData({ ...hotelData, rooms: newRooms });
   };
 
-  const handleUpdateRoomImage = (index: number, file: File) => {
+  const handleUpdateRoomImage = async (index: number, file: File) => {
     if (!hotelData) return;
-    const newRooms = [...hotelData.rooms];
-    newRooms[index] = { ...newRooms[index], roomImageFile: file };
-    setHotelData({ ...hotelData, rooms: newRooms });
+    
+    try {
+      setIsSaving(true);
+      
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Upload failed: ${errorText}`);
+      }
+
+      const data = await res.json();
+      if (data.success) {
+        const newRooms = [...hotelData.rooms];
+        newRooms[index] = { ...newRooms[index], image: data.url };
+        setHotelData({ ...hotelData, rooms: newRooms });
+        alert("Image uploaded successfully to Cloudinary!");
+      } else {
+        alert("Upload failed: " + (data.message || "Unknown error"));
+      }
+    } catch (e) {
+      console.error("Failed to upload image:", e);
+      alert("Error uploading image to Cloudinary. Please check your connection and try again.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleSaveInventory = async () => {
     try {
       setIsSaving(true);
       
-      const submitData = new FormData();
-      // Remove File objects before stringifying JSON
-      const roomsForJson = hotelData.rooms.map(({ roomImageFile, ...rest }: any) => rest);
-      submitData.append('rooms', JSON.stringify(roomsForJson));
-
-      // Append files
-      hotelData.rooms.forEach((room: any, idx: number) => {
-        if (room.roomImageFile) {
-          submitData.append(`roomImage_${idx}`, room.roomImageFile);
-        }
-      });
-
       const res = await fetch(`/api/hotel-admin/hotels/${hotelId}`, {
         method: 'PUT',
-        body: submitData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rooms: hotelData.rooms })
       });
       if (!res.ok) {
         const text = await res.text();
@@ -579,50 +597,88 @@ export default function HotelAdminDashboard() {
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}>
           <div className="p-8 border-b border-slate-800 hidden lg:block bg-indigo-950/20">
-            <p className="text-xs text-slate-500 font-black uppercase tracking-[0.2em]">Logged in as</p>
-            <h2 className="text-xl font-black tracking-tight text-white mt-1">Admin Panel</h2>
-            <p className="text-[10px] text-amber-400/70 mt-1 font-bold truncate">{hotelName}</p>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="bg-amber-400 p-2.5 rounded-2xl text-indigo-950 shadow-lg shadow-amber-400/20">
+                <Building2 className="w-6 h-6" />
+              </div>
+              <h2 className="text-xl font-black tracking-tighter text-white leading-none">HOTEL ADMIN<br/><span className="text-amber-400 text-xs tracking-[0.3em]">PORTAL</span></h2>
+            </div>
+            <p className="text-[10px] text-slate-500 font-bold truncate opacity-60">Property: {hotelName}</p>
           </div>
         
         <div className="p-4 space-y-1 flex-1 overflow-y-auto no-scrollbar">
-          <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] px-4 mb-3">Operations</p>
-          {[
-            { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-            { id: 'bookings', label: 'Manage Bookings', icon: Calendar },
-            { id: 'inventory', label: 'Room Inventory', icon: BedDouble },
-            { id: 'stayview', label: 'Stayview', icon: LayoutGrid },
-            { id: 'roomview', label: 'Room View', icon: DoorOpen },
-            { id: 'reservation', label: 'Reservation', icon: CalendarCheck },
-            { 
-              id: 'rates', 
-              label: 'Rates & Availability', 
-              icon: Tags,
-              subItems: [
-                { id: 'ratewizard', label: 'Rate Wizard', icon: Wand2 },
-                { id: 'packages', label: 'Packages & Promotions', icon: Gift }
-              ]
-            },
-            { 
-              id: 'distribution', 
-              label: 'Distribution', 
-              icon: Globe,
-              subItems: [
-                { id: 'stopsell', label: 'Auto Stopsell', icon: Slash },
-                { id: 'channellogs', label: 'Channel Logs', icon: FileSearch }
-              ]
-            },
-            { 
-              id: 'guest', 
-              label: 'Guest', 
-              icon: UserCheck,
-              subItems: [
-                { id: 'guestdb', label: 'Guest Database', icon: Contact },
-                { id: 'unsettled', label: 'UnSettled Folios', icon: CreditCard },
-                { id: 'lostfound', label: 'Lost & Found', icon: Backpack }
-              ]
-            },
-            { 
-              id: 'cashiering', 
+            <div className="pt-4 pb-2 px-4">
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-3">Front Office</p>
+            </div>
+            {[
+              { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+              { id: 'bookings', label: 'Manage Bookings', icon: Calendar },
+              { id: 'inventory', label: 'Room Inventory', icon: BedDouble },
+              { id: 'stayview', label: 'Stayview', icon: LayoutGrid },
+              { id: 'roomview', label: 'Room View', icon: DoorOpen },
+              { id: 'reservation', label: 'Reservation', icon: CalendarCheck },
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={cn(
+                  "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative",
+                  activeTab === item.id 
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20" 
+                    : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                )}
+              >
+                <item.icon className={cn("w-5 h-5", activeTab === item.id ? "text-white" : "text-slate-500 group-hover:text-indigo-400")} />
+                <span className="text-sm font-bold">{item.label}</span>
+                {activeTab === item.id && <div className="absolute right-2 w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />}
+              </button>
+            ))}
+
+            <div className="pt-6 pb-2 px-4">
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-3">Guest Management</p>
+            </div>
+            {[
+              { 
+                id: 'guest', 
+                label: 'Guest', 
+                icon: UserCheck,
+                subItems: [
+                  { id: 'guestdb', label: 'Guest Database', icon: Contact },
+                  { id: 'unsettled', label: 'UnSettled Folios', icon: CreditCard },
+                  { id: 'lostfound', label: 'Lost & Found', icon: Backpack }
+                ]
+              },
+            ].map((item) => (
+              <div key={item.id} className="space-y-1">
+                <div className="flex items-center justify-between px-4 py-3 text-slate-400 font-bold text-sm">
+                   <div className="flex items-center gap-3">
+                      <item.icon className="w-5 h-5 text-slate-500" />
+                      <span>{item.label}</span>
+                   </div>
+                   <ChevronDown className="w-4 h-4 opacity-50" />
+                </div>
+                <div className="pl-9 space-y-1">
+                  {item.subItems.map((sub) => (
+                    <button
+                      key={sub.id}
+                      onClick={() => setActiveTab(sub.id)}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-left group",
+                        activeTab === sub.id 
+                          ? "text-amber-400 bg-amber-400/10" 
+                          : "text-slate-500 hover:text-slate-200 hover:bg-slate-800/50"
+                      )}
+                    >
+                      <sub.icon className={cn("w-4 h-4", activeTab === sub.id ? "text-amber-400" : "text-slate-600 group-hover:text-slate-400")} />
+                      <span className="text-xs font-bold">{sub.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {[
+              {
+                id: 'cashiering', 
               label: 'Cashiering', 
               icon: Wallet,
               subItems: [
@@ -1241,6 +1297,123 @@ export default function HotelAdminDashboard() {
             </div>
           </div>
         )}
+        {activeTab === 'unsettled' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 space-y-8">
+            <header className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-black text-slate-900 tracking-tight">Guest / UnSettled Folios</h1>
+                <p className="text-slate-500 mt-1 font-medium">Manage and settle outstanding guest balances and invoices.</p>
+              </div>
+              <div className="flex gap-3">
+                <button className="flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 font-bold hover:bg-slate-50 transition-all shadow-sm">
+                  <FileDown className="w-4 h-4" /> Export to CSV
+                </button>
+              </div>
+            </header>
+
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { label: "Total Unsettled Balances", value: "₹1,25,000", color: "text-rose-600", bg: "bg-rose-50", icon: Wallet },
+                { label: "Count of Folios", value: "18", color: "text-indigo-600", bg: "bg-indigo-50", icon: Receipt },
+                { label: "Folios due > 7 days", value: "3", color: "text-amber-600", bg: "bg-amber-50", icon: Clock },
+              ].map((card, i) => (
+                <div key={i} className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-center justify-between group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{card.label}</p>
+                    <p className={cn("text-3xl font-black", card.color)}>{card.value}</p>
+                  </div>
+                  <div className={cn("p-4 rounded-2xl group-hover:scale-110 transition-transform duration-500", card.bg)}>
+                    <card.icon className={cn("w-6 h-6", card.color)} />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Table Controls */}
+            <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm">
+              <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+                <div className="flex flex-wrap gap-3 items-center w-full lg:w-auto">
+                   <div className="relative flex-1 lg:w-64">
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                      <input type="text" placeholder="Search Guest / Room / Folio..." className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 font-bold text-sm" />
+                   </div>
+                   <select className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-xs outline-none">
+                      <option>Today</option>
+                      <option>Yesterday</option>
+                      <option>This Week</option>
+                   </select>
+                   <select className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-xs outline-none">
+                      <option>All Room Types</option>
+                      <option>Deluxe</option>
+                      <option>Suite</option>
+                   </select>
+                   <select className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-xs outline-none">
+                      <option>All Status</option>
+                      <option>Pending</option>
+                      <option>Partial</option>
+                   </select>
+                </div>
+              </div>
+
+              {/* Folio Table */}
+              <div className="mt-8 overflow-hidden rounded-2xl border border-slate-100">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50/50 border-b border-slate-100">
+                      {["Folio ID", "Guest Name", "Room", "Checkout", "Stay", "Total Bill", "Paid", "Balance Due", "Actions"].map(h => (
+                        <th key={h} className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {[
+                      { id: '#F00123', guest: 'Rahul Sharma', room: '301', checkout: '2024-05-20', duration: '3 Nights', total: 15500, paid: 10000, balance: 5500 },
+                      { id: '#F00124', guest: 'Priya Singh', room: '105', checkout: '2024-05-19', duration: '2 Nights', total: 8200, paid: 0, balance: 8200 },
+                      { id: '#F00125', guest: 'Anjali Gupta', room: '202', checkout: '2024-05-21', duration: '4 Nights', total: 22000, paid: 15000, balance: 7000 },
+                      { id: '#F00126', guest: 'Vikram Patel', room: '404', checkout: '2024-05-18', duration: '1 Night', total: 4500, paid: 2000, balance: 2500 },
+                      { id: '#F00127', guest: 'Sarah Chen', room: '501', checkout: '2024-05-22', duration: '5 Nights', total: 35000, paid: 10000, balance: 25000 },
+                    ].map((row, i) => (
+                      <tr key={i} className="hover:bg-slate-50/50 transition-colors group">
+                        <td className="px-6 py-4 text-xs font-black text-indigo-600">{row.id}</td>
+                        <td className="px-6 py-4">
+                          <p className="font-bold text-slate-900 text-sm">{row.guest}</p>
+                          <p className="text-[10px] text-slate-400 font-medium">Verified Guest</p>
+                        </td>
+                        <td className="px-6 py-4 text-xs font-black text-slate-600">RM {row.room}</td>
+                        <td className="px-6 py-4 text-xs font-bold text-slate-500">{row.checkout}</td>
+                        <td className="px-6 py-4 text-xs font-bold text-slate-500">{row.duration}</td>
+                        <td className="px-6 py-4 text-xs font-black text-slate-900">₹{row.total.toLocaleString()}</td>
+                        <td className="px-6 py-4 text-xs font-black text-emerald-600">₹{row.paid.toLocaleString()}</td>
+                        <td className="px-6 py-4">
+                           <span className="text-xs font-black text-rose-600 bg-rose-50 px-2 py-1 rounded">₹{row.balance.toLocaleString()}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex gap-2">
+                             <button className="px-3 py-1.5 bg-emerald-600 text-white text-[10px] font-black rounded-lg hover:bg-emerald-700 transition-all shadow-md shadow-emerald-600/20 uppercase tracking-tighter">Settle</button>
+                             <button className="px-3 py-1.5 bg-rose-50 text-rose-600 text-[10px] font-black rounded-lg hover:bg-rose-600 hover:text-white transition-all border border-rose-100 uppercase tracking-tighter">Invoice</button>
+                             <button className="p-1.5 text-slate-400 hover:text-indigo-600 transition-colors"><Eye className="w-4 h-4" /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'lostfound' && (
+          <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-12 bg-white rounded-[40px] border border-slate-100 shadow-sm animate-in fade-in slide-in-from-bottom-4">
+             <div className="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mb-6">
+                <Backpack className="w-10 h-10 text-indigo-600" />
+             </div>
+             <h2 className="text-2xl font-black text-slate-900">Lost & Found Registry</h2>
+             <p className="text-slate-500 mt-2 max-w-sm font-medium">Track items left behind by guests. This module is currently being synchronized with housekeeping.</p>
+             <button className="mt-8 px-8 py-3 bg-indigo-600 text-white font-black rounded-2xl shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95 transition-all uppercase text-xs tracking-widest">Register New Item</button>
+          </div>
+        )}
 
         {activeTab === 'inventory' && (
           <div className="animate-in fade-in slide-in-from-bottom-4">
@@ -1325,18 +1498,16 @@ export default function HotelAdminDashboard() {
                                 <div className="w-full lg:w-48 space-y-2">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-indigo-600">Room Photo</label>
                                     <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 overflow-hidden shrink-0">
-                                            {room.roomImageFile ? (
-                                                <img src={URL.createObjectURL(room.roomImageFile)} className="w-full h-full object-cover" />
-                                            ) : room.image ? (
+                                        <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
+                                            {room.image ? (
                                                 <img src={room.image} className="w-full h-full object-cover" />
                                             ) : (
-                                                <BedDouble className="w-5 h-5 text-slate-300 m-auto mt-3.5" />
+                                                <BedDouble className="w-5 h-5 text-slate-300" />
                                             )}
                                         </div>
                                         <label className="flex-1 cursor-pointer">
                                             <div className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:bg-amber-50 hover:border-amber-400 transition-all text-center">
-                                                {room.image || room.roomImageFile ? 'Change' : 'Upload'}
+                                                {room.image ? 'Change' : 'Upload'}
                                             </div>
                                             <input 
                                                 type="file" accept="image/*" className="hidden" 

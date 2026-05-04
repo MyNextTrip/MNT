@@ -5,12 +5,17 @@ import connectToDatabase from "@/lib/mongodb";
 import { Hotel } from "@/lib/models/Hotel";
 
 export const metadata: Metadata = {
-  title: "Hotels in Patna, Ranchi, Motihari & Nepal | Direct Booking | MNT",
-  description: "Find the best hotels in Patna, Ranchi, Motihari, and Nepal. Book luxury stays and budget hotels directly via My Next Trip (MNT). 100% verified properties for premium hospitality.",
-  keywords: ["hotels in patna", "hotels in ranchi", "hotels in motihari", "resorts in nepal", "best hotels in bihar", "luxury stays ranchi", "direct hotel booking", "MNT hotels"],
+  title: "Hotels in Patna, Ranchi, Motihari & India | Direct Booking | MNT",
+  description: "Find the best hotels in Patna, Ranchi, Motihari, and across India. Better than Booking.com, MakeMyTrip, and Yatra for direct hotel deals. Book luxury stays and budget hotels directly via MNT.",
+  keywords: [
+    "hotels in patna", "hotels in ranchi", "hotels in motihari", "india best hotels", 
+    "near me hotels", "best hotels in india", "ranchi hotels", "patna hotels", 
+    "motihari hotels", "direct hotel booking", "MNT hotels", "makemytrip", 
+    "booking.com", "yatra.com"
+  ],
   openGraph: {
-    title: "Premium Hotel Booking in Patna, Ranchi & Nepal | MNT Brand",
-    description: "Discover curated luxury stays in Patna, Ranchi, Motihari, and Nepal. Guaranteed best prices.",
+    title: "Premium Hotel Booking in Patna, Ranchi & India | MNT Brand",
+    description: "Discover curated luxury stays in Patna, Ranchi, Motihari, and across India. Guaranteed best prices.",
     url: "https://www.mynexttrip.in/hotels",
   }
 };

@@ -4,12 +4,16 @@ import TrustFactors from "@/components/TrustFactors";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "MNT | Best Travel Agency in Patna & Hotel Booking Ranchi",
-  description: "Book premium stays directly with My Next Trip (MNT). The leading travel portal for direct hotel booking and property listing for owners in Patna, Ranchi, Motihari, and Nepal. Experience seamless MNT Brand hospitality.",
-  keywords: ["MNT Brand", "best travel agency in patna", "hotel booking ranchi", "nepal tour packages from india", "luxury hotels patna", "cheap flights patna", "holiday packages bihar", "travel portal india"],
+  title: "MNT | Best Hotels in Ranchi, Patna & India | Direct Booking Portal",
+  description: "Book premium stays directly with My Next Trip (MNT). Best hotels in Patna, Ranchi, Motihari and all over India. Better than MakeMyTrip, Booking.com & Yatra for direct hotel deals. Find hotels near me and the best hotels in India with MNT.",
+  keywords: [
+    "mnt", "makemytrip", "booking.com", "yatra.com", "ranchi hotels", "patna hotels", 
+    "motihari hotels", "india best hotels", "near me hotels", "best hotels in ranchi", 
+    "best hotels in patna", "best hotels in india", "MNT Brand", "direct booking portal"
+  ],
   openGraph: {
-    title: "MNT | Premium Travel Agency for Patna, Ranchi & Nepal",
-    description: "Book premium stays directly with My Next Trip (MNT). Direct hotel booking and property listing for owners.",
+    title: "MNT | Best Hotels in Ranchi, Patna & India | Direct Booking Portal",
+    description: "Book premium stays directly with MNT. Find the best hotels in Patna, Ranchi, and all over India at best prices.",
     url: "https://www.mynexttrip.in",
   },
 };

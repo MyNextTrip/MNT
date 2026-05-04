@@ -4,8 +4,13 @@ import { Plane, MapPin, ArrowRight, Briefcase, Calendar, Users } from "lucide-re
 
 export const metadata: Metadata = {
   title: "Cheap Flights from Patna & Ranchi | Air Ticket Booking | MNT",
-  description: "Book domestic and international flights from Patna and Ranchi. Get the best airfare deals and premium booking service with My Next Trip (MNT). Safe, fast, and transparent.",
-  keywords: ["cheap flights from patna", "flight ticket booking ranchi", "domestic flights india", "patna to delhi flights", "MNT flights", "air ticket agency patna", "international flights from ranchi"],
+  description: "Book domestic and international flights from Patna and Ranchi. Better than MakeMyTrip, Yatra, and Booking.com for personalized travel service. Find hotels near me and best hotels in India along with cheap airfare via MNT.",
+  keywords: [
+    "cheap flights from patna", "flight ticket booking ranchi", "domestic flights india", 
+    "patna to delhi flights", "MNT flights", "makemytrip", "booking.com", "yatra.com", 
+    "ranchi hotels", "patna hotels", "motihari hotels", "near me hotels", 
+    "best hotels in india", "air ticket agency patna"
+  ],
   openGraph: {
     title: "Book Your Next Flight | Best Air Ticket Deals | MNT Brand",
     description: "Premium flight booking service with transparent pricing and instant confirmations for Patna and Ranchi travelers.",

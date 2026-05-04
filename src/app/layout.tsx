@@ -25,7 +25,13 @@ export const metadata: Metadata = {
     template: "%s | MyNextTrip"
   },
   description: "Book premium stays directly with My Next Trip (MNT). The leading travel portal for direct hotel booking and property listing for owners in Patna, Ranchi, Motihari, and Nepal. Experience seamless MNT Brand hospitality.",
-  keywords: ["MNT Brand", "My Next Trip Hotel Booking", "Direct Booking Engine Bihar", "Property Listing for Owners Ranchi", "Nepal Travel Packages MNT", "patna hotels", "ranchi hotels"],
+  keywords: [
+    "MNT", "MNT Brand", "My Next Trip Hotel Booking", "Direct Booking Engine Bihar", 
+    "Property Listing for Owners Ranchi", "Nepal Travel Packages MNT", "patna hotels", 
+    "ranchi hotels", "motihari hotels", "makemytrip", "booking.com", "yatra.com", 
+    "india best hotels", "near me hotels", "best hotels in ranchi", "best hotels in patna", 
+    "best hotels in india"
+  ],
   authors: [{ name: "MyNextTrip Team" }],
   creator: "MyNextTrip",
   publisher: "MyNextTrip",
