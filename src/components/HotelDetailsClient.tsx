@@ -397,28 +397,36 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
         </Link>
         
         {/* Image Slider */}
-        {hotel.images && hotel.images.length > 0 && (
-          <div className="relative rounded-3xl overflow-hidden shadow-xl mb-8 h-[300px] md:h-[500px] bg-black group">
-            <Image 
-              src={hotel.images[currentImageIndex]} 
-              alt={`${hotel.hotelName} image ${currentImageIndex + 1}`} 
-              fill className="object-cover transition-opacity duration-500" priority
-              sizes="(max-width: 768px) 100vw, 1200px"
-            />
-            {hotel.images.length > 1 && (
-              <>
-                <button onClick={handlePrevImage} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all z-10" suppressHydrationWarning><ChevronLeft className="w-6 h-6" /></button>
-                <button onClick={handleNextImage} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all z-10" suppressHydrationWarning><ChevronRight className="w-6 h-6" /></button>
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-                  {hotel.images.map((_: any, idx: number) => (
-                    <button key={idx} onClick={() => setCurrentImageIndex(idx)} className={cn("h-2 rounded-full transition-all", currentImageIndex === idx ? "w-8 bg-white" : "w-2 bg-white/50")} suppressHydrationWarning />
-                  ))}
-                </div>
-              </>
-            )}
-            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-black uppercase">{currentImageIndex + 1} / {hotel.images.length}</div>
-          </div>
-        )}
+        {(() => {
+          const mainImages = hotel.images || [];
+          const roomImages = hotel.rooms ? hotel.rooms.map((r: any) => r.image).filter(Boolean) : [];
+          const allImages = [...mainImages, ...roomImages];
+          
+          if (allImages.length === 0) return null;
+
+          return (
+            <div className="relative rounded-3xl overflow-hidden shadow-xl mb-8 h-[300px] md:h-[500px] bg-black group">
+              <Image 
+                src={allImages[currentImageIndex % allImages.length]} 
+                alt={`${hotel.hotelName} image ${currentImageIndex + 1}`} 
+                fill className="object-cover transition-opacity duration-500" priority
+                sizes="(max-width: 768px) 100vw, 1200px"
+              />
+              {allImages.length > 1 && (
+                <>
+                  <button onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1))} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all z-10" suppressHydrationWarning><ChevronLeft className="w-6 h-6" /></button>
+                  <button onClick={() => setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1))} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all z-10" suppressHydrationWarning><ChevronRight className="w-6 h-6" /></button>
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                    {allImages.map((_: any, idx: number) => (
+                      <button key={idx} onClick={() => setCurrentImageIndex(idx)} className={cn("h-2 rounded-full transition-all", currentImageIndex === idx ? "w-8 bg-white" : "w-2 bg-white/50")} suppressHydrationWarning />
+                    ))}
+                  </div>
+                </>
+              )}
+              <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-black uppercase">{currentImageIndex + 1} / {allImages.length}</div>
+            </div>
+          );
+        })()}
 
         <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
@@ -603,6 +611,22 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
             <div className="p-8 border-b flex justify-between items-center">
               <h3 className="text-2xl font-black text-slate-900">Booking Confirmation</h3>
               <button onClick={() => setShowPaymentModal(false)} disabled={isBookingInProgress} className="p-2 hover:bg-slate-100 rounded-full"><X className="w-5 h-5 text-slate-400" /></button>
+            </div>
+            {/* Room Preview in Modal */}
+            <div className="px-8 pt-6">
+              <div className="relative w-full h-40 rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+                <Image 
+                  src={selectedRoomForBooking.room.image || (hotel.images && hotel.images.length > 0 ? hotel.images[selectedRoomForBooking.idx % hotel.images.length] : '/images/hero-bg.png')} 
+                  alt={selectedRoomForBooking.room.type} 
+                  fill 
+                  className="object-cover" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-4 left-4">
+                  <p className="text-white font-black text-lg uppercase tracking-wider">{selectedRoomForBooking.room.type}</p>
+                  <p className="text-white/80 text-xs font-bold">{hotel.hotelName}</p>
+                </div>
+              </div>
             </div>
             <div className="p-8 overflow-y-auto space-y-8">
                <div className="space-y-4">

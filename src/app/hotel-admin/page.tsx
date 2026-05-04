@@ -315,8 +315,22 @@ export default function HotelAdminDashboard() {
       if (data.success) {
         const newRooms = [...hotelData.rooms];
         newRooms[index] = { ...newRooms[index], image: data.url };
+        
+        // Update local state first
         setHotelData({ ...hotelData, rooms: newRooms });
-        alert("Image uploaded successfully to Cloudinary!");
+
+        // Auto-save to MongoDB immediately
+        const saveRes = await fetch(`/api/hotel-admin/hotels/${hotelId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rooms: newRooms }),
+        });
+
+        if (saveRes.ok) {
+          alert("Room image uploaded and saved successfully!");
+        } else {
+          alert("Image uploaded to Cloudinary, but failed to save in database. Please click 'Save Changes' manually.");
+        }
       } else {
         alert("Upload failed: " + (data.message || "Unknown error"));
       }
