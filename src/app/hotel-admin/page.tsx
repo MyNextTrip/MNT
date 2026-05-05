@@ -50,6 +50,8 @@ export default function HotelAdminDashboard() {
     roomType: "Standard Room",
     roomCharges: "0",
     taxes: "0",
+    advanceAmount: "0",
+    paymentMethod: "Cash",
     selectedRooms: {} as Record<string, number>,
     rooms: [{ type: "", rate: 0 }]
   });
@@ -110,6 +112,28 @@ export default function HotelAdminDashboard() {
     }
   }, [isAuthorized, hotelId, activeTab]);
 
+  useEffect(() => {
+    if (activeTab === 'new-reservation' && hotelData?.rooms) {
+      const nights = Math.max(1, Math.ceil((new Date(newResForm.checkOut).getTime() - new Date(newResForm.checkIn).getTime()) / (1000 * 60 * 60 * 24)));
+      
+      let subtotal = 0;
+      Object.entries(newResForm.selectedRooms || {}).forEach(([type, count]) => {
+        const room = hotelData.rooms.find((r: any) => r.type === type);
+        if (room && count > 0) {
+          subtotal += Number(room.price) * count * nights;
+        }
+      });
+
+      const taxAmount = Math.round(subtotal * 0.05);
+      
+      setNewResForm(prev => ({
+        ...prev,
+        roomCharges: subtotal.toString(),
+        taxes: taxAmount.toString()
+      }));
+    }
+  }, [newResForm.selectedRooms, newResForm.checkIn, newResForm.checkOut, hotelData, activeTab]);
+
   const fetchStats = async () => {
     try {
       setLoadingStats(true);
@@ -152,7 +176,7 @@ export default function HotelAdminDashboard() {
   const fetchHotelData = async () => {
     try {
       setLoadingHotel(true);
-      const res = await fetch(`/api/hotel-admin/hotels/${hotelId}`);
+      const res = await fetch(`/api/hotel-admin/hotels?hotelId=${hotelId}`);
       if (!res.ok) {
         const text = await res.text();
         throw new Error(`Fetch hotel data failed with status ${res.status}: ${text.substring(0, 100)}`);
@@ -320,7 +344,7 @@ export default function HotelAdminDashboard() {
         setHotelData({ ...hotelData, rooms: newRooms });
 
         // Auto-save to MongoDB immediately
-        const saveRes = await fetch(`/api/hotel-admin/hotels/${hotelId}`, {
+        const saveRes = await fetch(`/api/hotel-admin/hotels?hotelId=${hotelId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ rooms: newRooms }),
@@ -346,7 +370,7 @@ export default function HotelAdminDashboard() {
     try {
       setIsSaving(true);
       
-      const res = await fetch(`/api/hotel-admin/hotels/${hotelId}`, {
+      const res = await fetch(`/api/hotel-admin/hotels?hotelId=${hotelId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rooms: hotelData.rooms })
@@ -419,15 +443,20 @@ export default function HotelAdminDashboard() {
     doc.text(`Room: ${booking.roomType} (x${booking.roomsCount})`, 110, 109);
     
     // Financial Summary Table
+    const roomCharges = booking.totalAmount / 1.05;
+    const taxes = booking.totalAmount - roomCharges;
+
     autoTable(doc, {
       startY: 130,
       head: [['Description', 'Amount']],
       body: [
-        ['Room Charges', `INR ${booking.totalAmount - (booking.totalAmount * 0.12)}`],
-        ['Taxes (GST)', `INR ${(booking.totalAmount * 0.12).toFixed(2)}`],
-        [{ content: 'Total Paid Amount', styles: { fontStyle: 'bold' } }, { content: `INR ${booking.totalAmount}`, styles: { fontStyle: 'bold' } }]
+        ['Room Charges', `INR ${roomCharges.toFixed(2)}`],
+        ['Taxes (GST 5%)', `INR ${taxes.toFixed(2)}`],
+        [{ content: 'Total Amount', styles: { fontStyle: 'bold' } }, { content: `INR ${booking.totalAmount.toLocaleString()}`, styles: { fontStyle: 'bold' } }],
+        [{ content: 'Paid (Advance)', styles: { fontStyle: 'bold', textColor: [16, 185, 129] } }, { content: `INR ${booking.paidAmount.toLocaleString()}`, styles: { fontStyle: 'bold', textColor: [16, 185, 129] } }],
+        [{ content: 'Balance Due', styles: { fontStyle: 'bold', textColor: [239, 68, 68] } }, { content: `INR ${booking.balanceAmount.toLocaleString()}`, styles: { fontStyle: 'bold', textColor: [239, 68, 68] } }]
       ],
-      headStyles: { fillColor: [79, 70, 229], textColor: 255 },
+      headStyles: { fillColor: [15, 23, 42], textColor: 255 },
       theme: 'grid',
       margin: { left: 20, right: 20 }
     });
@@ -473,7 +502,9 @@ export default function HotelAdminDashboard() {
         roomType: roomTypeStr,
         roomsCount: totalRoomsCount,
         totalAmount,
-        paymentStatus: 'Paid',
+        paidAmount: Number(newResForm.advanceAmount),
+        paymentMethod: newResForm.paymentMethod,
+        paymentStatus: Number(newResForm.advanceAmount) >= totalAmount ? 'Paid' : 'Pending',
         reservationStatus: newResForm.resType,
         bookingSource: newResForm.bookingSource,
         businessSource: newResForm.businessSource,
@@ -1861,13 +1892,13 @@ export default function HotelAdminDashboard() {
                                 </div>
                               </div>
                             </td>
-                            <td className="px-8 py-6">
-                              <p className="text-xs font-black text-slate-900">₹{b.totalAmount?.toLocaleString()}</p>
-                              <p className={cn(
-                                "text-[9px] font-black uppercase mt-1",
-                                (b.paymentMethod || b.paymentStatus) === 'Paid' || b.paymentMethod ? "text-emerald-500" : "text-amber-500"
-                              )}>{b.paymentMethod || b.paymentStatus}</p>
-                            </td>
+                             <td className="px-8 py-6">
+                                <p className="text-xs font-black text-slate-900">₹{b.totalAmount?.toLocaleString()}</p>
+                                <div className="flex flex-col gap-0.5 mt-1">
+                                  <p className="text-[9px] font-black text-emerald-500 uppercase tracking-tighter">Paid: ₹{b.paidAmount?.toLocaleString()}</p>
+                                  {b.balanceAmount > 0 && <p className="text-[9px] font-black text-rose-500 uppercase tracking-tighter">Bal: ₹{b.balanceAmount?.toLocaleString()}</p>}
+                                </div>
+                              </td>
                             <td className="px-8 py-6">
                               <span className={cn(
                                 "text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-[0.15em] border",
@@ -2200,30 +2231,68 @@ export default function HotelAdminDashboard() {
               <div className="space-y-8">
                 <div className="bg-slate-900 rounded-[32px] p-8 shadow-2xl text-white sticky top-28">
                    <h3 className="text-xl font-black mb-8">Billing Summary</h3>
-                   <div className="space-y-4 pb-8 border-b border-white/10">
-                      <div className="space-y-2">
-                        <label className="text-[9px] font-black text-white/40 uppercase tracking-widest">Room Charges (INR)</label>
-                        <input 
-                          type="number" 
-                          value={newResForm.roomCharges}
-                          onChange={(e) => setNewResForm({ ...newResForm, roomCharges: e.target.value })}
-                          className="w-full h-10 bg-white/5 border border-white/10 rounded-lg px-3 text-sm font-bold outline-none focus:border-indigo-400 transition-all text-white" 
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[9px] font-black text-white/40 uppercase tracking-widest">Taxes (INR)</label>
-                        <input 
-                          type="number" 
-                          value={newResForm.taxes}
-                          onChange={(e) => setNewResForm({ ...newResForm, taxes: e.target.value })}
-                          className="w-full h-10 bg-white/5 border border-white/10 rounded-lg px-3 text-sm font-bold outline-none focus:border-indigo-400 transition-all text-white" 
-                        />
-                      </div>
-                   </div>
-                   <div className="pt-8 mb-8 flex justify-between items-center">
-                      <span className="text-white/60 font-black uppercase tracking-widest text-xs">Total Amount</span>
-                      <span className="text-3xl font-black tracking-tight">₹{(Number(newResForm.roomCharges) + Number(newResForm.taxes)).toLocaleString()}</span>
-                   </div>
+                    <div className="space-y-4 pb-8 border-b border-white/10">
+                       <div className="space-y-2">
+                         <label className="text-[9px] font-black text-white/40 uppercase tracking-widest">Room Charges (INR)</label>
+                         <input 
+                           type="number" 
+                           value={newResForm.roomCharges}
+                           onChange={(e) => setNewResForm({ ...newResForm, roomCharges: e.target.value })}
+                           className="w-full h-10 bg-white/5 border border-white/10 rounded-lg px-3 text-sm font-bold outline-none focus:border-indigo-400 transition-all text-white" 
+                         />
+                       </div>
+                       <div className="space-y-2">
+                         <label className="text-[9px] font-black text-white/40 uppercase tracking-widest">Taxes (GST 5%)</label>
+                         <div className="relative">
+                           <input 
+                             type="number" 
+                             value={newResForm.taxes}
+                             readOnly
+                             className="w-full h-10 bg-white/5 border border-white/10 rounded-lg px-3 text-sm font-bold outline-none text-white/60 cursor-not-allowed" 
+                           />
+                           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-white/20">AUTO</span>
+                         </div>
+                       </div>
+                       <div className="space-y-2">
+                         <label className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Advance Paid (INR)</label>
+                         <input 
+                           type="number" 
+                           value={newResForm.advanceAmount}
+                           onChange={(e) => setNewResForm({ ...newResForm, advanceAmount: e.target.value })}
+                           className="w-full h-10 bg-indigo-500/10 border border-indigo-500/30 rounded-lg px-3 text-sm font-bold outline-none focus:border-indigo-400 transition-all text-white placeholder-white/20" 
+                           placeholder="0"
+                         />
+                       </div>
+                       <div className="space-y-2">
+                         <label className="text-[9px] font-black text-white/40 uppercase tracking-widest">Payment Method</label>
+                         <select 
+                           value={newResForm.paymentMethod}
+                           onChange={(e) => setNewResForm({ ...newResForm, paymentMethod: e.target.value })}
+                           className="w-full h-10 bg-white/5 border border-white/10 rounded-lg px-3 text-sm font-bold outline-none focus:border-indigo-400 transition-all text-white appearance-none"
+                         >
+                            <option value="Cash">Cash</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="UPI / QR">UPI / QR Code</option>
+                            <option value="Card">Credit / Debit Card</option>
+                            <option value="Cheque">Cheque</option>
+                            <option value="Others">Others</option>
+                         </select>
+                       </div>
+                    </div>
+                    <div className="pt-8 mb-8">
+                       <div className="flex justify-between items-center mb-2">
+                          <span className="text-white/40 font-bold uppercase tracking-widest text-[9px]">Total Bill</span>
+                          <span className="text-xl font-black tracking-tight">₹{(Number(newResForm.roomCharges) + Number(newResForm.taxes)).toLocaleString()}</span>
+                       </div>
+                       <div className="flex justify-between items-center text-emerald-400">
+                          <span className="font-bold uppercase tracking-widest text-[9px]">Advance Paid</span>
+                          <span className="text-sm font-black">- ₹{Number(newResForm.advanceAmount).toLocaleString()}</span>
+                       </div>
+                       <div className="flex justify-between items-center mt-4 pt-4 border-t border-white/10">
+                          <span className="text-white font-black uppercase tracking-widest text-[10px]">Balance Due</span>
+                          <span className="text-2xl font-black text-indigo-400">₹{Math.max(0, (Number(newResForm.roomCharges) + Number(newResForm.taxes)) - Number(newResForm.advanceAmount)).toLocaleString()}</span>
+                       </div>
+                    </div>
                    
                    <div className="space-y-3">
                       <button 

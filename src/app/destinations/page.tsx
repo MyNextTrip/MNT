@@ -10,23 +10,50 @@ export const metadata: Metadata = {
     "tourist places in patna", "waterfalls in ranchi", "bihar tourism", "jharkhand destinations", 
     "nepal sightseeing", "best hotels in ranchi", "best hotels in patna", "best hotels in india", 
     "ranchi hotels", "patna hotels", "near me hotels", "MNT destinations", "makemytrip", 
-    "booking.com", "yatra.com"
+    "booking.com", "yatra.com", "travel agency patna", "travel agency ranchi"
   ],
+  alternates: {
+    canonical: "https://www.mynexttrip.in/destinations",
+  },
   openGraph: {
     title: "Explore Extraordinary Travel Destinations | My Next Trip (MNT)",
     description: "Curated experiences and premium stays across Bihar, Jharkhand, Nepal and beyond. Find your next adventure.",
     images: [{ url: "/images/goa.png" }],
     url: "https://www.mynexttrip.in/destinations",
+    type: "website",
   }
 };
 
 export default function DestinationsPage() {
   return (
     <main className="min-h-screen bg-slate-50 pb-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://www.mynexttrip.in"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Destinations",
+                "item": "https://www.mynexttrip.in/destinations"
+              }
+            ]
+          })
+        }}
+      />
       {/* Hero Header */}
       <div className="pt-24 pb-32 relative overflow-hidden">
         <div className="absolute inset-0">
-          <Image src="/images/goa.png" alt="Travel Destinations in Bihar and Jharkhand" fill className="object-cover" priority />
+          <Image src="/images/goa.png" alt="Travel Destinations in Bihar, Jharkhand and Nepal - MNT" fill className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/70"></div>
         </div>
         <div className="container mx-auto px-4 relative z-10 text-center">

@@ -60,7 +60,12 @@ export async function POST(req: Request) {
     const data = await req.json();
     console.log("Creating manual booking with data:", data);
     
-    const { hotelId, hotelName, guestName, guestPhone, userEmail, checkInDate, checkOutDate, roomType, roomsCount, totalAmount, paymentStatus, reservationStatus, bookingSource, businessSource, companyName } = data;
+    const { 
+      hotelId, hotelName, guestName, guestPhone, userEmail, 
+      checkInDate, checkOutDate, roomType, roomsCount, 
+      totalAmount, paidAmount, paymentMethod, paymentStatus, 
+      reservationStatus, bookingSource, businessSource, companyName 
+    } = data;
 
     if (!hotelId || !guestName || !checkInDate || !checkOutDate) {
       return NextResponse.json({ success: false, message: 'Missing required fields: hotelId, guestName, checkInDate, or checkOutDate' }, { status: 400 });
@@ -89,6 +94,10 @@ export async function POST(req: Request) {
     // Generate a simple unique booking ID
     const bookingId = `MNT-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
+    const total = Number(totalAmount) || 0;
+    const paid = Number(paidAmount) || 0;
+    const balance = Math.max(0, total - paid);
+
     const bookingData = {
       bookingId,
       hotelId,
@@ -101,11 +110,12 @@ export async function POST(req: Request) {
       checkOutDate: new Date(checkOutDate),
       roomType: roomType || "Standard Room",
       roomsCount: Number(roomsCount) || 1,
-      totalAmount: Number(totalAmount) || 0,
-      paidAmount: Number(totalAmount) || 0,
-      balanceAmount: 0,
-      paymentType: 'Prepaid',
-      paymentStatus: paymentStatus || 'Paid',
+      totalAmount: total,
+      paidAmount: paid,
+      balanceAmount: balance,
+      paymentMethod: paymentMethod || 'Cash',
+      paymentType: paid >= total ? 'Prepaid' : (paid > 0 ? 'Partial' : 'PayAtHotel'),
+      paymentStatus: paymentStatus || (paid >= total ? 'Paid' : 'Pending'),
       reservationStatus: reservationStatus || 'Confirmed',
       bookingSource: bookingSource || 'Direct',
       businessSource: businessSource || 'Walk In',

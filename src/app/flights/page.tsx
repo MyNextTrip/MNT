@@ -9,23 +9,50 @@ export const metadata: Metadata = {
     "cheap flights from patna", "flight ticket booking ranchi", "domestic flights india", 
     "patna to delhi flights", "MNT flights", "makemytrip", "booking.com", "yatra.com", 
     "ranchi hotels", "patna hotels", "motihari hotels", "near me hotels", 
-    "best hotels in india", "air ticket agency patna"
+    "best hotels in india", "air ticket agency patna", "air ticket agency ranchi"
   ],
+  alternates: {
+    canonical: "https://www.mynexttrip.in/flights",
+  },
   openGraph: {
     title: "Book Your Next Flight | Best Air Ticket Deals | MNT Brand",
     description: "Premium flight booking service with transparent pricing and instant confirmations for Patna and Ranchi travelers.",
     images: [{ url: "/images/dubai.png" }],
     url: "https://www.mynexttrip.in/flights",
+    type: "website",
   }
 };
 
 export default function FlightsPage() {
   return (
     <main className="min-h-screen bg-slate-50 pb-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://www.mynexttrip.in"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Flights",
+                "item": "https://www.mynexttrip.in/flights"
+              }
+            ]
+          })
+        }}
+      />
       {/* Hero Search Section */}
       <div className="pt-24 pb-32 relative overflow-hidden">
         <div className="absolute inset-0">
-          <Image src="/images/dubai.png" alt="Flight booking background" fill className="object-cover" priority />
+          <Image src="/images/dubai.png" alt="Book Cheap Flights Online - MNT Travel" fill className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/70"></div>
         </div>
         

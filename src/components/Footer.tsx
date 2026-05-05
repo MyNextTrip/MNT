@@ -70,11 +70,20 @@ export default function Footer() {
                 </div>
                 <span className="leading-snug pt-1">Bariatu Road, Ranchi,<br/> Jharkhand, India</span>
               </li>
-              <li className="flex items-center gap-4 text-slate-400 group">
+              <li className="flex items-start gap-4 text-slate-400 group">
                 <div className="p-2 bg-slate-800/50 rounded-lg group-hover:bg-primary/20 transition-colors">
                   <Phone className="h-5 w-5 text-primary" />
                 </div>
-                <span className="pt-1">+91 92635 54855</span>
+                <div className="flex flex-col pt-1">
+                  <div className="mb-3">
+                    <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider block mb-0.5">MNT Support Team</span>
+                    <span className="font-medium text-slate-200">+91 70330 08111</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider block mb-0.5">Technical Team</span>
+                    <span className="font-medium text-slate-200">+91 92635 54855</span>
+                  </div>
+                </div>
               </li>
               <li className="flex items-center gap-4 text-slate-400 group">
                 <div className="p-2 bg-slate-800/50 rounded-lg group-hover:bg-primary/20 transition-colors">

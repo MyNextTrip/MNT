@@ -11,12 +11,16 @@ export const metadata: Metadata = {
     "hotels in patna", "hotels in ranchi", "hotels in motihari", "india best hotels", 
     "near me hotels", "best hotels in india", "ranchi hotels", "patna hotels", 
     "motihari hotels", "direct hotel booking", "MNT hotels", "makemytrip", 
-    "booking.com", "yatra.com"
+    "booking.com", "yatra.com", "luxury hotels patna", "budget hotels ranchi"
   ],
+  alternates: {
+    canonical: "https://www.mynexttrip.in/hotels",
+  },
   openGraph: {
     title: "Premium Hotel Booking in Patna, Ranchi & India | MNT Brand",
     description: "Discover curated luxury stays in Patna, Ranchi, Motihari, and across India. Guaranteed best prices.",
     url: "https://www.mynexttrip.in/hotels",
+    type: "website",
   }
 };
 
@@ -50,12 +54,35 @@ export default async function HotelsPage({
 
   return (
     <main className="min-h-screen bg-slate-50 pb-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://www.mynexttrip.in"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Hotels",
+                "item": "https://www.mynexttrip.in/hotels"
+              }
+            ]
+          })
+        }}
+      />
       {/* Hero Header */}
       <div className="bg-slate-900 pt-16 pb-24 relative overflow-hidden">
         <div className="absolute inset-0">
           <Image 
             src="/images/hero-bg.png" 
-            alt="Hotels Background" 
+            alt="Luxury Hotels and Stays in India - MNT" 
             fill 
             className="object-cover opacity-40"
             priority

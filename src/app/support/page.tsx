@@ -42,6 +42,9 @@ export default function SupportPage() {
             <p className="text-slate-500 mb-6 text-sm flex-grow">
               Speak with our friendly team. We're here to answer all your questions immediately.
             </p>
+            <a href="tel:+917033008111" className="text-xl font-extrabold text-primary hover:text-primary/80 transition-colors">
+              Tel. +91 7033008111
+            </a>
             <a href="tel:+919263554855" className="text-xl font-extrabold text-primary hover:text-primary/80 transition-colors">
               Tel. +91 9263554855
             </a>
@@ -72,11 +75,11 @@ export default function SupportPage() {
             </p>
             <div className="w-full flex justify-between items-center text-sm text-slate-600 border-b border-slate-100 pb-2 mb-2">
               <span className="font-medium">Monday - Friday:</span>
-              <span className="font-bold text-slate-900">9:00 AM - 8:00 PM</span>
+              <span className="font-bold text-slate-900">24/7 available</span>
             </div>
             <div className="w-full flex justify-between items-center text-sm text-slate-600">
               <span className="font-medium">Saturday & Sunday:</span>
-              <span className="font-bold text-slate-900">10:00 AM - 4:00 PM</span>
+              <span className="font-bold text-slate-900">24/7 available</span>
             </div>
           </article>
           

@@ -101,13 +101,22 @@ export default function RootLayout({
                 "alternateName": "MNT Travel",
                 "url": "https://www.mynexttrip.in",
                 "logo": "https://www.mynexttrip.in/images/mnt-logo-new.png",
-                "contactPoint": {
-                  "@type": "ContactPoint",
-                  "telephone": "+91-92635-54855",
-                  "contactType": "customer service",
-                  "areaServed": ["IN", "NP"],
-                  "availableLanguage": ["en", "hi"]
-                },
+                "contactPoint": [
+                  {
+                    "@type": "ContactPoint",
+                    "telephone": "+91-70330-08111",
+                    "contactType": "customer support",
+                    "areaServed": ["IN", "NP"],
+                    "availableLanguage": ["en", "hi"]
+                  },
+                  {
+                    "@type": "ContactPoint",
+                    "telephone": "+91-92635-54855",
+                    "contactType": "technical support",
+                    "areaServed": ["IN", "NP"],
+                    "availableLanguage": ["en", "hi"]
+                  }
+                ],
                 "address": {
                   "@type": "PostalAddress",
                   "streetAddress": "Bariatu Road",
@@ -120,6 +129,24 @@ export default function RootLayout({
                   "https://www.facebook.com/profile.php?id=61575468341367",
                   "https://www.instagram.com/mynexttrip07/",
                   "https://www.youtube.com/channel/UC71Zk6DnIdPEqAkq3-JyFpA"
+                ]
+              })
+            }}
+          />
+          {/* Breadcrumb Schema */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://www.mynexttrip.in"
+                  }
                 ]
               })
             }}

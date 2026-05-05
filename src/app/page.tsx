@@ -9,12 +9,17 @@ export const metadata: Metadata = {
   keywords: [
     "mnt", "makemytrip", "booking.com", "yatra.com", "ranchi hotels", "patna hotels", 
     "motihari hotels", "india best hotels", "near me hotels", "best hotels in ranchi", 
-    "best hotels in patna", "best hotels in india", "MNT Brand", "direct booking portal"
+    "best hotels in patna", "best hotels in india", "MNT Brand", "direct booking portal",
+    "luxury hotels bihar", "top rated hotels jharkhand", "nepal travel deals"
   ],
+  alternates: {
+    canonical: "https://www.mynexttrip.in",
+  },
   openGraph: {
     title: "MNT | Best Hotels in Ranchi, Patna & India | Direct Booking Portal",
     description: "Book premium stays directly with MNT. Find the best hotels in Patna, Ranchi, and all over India at best prices.",
     url: "https://www.mynexttrip.in",
+    type: "website",
   },
 };
 
@@ -24,6 +29,7 @@ const jsonLd = {
   "name": "MyNextTrip (MNT)",
   "url": "https://www.mynexttrip.in",
   "logo": "https://www.mynexttrip.in/images/mnt-logo-new.png",
+  "image": "https://www.mynexttrip.in/images/og-image.png",
   "description": "Premium travel agency and hospitality aggregator in Patna and Ranchi. Specializing in direct hotel bookings and property listing for owners across Bihar, Jharkhand, and Nepal.",
   "address": {
     "@type": "PostalAddress",
@@ -38,18 +44,35 @@ const jsonLd = {
     "latitude": "23.3441",
     "longitude": "85.3091"
   },
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+    ],
+    "opens": "00:00",
+    "closes": "23:59"
+  },
   "sameAs": [
     "https://www.facebook.com/profile.php?id=61575468341367",
     "https://www.instagram.com/mynexttrip07/",
     "https://www.youtube.com/channel/UC71Zk6DnIdPEqAkq3-JyFpA"
   ],
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "telephone": "+91-9263554855",
-    "contactType": "customer service",
-    "areaServed": ["IN", "NP"],
-    "availableLanguage": ["Hindi", "English"]
-  }
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "telephone": "+91-7033008111",
+      "contactType": "customer service",
+      "areaServed": ["IN", "NP"],
+      "availableLanguage": ["Hindi", "English"]
+    },
+    {
+      "@type": "ContactPoint",
+      "telephone": "+91-9263554855",
+      "contactType": "technical support",
+      "areaServed": ["IN", "NP"],
+      "availableLanguage": ["Hindi", "English"]
+    }
+  ]
 };
 
 export default function Home() {
