@@ -10,11 +10,12 @@ import {
   Smartphone, Sparkles, Dumbbell, Waves, Heart, Baby, 
   Briefcase, Utensils, ConciergeBell, Dog,
   Navigation as NavigationIcon, Monitor, Zap, Menu, X, Key, Copy, Check, Save, Loader2, MessageSquareText, Phone, CheckCircle2,
-  Map as MapIcon, Leaf, CalendarCheck, Search, FileDown
+  Map as MapIcon, Leaf, CalendarCheck, Search, FileDown, MessageSquareMore
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import WhatsAppAutomation from "@/components/admin/WhatsAppAutomation";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -603,7 +604,8 @@ export default function AdminDashboard() {
             { id: 'reservations', label: 'Reservations', icon: CalendarCheck },
             { id: 'users', label: 'Users', icon: Users },
             { id: 'inquiries', label: 'Hotel Inquiries', icon: Building2 },
-            { id: 'chatbot-users', label: 'Chatbot Users', icon: MessageSquareText }
+            { id: 'chatbot-users', label: 'Chatbot Users', icon: MessageSquareText },
+            { id: 'whatsapp-automation', label: 'WhatsApp Automation', icon: MessageSquareMore }
           ].map((tab) => (
             <button 
               key={tab.id}
@@ -1631,6 +1633,12 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {activeTab === 'whatsapp-automation' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4">
+            <WhatsAppAutomation />
           </div>
         )}
 

@@ -7,10 +7,30 @@ export const metadata: Metadata = {
   title: "MNT | Best Hotels in Ranchi, Patna & India | Direct Booking Portal",
   description: "Book premium stays directly with My Next Trip (MNT). Best hotels in Patna, Ranchi, Motihari and all over India. Better than MakeMyTrip, Booking.com & Yatra for direct hotel deals. Find hotels near me and the best hotels in India with MNT.",
   keywords: [
-    "mnt", "makemytrip", "booking.com", "yatra.com", "ranchi hotels", "patna hotels", 
-    "motihari hotels", "india best hotels", "near me hotels", "best hotels in ranchi", 
+    "mnt", "makemytrip", "booking.com", "yatra.com", "ranchi hotels", "patna hotels",
+    "motihari hotels", "india best hotels", "near me hotels", "best hotels in ranchi",
     "best hotels in patna", "best hotels in india", "MNT Brand", "direct booking portal",
-    "luxury hotels bihar", "top rated hotels jharkhand", "nepal travel deals"
+    "luxury hotels bihar", "top rated hotels jharkhand", "nepal travel deals",
+    "Best luxury boutique hotels in India for a romantic getaway",
+    "Luxury boutique hotels vs luxury chain hotels in India",
+    "Which luxury boutique hotel should I choose for a quiet weekend retreat in India?",
+    "Recommendations for luxury boutique hotels in India with spa and wellness facilities",
+    "Top luxury boutique hotels in India that offer personalized concierge services",
+    "Best luxury boutique hotels near me with private pools in India",
+    "Luxury boutique hotels in India vs heritage hotels",
+    "Which luxury boutique hotel in India offers the best gourmet dining experience?",
+    "Affordable luxury boutique hotels in India that don't compromise on quality",
+    "Best luxury boutique hotels in India for honeymooners with ocean views",
+    "Luxury boutique hotels vs luxury resorts in India",
+    "Which luxury boutique hotels in India provide eco-friendly and sustainable stays?",
+    "Best luxury boutique hotels in India with exclusive rooftop bars or lounges",
+    "Luxury boutique hotels in India known for exceptional architecture and design",
+    "Which luxury boutique hotel in India is ideal for a solo traveler seeking privacy?",
+    "Best luxury boutique hotels in India that offer curated local experiences and tours",
+    "Luxury boutique hotels in India vs luxury serviced apartments",
+    "Recommendations for luxury boutique hotels in India located in historic districts",
+    "Which luxury boutique hotels in India provide the best wellness retreats and yoga programs?",
+    "Best luxury boutique hotels in India for celebrating special occasions with personalized services"
   ],
   alternates: {
     canonical: "https://www.mynexttrip.in",
@@ -113,6 +133,69 @@ export default function Home() {
 
       <TrustFactors />
       
+      {/* SEO Optimized Insights Section */}
+      <section className="py-20 bg-slate-50 overflow-hidden">
+        <div className="container mx-auto px-4">
+          <header className="mb-12 text-center max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 font-serif">Discover the Best Luxury Boutique Hotels in India</h2>
+            <p className="text-slate-600">Your ultimate guide to the most exclusive, romantic, and culturally immersive stays across the Indian subcontinent.</p>
+          </header>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100 hover:shadow-xl transition-all group">
+              <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-primary transition-colors">Best luxury boutique hotels in India for a romantic getaway</h3>
+              <p className="text-slate-600 text-sm leading-relaxed mb-4">Planning a special trip? Discover the best luxury boutique hotels in India for a romantic getaway, featuring secluded villas, candlelit dinners, and world-class service tailored for couples.</p>
+              <p className="text-xs font-bold text-primary uppercase tracking-widest">Read more about Romantic Stays</p>
+            </div>
+
+            <div className="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100 hover:shadow-xl transition-all group">
+              <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-primary transition-colors">Luxury boutique hotels vs luxury chain hotels in India</h3>
+              <p className="text-slate-600 text-sm leading-relaxed mb-4">Curious about luxury boutique hotels vs luxury chain hotels in India? We compare personalized service, unique architecture, and local character to help you choose the better experience.</p>
+              <p className="text-xs font-bold text-primary uppercase tracking-widest">Compare Experiences</p>
+            </div>
+
+            <div className="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100 hover:shadow-xl transition-all group">
+              <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-primary transition-colors">Top luxury boutique hotels with spa and wellness</h3>
+              <p className="text-slate-600 text-sm leading-relaxed mb-4">Looking for recommendations for luxury boutique hotels in India with spa and wellness facilities? From Ayurveda to modern hydrotherapy, find your perfect quiet weekend retreat in India.</p>
+              <p className="text-xs font-bold text-primary uppercase tracking-widest">Explore Wellness Retreats</p>
+            </div>
+          </div>
+
+          <div className="mt-16 p-10 bg-white rounded-[40px] shadow-2xl shadow-slate-200/50 border border-slate-100">
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                   <h4 className="text-2xl font-bold text-slate-900 mb-6">Expert Travel Recommendations</h4>
+                   <ul className="space-y-4">
+                      {[
+                        "Top luxury boutique hotels in India that offer personalized concierge services",
+                        "Best luxury boutique hotels near me with private pools in India",
+                        "Luxury boutique hotels in India vs heritage hotels for cultural immersion",
+                        "Best luxury boutique hotels in India for honeymooners with ocean views",
+                        "Luxury boutique hotels vs luxury resorts in India for family vacations",
+                        "Eco-friendly and sustainable luxury boutique hotels in India"
+                      ].map((item, i) => (
+                        <li key={i} className="flex gap-3 text-slate-600 text-sm italic border-b border-slate-50 pb-2">
+                           <span className="text-primary font-bold">#</span> {item}
+                        </li>
+                      ))}
+                   </ul>
+                </div>
+                <div className="bg-slate-900 p-8 rounded-3xl text-white">
+                   <h4 className="text-xl font-bold mb-4">Why Book via MyNextTrip?</h4>
+                   <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                      Whether you are a solo traveler seeking privacy in a luxury boutique hotel or celebrating a special occasion with personalized services, MNT provides curated access to India's most exceptional architecture and design-led stays. From historic districts to exclusive rooftop bars and lounges, we ensure your stay is unforgettable.
+                   </p>
+                   <div className="space-y-3">
+                      <p className="text-xs text-slate-300 flex items-center gap-2">✓ Curated local experiences and tours</p>
+                      <p className="text-xs text-slate-300 flex items-center gap-2">✓ Best wellness retreats and yoga programs</p>
+                      <p className="text-xs text-slate-300 flex items-center gap-2">✓ Personalized gourmet dining experiences</p>
+                   </div>
+                </div>
+             </div>
+          </div>
+        </div>
+      </section>
+
       {/* Brands Section */}
       <section className="py-12 bg-white border-y border-gray-100">
         <div className="container mx-auto px-4 uppercase text-[10px] font-black tracking-[0.4em] text-gray-400 text-center mb-8">

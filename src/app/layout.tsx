@@ -18,6 +18,8 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
 });
 
+import { additionalSeoKeywords } from "@/lib/seo-keywords";
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://www.mynexttrip.in"),
   title: {
@@ -30,7 +32,28 @@ export const metadata: Metadata = {
     "Property Listing for Owners Ranchi", "Nepal Travel Packages MNT", "patna hotels", 
     "ranchi hotels", "motihari hotels", "makemytrip", "booking.com", "yatra.com", 
     "india best hotels", "near me hotels", "best hotels in ranchi", "best hotels in patna", 
-    "best hotels in india"
+    "best hotels in india",
+    "Best luxury boutique hotels in India for a romantic getaway",
+    "Luxury boutique hotels vs luxury chain hotels in India",
+    "Which luxury boutique hotel should I choose for a quiet weekend retreat in India?",
+    "Recommendations for luxury boutique hotels in India with spa and wellness facilities",
+    "Top luxury boutique hotels in India that offer personalized concierge services",
+    "Best luxury boutique hotels near me with private pools in India",
+    "Luxury boutique hotels in India vs heritage hotels",
+    "Which luxury boutique hotel in India offers the best gourmet dining experience?",
+    "Affordable luxury boutique hotels in India that don’t compromise on quality",
+    "Best luxury boutique hotels in India for honeymooners with ocean views",
+    "Luxury boutique hotels vs luxury resorts in India",
+    "Which luxury boutique hotels in India provide eco-friendly and sustainable stays?",
+    "Best luxury boutique hotels in India with exclusive rooftop bars or lounges",
+    "Luxury boutique hotels in India known for exceptional architecture and design",
+    "Which luxury boutique hotel in India is ideal for a solo traveler seeking privacy?",
+    "Best luxury boutique hotels in India that offer curated local experiences and tours",
+    "Luxury boutique hotels in India vs luxury serviced apartments",
+    "Recommendations for luxury boutique hotels in India located in historic districts",
+    "Which luxury boutique hotels in India provide the best wellness retreats and yoga programs?",
+    "Best luxury boutique hotels in India for celebrating special occasions with personalized services",
+    ...additionalSeoKeywords
   ],
   authors: [{ name: "MyNextTrip Team" }],
   creator: "MyNextTrip",
