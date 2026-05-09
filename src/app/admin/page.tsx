@@ -13,8 +13,7 @@ import {
   Map as MapIcon, Leaf, CalendarCheck, Search, FileDown, MessageSquareMore, UserPlus, Camera
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 import WhatsAppAutomation from "@/components/admin/WhatsAppAutomation";
 
 export default function AdminDashboard() {
@@ -62,7 +61,9 @@ export default function AdminDashboard() {
     mapUrl: ""
   });
 
-  const generateReservationPDF = (booking: any) => {
+  const generateReservationPDF = async (booking: any) => {
+    const { default: jsPDF } = await import("jspdf");
+    const { default: autoTable } = await import("jspdf-autotable");
     const doc = new jsPDF();
     
     // Header - Modern Design
@@ -766,7 +767,15 @@ export default function AdminDashboard() {
                           <td className="px-6 py-4">
                             <div className="w-16 h-16 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden relative">
                               {h.images && h.images.length > 0 ? (
-                                <img src={h.images[0]} alt={h.hotelName} className="object-cover w-full h-full" />
+                              <div className="w-full h-full relative">
+                                <OptimizedImage 
+                                  src={h.images[0]} 
+                                  alt={h.hotelName} 
+                                  width={200}
+                                  height={150}
+                                  className="object-cover w-full h-full" 
+                                />
+                              </div>
                               ) : (
                                 <Building2 className="w-6 h-6 text-slate-400 m-auto mt-5" />
                               )}
@@ -981,10 +990,16 @@ export default function AdminDashboard() {
                         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Room Photo</label>
                         <div className="flex items-center gap-3">
                           <div className="relative group/img w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex-shrink-0">
-                            {room.roomImageFile ? (
-                              <img src={URL.createObjectURL(room.roomImageFile)} className="w-full h-full object-cover" />
-                            ) : room.image ? (
-                              <img src={room.image} className="w-full h-full object-cover" />
+                            {(room.roomImageFile || room.image) ? (
+                              <div className="w-full h-full relative">
+                                <OptimizedImage 
+                                  src={room.roomImageFile ? URL.createObjectURL(room.roomImageFile) : (room.image || "/images/placeholder.png")} 
+                                  alt="Room Preview"
+                                  width={128}
+                                  height={80}
+                                  className="w-full h-full object-cover" 
+                                />
+                              </div>
                             ) : (
                               <ImageIcon className="w-5 h-5 text-slate-300 m-auto mt-3.5" />
                             )}
@@ -2015,7 +2030,15 @@ function StaffAssignTab({ allHotels }: { allHotels: any[] }) {
                 <div className="relative group">
                   <div className="w-32 h-32 bg-white rounded-[2rem] border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden transition-all group-hover:border-indigo-400">
                     {form.photo ? (
-                      <img src={form.photo} alt="Preview" className="w-full h-full object-cover" />
+                      <div className="w-full h-full relative">
+                        <OptimizedImage 
+                          src={form.photo} 
+                          alt="Preview" 
+                          width={150}
+                          height={150}
+                          className="w-full h-full object-cover" 
+                        />
+                      </div>
                     ) : (
                       <Camera className="w-8 h-8 text-slate-300 group-hover:text-indigo-400 transition-colors" />
                     )}

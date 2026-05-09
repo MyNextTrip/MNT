@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/LanguageContext";
 import { languages } from "@/lib/translations";
 import { cn } from "@/lib/utils";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 export default function Header() {
   const router = useRouter();

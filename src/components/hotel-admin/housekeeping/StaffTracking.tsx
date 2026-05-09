@@ -5,6 +5,7 @@ import {
   UserCheck, Timer, Award, Zap, Loader2
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 interface StaffTrackingProps {
   staff?: any[];
@@ -113,7 +114,15 @@ export const StaffTracking = ({ staff = [] }: StaffTrackingProps) => {
                           <div className="flex items-center gap-3">
                              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-indigo-600 font-black border border-slate-100 shadow-sm overflow-hidden">
                                 {staff.photo ? (
-                                  <img src={staff.photo} alt={staff.name} className="w-full h-full object-cover" />
+                                  <div className="w-full h-full relative">
+                                    <OptimizedImage 
+                                      src={staff.photo} 
+                                      alt={staff.name} 
+                                      width={48}
+                                      height={48}
+                                      className="w-full h-full object-cover" 
+                                    />
+                                  </div>
                                 ) : (
                                   staff.name.charAt(0)
                                 )}

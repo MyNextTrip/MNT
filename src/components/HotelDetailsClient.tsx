@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import Script from "next/script";
 import { cn } from "@/lib/utils";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 import { HotelDetailsSkeleton } from "./Skeletons";
 
@@ -406,7 +407,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
 
           return (
             <div className="relative rounded-3xl overflow-hidden shadow-xl mb-8 h-[300px] md:h-[500px] bg-black group">
-              <Image 
+              <OptimizedImage 
                 src={allImages[currentImageIndex % allImages.length]} 
                 alt={`${hotel.hotelName} image ${currentImageIndex + 1}`} 
                 fill className="object-cover transition-opacity duration-500" priority
@@ -506,7 +507,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
                       className="relative w-full h-48 md:h-64 rounded-[20px] overflow-hidden mb-6 bg-slate-100 cursor-pointer group/img"
                       onClick={() => setExpandedImage(room.image || (hotel.images && hotel.images.length > 0 ? hotel.images[idx % hotel.images.length] : '/images/hero-bg.png'))}
                     >
-                      <Image src={room.image || (hotel.images && hotel.images.length > 0 ? hotel.images[idx % hotel.images.length] : '/images/hero-bg.png')} alt={room.type} fill className="object-cover group-hover/img:scale-105 transition-transform" />
+                      <OptimizedImage src={room.image || (hotel.images && hotel.images.length > 0 ? hotel.images[idx % hotel.images.length] : '/images/hero-bg.png')} alt={room.type} fill className="object-cover group-hover/img:scale-105 transition-transform" />
                       <div className="absolute top-4 left-4 bg-white/95 px-4 py-1.5 rounded-full shadow-md"><span className="text-sm font-black text-slate-900 uppercase tracking-widest">{room.type}</span></div>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -710,7 +711,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
         </div>
       )}
 
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
     </main>
   );
 }

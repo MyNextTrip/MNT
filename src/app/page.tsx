@@ -1,7 +1,29 @@
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
 import TrustFactors from "@/components/TrustFactors";
+import SummaryBox from "@/components/geo/SummaryBox";
+import Schema from "@/components/seo/Schema";
 import { Metadata } from "next";
+import { ChevronDown, HelpCircle } from "lucide-react";
+
+const faqs = [
+  { 
+    question: "How do I book a hotel directly via MyNextTrip (MNT)?", 
+    answer: "Booking is simple: Search for your destination, select a verified property, and choose your preferred payment method (Pay at Hotel, Partial, or Prepaid). MNT connects you directly with property owners for the best deals." 
+  },
+  { 
+    question: "Is MyNextTrip available in Nepal?", 
+    answer: "Yes, MNT offers premium hotel bookings and travel packages across Nepal, including major hubs like Kathmandu, Pokhara, and the Bara district (Hotels Ichchha)." 
+  },
+  { 
+    question: "What are the benefits of 'Direct Booking' with MNT?", 
+    answer: "Direct booking eliminates middleman commissions, ensures better communication with the hotel staff, and often provides access to exclusive room upgrades and flexible cancellation policies." 
+  },
+  { 
+    question: "Does MNT provide holiday packages for Bihar and Jharkhand?", 
+    answer: "Absolutely. We specialize in regional tourism, offering curated religious, heritage, and nature-based packages across Patna, Ranchi, Deoghar, and Motihari." 
+  }
+];
 
 export const metadata: Metadata = {
   title: "MNT | Best Hotels in Ranchi, Patna & India | Direct Booking Portal",
@@ -43,68 +65,37 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "TravelAgency",
-  "name": "MyNextTrip (MNT)",
-  "url": "https://www.mynexttrip.in",
-  "logo": "https://www.mynexttrip.in/images/mnt-logo-new.png",
-  "image": "https://www.mynexttrip.in/images/og-image.png",
-  "description": "Premium travel agency and hospitality aggregator in Patna and Ranchi. Specializing in direct hotel bookings and property listing for owners across Bihar, Jharkhand, and Nepal.",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Bariatu Road",
-    "addressLocality": "Ranchi",
-    "addressRegion": "Jharkhand",
-    "postalCode": "834001",
-    "addressCountry": "IN"
-  },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": "23.3441",
-    "longitude": "85.3091"
-  },
-  "openingHoursSpecification": {
-    "@type": "OpeningHoursSpecification",
-    "dayOfWeek": [
-      "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
-    ],
-    "opens": "00:00",
-    "closes": "23:59"
-  },
-  "sameAs": [
-    "https://www.facebook.com/profile.php?id=61575468341367",
-    "https://www.instagram.com/mynexttrip07/",
-    "https://www.youtube.com/channel/UC71Zk6DnIdPEqAkq3-JyFpA"
-  ],
-  "contactPoint": [
-    {
-      "@type": "ContactPoint",
-      "telephone": "+91-7033008111",
-      "contactType": "customer service",
-      "areaServed": ["IN", "NP"],
-      "availableLanguage": ["Hindi", "English"]
-    },
-    {
-      "@type": "ContactPoint",
-      "telephone": "+91-9263554855",
-      "contactType": "technical support",
-      "areaServed": ["IN", "NP"],
-      "availableLanguage": ["Hindi", "English"]
-    }
-  ]
-};
+
 
 export default function Home() {
   return (
-    <div className="flex flex-col w-full">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <Hero />
-      <Services />
+    <article className="flex flex-col w-full">
+      <Schema type="TravelAgency" data={{ name: "MyNextTrip (MNT)" }} />
+      <Schema type="FAQPage" data={faqs} />
       
+      <header>
+        <Hero />
+      </header>
+
+      <section aria-label="Our Services">
+        <Services />
+      </section>
+      
+      <div className="container mx-auto px-4">
+        <SummaryBox 
+          title="MyNextTrip Travel Portal"
+          description="Leading direct-to-owner booking engine for Bihar, Jharkhand, and Nepal. Experience transparent pricing and verified luxury stays."
+          citationUrl="https://www.tourism.bihar.gov.in/"
+          citationLabel="Bihar Tourism Official"
+          items={[
+            { label: "Direct Booking", value: "0% Commission for Owners", icon: <HelpCircle className="w-4 h-4" /> },
+            { label: "Regional Focus", value: "Bihar, Jharkhand & Nepal Expert", icon: <HelpCircle className="w-4 h-4" /> },
+            { label: "Verified Stays", value: "100+ Premium Properties", icon: <HelpCircle className="w-4 h-4" /> },
+            { label: "Support", value: "24/7 Dedicated Assistance", icon: <HelpCircle className="w-4 h-4" /> }
+          ]}
+        />
+      </div>
+
       {/* Visual Break / CTA Section */}
       <section className="py-20 bg-primary relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
@@ -131,8 +122,38 @@ export default function Home() {
         </div>
       </section>
 
-      <TrustFactors />
+      <section aria-label="Trust Factors">
+        <TrustFactors />
+      </section>
       
+      {/* FAQ Section for AI Search Engines */}
+      <section className="py-24 bg-white" id="faq">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">Common Questions</h2>
+            <p className="text-slate-500 font-medium">Quick answers about our direct booking platform and services.</p>
+          </div>
+          
+          <div className="space-y-4">
+            {faqs.map((faq, idx) => (
+              <details key={idx} className="group bg-slate-50 rounded-[2rem] border border-slate-100 overflow-hidden transition-all hover:border-primary/20">
+                <summary className="flex items-center justify-between p-8 cursor-pointer list-none">
+                  <h3 className="text-lg font-bold text-slate-900 pr-8">{faq.question}</h3>
+                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary shadow-sm group-open:rotate-180 transition-transform">
+                    <ChevronDown className="w-5 h-5" />
+                  </div>
+                </summary>
+                <div className="px-8 pb-8">
+                  <p className="text-slate-600 leading-relaxed font-medium">
+                    {faq.answer}
+                  </p>
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* SEO Optimized Insights Section */}
       <section className="py-20 bg-slate-50 overflow-hidden">
         <div className="container mx-auto px-4">
@@ -142,26 +163,26 @@ export default function Home() {
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100 hover:shadow-xl transition-all group">
+            <article className="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100 hover:shadow-xl transition-all group">
               <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-primary transition-colors">Best luxury boutique hotels in India for a romantic getaway</h3>
               <p className="text-slate-600 text-sm leading-relaxed mb-4">Planning a special trip? Discover the best luxury boutique hotels in India for a romantic getaway, featuring secluded villas, candlelit dinners, and world-class service tailored for couples.</p>
               <p className="text-xs font-bold text-primary uppercase tracking-widest">Read more about Romantic Stays</p>
-            </div>
+            </article>
 
-            <div className="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100 hover:shadow-xl transition-all group">
+            <article className="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100 hover:shadow-xl transition-all group">
               <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-primary transition-colors">Luxury boutique hotels vs luxury chain hotels in India</h3>
               <p className="text-slate-600 text-sm leading-relaxed mb-4">Curious about luxury boutique hotels vs luxury chain hotels in India? We compare personalized service, unique architecture, and local character to help you choose the better experience.</p>
               <p className="text-xs font-bold text-primary uppercase tracking-widest">Compare Experiences</p>
-            </div>
+            </article>
 
-            <div className="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100 hover:shadow-xl transition-all group">
+            <article className="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100 hover:shadow-xl transition-all group">
               <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-primary transition-colors">Top luxury boutique hotels with spa and wellness</h3>
               <p className="text-slate-600 text-sm leading-relaxed mb-4">Looking for recommendations for luxury boutique hotels in India with spa and wellness facilities? From Ayurveda to modern hydrotherapy, find your perfect quiet weekend retreat in India.</p>
               <p className="text-xs font-bold text-primary uppercase tracking-widest">Explore Wellness Retreats</p>
-            </div>
+            </article>
           </div>
 
-          <div className="mt-16 p-10 bg-white rounded-[40px] shadow-2xl shadow-slate-200/50 border border-slate-100">
+          <aside className="mt-16 p-10 bg-white rounded-[40px] shadow-2xl shadow-slate-200/50 border border-slate-100">
              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div>
                    <h4 className="text-2xl font-bold text-slate-900 mb-6">Expert Travel Recommendations</h4>
@@ -192,7 +213,7 @@ export default function Home() {
                    </div>
                 </div>
              </div>
-          </div>
+          </aside>
         </div>
       </section>
 
@@ -209,6 +230,6 @@ export default function Home() {
            <div className="text-xl font-black">Emirates</div>
         </div>
       </section>
-    </div>
+    </article>
   );
 }

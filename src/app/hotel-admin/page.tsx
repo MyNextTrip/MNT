@@ -14,16 +14,34 @@ import {
   MoveHorizontal, Replace, ArrowLeftRight, Ban, LayoutList, Printer, Send, Search, Mail, Phone, Eye
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import OptimizedImage from "@/components/ui/OptimizedImage";
+import dynamic from 'next/dynamic';
 
-// Housekeeping Module Imports
-import { HouseStatusTab } from "@/components/hotel-admin/housekeeping/HouseStatusTab";
-import { MaintenanceBlockTab } from "@/components/hotel-admin/housekeeping/MaintenanceBlockTab";
-import { WorkOrderTab } from "@/components/hotel-admin/housekeeping/WorkOrderTab";
-import { SupervisorPanel } from "@/components/hotel-admin/housekeeping/SupervisorPanel";
-import { StaffTracking } from "@/components/hotel-admin/housekeeping/StaffTracking";
-import { HousekeepingReports } from "@/components/hotel-admin/housekeeping/HousekeepingReports";
+// Dynamic Housekeeping Modules
+const HouseStatusTab = dynamic(() => import("@/components/hotel-admin/housekeeping/HouseStatusTab").then(mod => mod.HouseStatusTab), { 
+  loading: () => <div className="p-12 animate-pulse bg-slate-50 rounded-[40px] border border-slate-100 h-96" />,
+  ssr: false 
+});
+const MaintenanceBlockTab = dynamic(() => import("@/components/hotel-admin/housekeeping/MaintenanceBlockTab").then(mod => mod.MaintenanceBlockTab), { 
+  loading: () => <div className="p-12 animate-pulse bg-slate-50 rounded-[40px] border border-slate-100 h-96" />,
+  ssr: false 
+});
+const WorkOrderTab = dynamic(() => import("@/components/hotel-admin/housekeeping/WorkOrderTab").then(mod => mod.WorkOrderTab), { 
+  loading: () => <div className="p-12 animate-pulse bg-slate-50 rounded-[40px] border border-slate-100 h-96" />,
+  ssr: false 
+});
+const SupervisorPanel = dynamic(() => import("@/components/hotel-admin/housekeeping/SupervisorPanel").then(mod => mod.SupervisorPanel), { 
+  loading: () => <div className="p-12 animate-pulse bg-slate-50 rounded-[40px] border border-slate-100 h-96" />,
+  ssr: false 
+});
+const StaffTracking = dynamic(() => import("@/components/hotel-admin/housekeeping/StaffTracking").then(mod => mod.StaffTracking), { 
+  loading: () => <div className="p-12 animate-pulse bg-slate-50 rounded-[40px] border border-slate-100 h-96" />,
+  ssr: false 
+});
+const HousekeepingReports = dynamic(() => import("@/components/hotel-admin/housekeeping/HousekeepingReports").then(mod => mod.HousekeepingReports), { 
+  loading: () => <div className="p-12 animate-pulse bg-slate-50 rounded-[40px] border border-slate-100 h-96" />,
+  ssr: false 
+});
 
 export default function HotelAdminDashboard() {
   const router = useRouter();
@@ -426,7 +444,9 @@ export default function HotelAdminDashboard() {
       setIsSaving(false);
     }
   };
-  const generateReservationPDF = (booking: any) => {
+  const generateReservationPDF = async (booking: any) => {
+    const { default: jsPDF } = await import("jspdf");
+    const { default: autoTable } = await import("jspdf-autotable");
     const doc = new jsPDF();
     
     // Header - Modern Design
@@ -1588,7 +1608,15 @@ export default function HotelAdminDashboard() {
                                     <div className="flex items-center gap-3">
                                         <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
                                             {room.image ? (
-                                                <img src={room.image} className="w-full h-full object-cover" />
+                                              <div className="w-full h-full relative">
+                                                <OptimizedImage 
+                                                  src={room.image} 
+                                                  alt={room.roomType}
+                                                  width={100}
+                                                  height={80}
+                                                  className="w-full h-full object-cover" 
+                                                />
+                                              </div>
                                             ) : (
                                                 <BedDouble className="w-5 h-5 text-slate-300" />
                                             )}

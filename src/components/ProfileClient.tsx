@@ -13,8 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 export default function ProfileClient() {
   const router = useRouter();
@@ -61,7 +60,9 @@ export default function ProfileClient() {
     }
   };
 
-  const generateReceipt = (booking: any) => {
+  const generateReceipt = async (booking: any) => {
+    const { default: jsPDF } = await import("jspdf");
+    const { default: autoTable } = await import("jspdf-autotable");
     const doc = new jsPDF();
     const primaryColor: [number, number, number] = [37, 99, 235]; 
 
@@ -311,9 +312,11 @@ export default function ProfileClient() {
                                       <span className="text-[9px] font-black text-slate-500 uppercase tracking-tighter">Paid via: {booking.paymentMethod}</span>
                                       {booking.paymentMethod === 'QR' && (
                                         <div className="p-2 bg-white rounded-xl border border-indigo-100 w-fit animate-in zoom-in-95">
-                                          <img 
+                                          <OptimizedImage 
                                             src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=MNT-Booking-Payment" 
                                             alt="Payment QR" 
+                                            width={64}
+                                            height={64}
                                             className="w-16 h-16 object-contain"
                                           />
                                         </div>

@@ -6,17 +6,19 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import MNTChatBot from "@/components/MNTChatBot";
-
+import Schema from "@/components/seo/Schema";
 import { LanguageProvider } from "@/lib/LanguageContext";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: 'swap',
 });
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
+  display: 'swap',
 });
 
 import { additionalSeoKeywords } from "@/lib/seo-keywords";
@@ -29,36 +31,44 @@ export const metadata: Metadata = {
   },
   description: "Book premium stays directly with My Next Trip (MNT). The leading travel portal for direct hotel booking and property listing for owners in Patna, Ranchi, Motihari, and Nepal. Experience seamless MNT Brand hospitality.",
   keywords: [
-    "MNT", "MNT Brand", "My Next Trip Hotel Booking", "Direct Booking Engine Bihar", 
-    "Property Listing for Owners Ranchi", "Nepal Travel Packages MNT", "patna hotels", 
-    "ranchi hotels", "motihari hotels", "makemytrip", "booking.com", "yatra.com", 
-    "india best hotels", "near me hotels", "best hotels in ranchi", "best hotels in patna", 
-    "best hotels in india",
-    "Best luxury boutique hotels in India for a romantic getaway",
-    "Luxury boutique hotels vs luxury chain hotels in India",
-    "Which luxury boutique hotel should I choose for a quiet weekend retreat in India?",
-    "Recommendations for luxury boutique hotels in India with spa and wellness facilities",
-    "Top luxury boutique hotels in India that offer personalized concierge services",
-    "Best luxury boutique hotels near me with private pools in India",
-    "Luxury boutique hotels in India vs heritage hotels",
-    "Which luxury boutique hotel in India offers the best gourmet dining experience?",
-    "Affordable luxury boutique hotels in India that don’t compromise on quality",
-    "Best luxury boutique hotels in India for honeymooners with ocean views",
-    "Luxury boutique hotels vs luxury resorts in India",
-    "Which luxury boutique hotels in India provide eco-friendly and sustainable stays?",
-    "Best luxury boutique hotels in India with exclusive rooftop bars or lounges",
-    "Luxury boutique hotels in India known for exceptional architecture and design",
-    "Which luxury boutique hotel in India is ideal for a solo traveler seeking privacy?",
-    "Best luxury boutique hotels in India that offer curated local experiences and tours",
-    "Luxury boutique hotels in India vs luxury serviced apartments",
-    "Recommendations for luxury boutique hotels in India located in historic districts",
-    "Which luxury boutique hotels in India provide the best wellness retreats and yoga programs?",
-    "Best luxury boutique hotels in India for celebrating special occasions with personalized services",
+    "MNT", "MNT Brand", "My Next Trip", "Direct Hotel Booking Engine", 
+    "Property Management System India", "Hotel Listing for Owners",
+    "Patna Hotels", "Ranchi Hotels", "Nepal Travel Packages",
+    "Generative AI Travel Search", "Direct Booking Deals",
+    // User Provided High-Intent Keywords
+    "make my trip", "makemytrip", "mmt", "flight ticket", "train ticket booking", 
+    "cheap flights", "book flight tickets", "hotels near me", "cheap flights to Goa", 
+    "flights from Delhi to Mumbai", "flights from Mumbai to Delhi", "flights to Dubai from India", 
+    "international flights booking", "cheap flights to Europe", "one way flight ticket", 
+    "5 star hotels in Jaipur", "budget hotels in Manali", "hotels in Goa", "hotels in Shimla", 
+    "luxury hotels in India", "hotel booking online", "hotels near Taj Mahal", "honeymoon packages to Maldives", 
+    "family trip packages India", "holiday packages from Delhi", "honeymoon packages in Kerala", 
+    "Goa tour package", "Kashmir tour package", "weekend getaways near Delhi", "Rajasthan tour package", 
+    "bus ticket booking online", "irctc train booking", "train booking", "best time to visit Kashmir", 
+    "visa free countries for Indians", "best places to visit in December", "top 10 travel destinations India", 
+    "how to get visa for Thailand", "best beaches in India", "unexplored destinations India", 
+    "Manali tour package from Delhi", "how to get Thailand visa", "beach hotels in Goa", 
+    "top 10 budget travel destinations India", "best places to visit in December India", 
+    "Ladakh bike trip package", "4 nights 5 days Andaman package from Delhi", "travel in budget India tips", 
+    "best monsoon destinations India", "Dubai visa for Indians", "which is the best travel portal in India", 
+    "best honeymoon destinations in India 2026", "Spiti Valley tour package", "flight booking", 
+    "flight ticket booking", "hotel booking", "cheap flights to Dubai", "cheap flights from Mumbai", 
+    "domestic flights India", "holiday packages", "flight offers today", "best hotels in Mumbai", 
+    "honeymoon packages", "cheap flights to Bangkok", "Kerala tour package", "Shimla tour package", 
+    "cheap international holiday packages", "Andaman tour package", "last minute flight deals India", 
+    "Europe tour package from India", "flight status check", "PNR status", "cheap hotels near me", 
+    "travel agency near me",
     ...additionalSeoKeywords
   ],
-  authors: [{ name: "MyNextTrip Team" }],
+  category: "Travel & Hospitality",
+  other: {
+    "ai-engine-optimization": "Generative Engine Optimized (GEO) v1.0",
+    "primary-service": "Hotel Aggregator & Booking Engine",
+    "geotarget": "India, Bihar, Jharkhand, Nepal",
+  },
+  authors: [{ name: "MyNextTrip Editorial Team" }],
   creator: "MyNextTrip",
-  publisher: "MyNextTrip",
+  publisher: "MyNextTrip (MNT)",
   formatDetection: {
     email: false,
     address: false,
@@ -66,7 +76,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "en_IE",
+    locale: "en_IN",
     url: "https://www.mynexttrip.in",
     siteName: "MyNextTrip (MNT)",
     title: "MNT | Direct Hotel Booking & Property Listing Bihar, Jharkhand, Nepal",
@@ -129,65 +139,12 @@ export default function RootLayout({
           `}
         </Script>
         <LanguageProvider>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "Organization",
-                "name": "My Next Trip (MNT)",
-                "alternateName": "MNT Travel",
-                "url": "https://www.mynexttrip.in",
-                "logo": "https://www.mynexttrip.in/images/mnt-logo-new.png",
-                "contactPoint": [
-                  {
-                    "@type": "ContactPoint",
-                    "telephone": "+91-70330-08111",
-                    "contactType": "customer support",
-                    "areaServed": ["IN", "NP"],
-                    "availableLanguage": ["en", "hi"]
-                  },
-                  {
-                    "@type": "ContactPoint",
-                    "telephone": "+91-92635-54855",
-                    "contactType": "technical support",
-                    "areaServed": ["IN", "NP"],
-                    "availableLanguage": ["en", "hi"]
-                  }
-                ],
-                "address": {
-                  "@type": "PostalAddress",
-                  "streetAddress": "Bariatu Road",
-                  "addressLocality": "Ranchi",
-                  "addressRegion": "Jharkhand",
-                  "postalCode": "834001",
-                  "addressCountry": "IN"
-                },
-                "sameAs": [
-                  "https://www.facebook.com/profile.php?id=61575468341367",
-                  "https://www.instagram.com/mynexttrip07/",
-                  "https://www.youtube.com/channel/UC71Zk6DnIdPEqAkq3-JyFpA"
-                ]
-              })
-            }}
-          />
-          {/* Breadcrumb Schema */}
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "BreadcrumbList",
-                "itemListElement": [
-                  {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "name": "Home",
-                    "item": "https://www.mynexttrip.in"
-                  }
-                ]
-              })
-            }}
+          <Schema type="TravelAgency" data={{ name: "MyNextTrip (MNT)" }} />
+          <Schema 
+            type="BreadcrumbList" 
+            data={[
+              { name: "Home", item: "/" }
+            ]} 
           />
           <Header />
           <main>{children}</main>
