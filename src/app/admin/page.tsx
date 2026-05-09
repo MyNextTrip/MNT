@@ -10,7 +10,7 @@ import {
   Smartphone, Sparkles, Dumbbell, Waves, Heart, Baby, 
   Briefcase, Utensils, ConciergeBell, Dog,
   Navigation as NavigationIcon, Monitor, Zap, Menu, X, Key, Copy, Check, Save, Loader2, MessageSquareText, Phone, CheckCircle2,
-  Map as MapIcon, Leaf, CalendarCheck, Search, FileDown, MessageSquareMore
+  Map as MapIcon, Leaf, CalendarCheck, Search, FileDown, MessageSquareMore, UserPlus, Camera
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
@@ -605,7 +605,8 @@ export default function AdminDashboard() {
             { id: 'users', label: 'Users', icon: Users },
             { id: 'inquiries', label: 'Hotel Inquiries', icon: Building2 },
             { id: 'chatbot-users', label: 'Chatbot Users', icon: MessageSquareText },
-            { id: 'whatsapp-automation', label: 'WhatsApp Automation', icon: MessageSquareMore }
+            { id: 'whatsapp-automation', label: 'WhatsApp Automation', icon: MessageSquareMore },
+            { id: 'staff-assign', label: 'Staff Assign', icon: UserPlus }
           ].map((tab) => (
             <button 
               key={tab.id}
@@ -1724,6 +1725,11 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
+        {activeTab === 'staff-assign' && (
+          <StaffAssignTab allHotels={allHotels} />
+        )}
+
+        {/* ... existing code ... */}
       </main>
 
       {/* Credentials Modal */}
@@ -1831,6 +1837,317 @@ export default function AdminDashboard() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Staff Assign Component
+function StaffAssignTab({ allHotels }: { allHotels: any[] }) {
+  const [selectedHotel, setSelectedHotel] = useState<string>("");
+  const [staffList, setStaffList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  
+  const [form, setForm] = useState({
+    name: "",
+    designation: "",
+    code: "",
+    photo: ""
+  });
+
+  const fetchStaff = async (hotelId: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/admin/staff?hotelId=${hotelId}`);
+      const data = await res.json();
+      if (data.success) {
+        setStaffList(data.staff);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedHotel) {
+      fetchStaff(selectedHotel);
+    }
+  }, [selectedHotel]);
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        setForm({ ...form, photo: data.url });
+      } else {
+        alert("Upload failed");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error uploading photo");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleAssign = async () => {
+    if (!selectedHotel || !form.name || !form.designation || !form.code) {
+      alert("Please fill all fields and select a hotel.");
+      return;
+    }
+
+    if (form.code.length !== 5) {
+      alert("Employee code must be exactly 5 characters.");
+      return;
+    }
+
+    const hotel = allHotels.find(h => h._id === selectedHotel);
+
+    setIsSubmitting(true);
+    try {
+      const method = editingId ? 'PUT' : 'POST';
+      const body = editingId 
+        ? { id: editingId, ...form, employeeCode: form.code } 
+        : { hotelId: selectedHotel, hotelName: hotel?.hotelName, ...form, employeeCode: form.code };
+
+      const res = await fetch('/api/admin/staff', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(editingId ? "Employee updated successfully!" : "Employee assigned successfully!");
+        setForm({ name: "", designation: "", code: "", photo: "" });
+        setEditingId(null);
+        fetchStaff(selectedHotel);
+      } else {
+        alert(data.message || "Failed to save employee.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error saving employee.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEdit = (staff: any) => {
+    setEditingId(staff._id);
+    setForm({
+      name: staff.name,
+      designation: staff.designation,
+      code: staff.employeeCode,
+      photo: staff.photo || ""
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this employee?")) return;
+
+    try {
+      const res = await fetch(`/api/admin/staff?id=${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        fetchStaff(selectedHotel);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return (
+    <div className="animate-in fade-in slide-in-from-bottom-4 space-y-8">
+      <header>
+        <h1 className="text-3xl font-black text-slate-900">Staff Assignment</h1>
+        <p className="text-slate-500 mt-2 font-medium">Assign and manage employees for registered hotels.</p>
+      </header>
+
+      <div className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100">
+        <div className="max-w-4xl space-y-8">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Select Hotel</label>
+            <div className="relative">
+              <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <select 
+                value={selectedHotel}
+                onChange={(e) => {
+                  setSelectedHotel(e.target.value);
+                  setEditingId(null);
+                  setForm({ name: "", designation: "", code: "", photo: "" });
+                }}
+                disabled={!!editingId}
+                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all font-bold text-slate-700 appearance-none disabled:opacity-50"
+              >
+                <option value="">Select a hotel...</option>
+                {allHotels.map(h => (
+                  <option key={h._id} value={h._id}>
+                    {h.hotelName} ({h.location} - {h.address.substring(0, 30)}{h.address.length > 30 ? '...' : ''})
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none" />
+            </div>
+          </div>
+
+          {selectedHotel && (
+            <div className="flex flex-col md:flex-row gap-8 items-start p-8 bg-slate-50 rounded-[40px] border border-slate-100 animate-in zoom-in-95 duration-300">
+              {/* Photo Upload Section */}
+              <div className="flex flex-col items-center gap-4 w-full md:w-auto">
+                <div className="relative group">
+                  <div className="w-32 h-32 bg-white rounded-[2rem] border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden transition-all group-hover:border-indigo-400">
+                    {form.photo ? (
+                      <img src={form.photo} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <Camera className="w-8 h-8 text-slate-300 group-hover:text-indigo-400 transition-colors" />
+                    )}
+                    {isUploading && (
+                      <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
+                        <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
+                      </div>
+                    )}
+                  </div>
+                  <label className="absolute -bottom-2 -right-2 bg-indigo-600 text-white p-2.5 rounded-2xl shadow-lg cursor-pointer hover:bg-indigo-700 transition-all hover:scale-110 active:scale-95">
+                    <Camera className="w-4 h-4" />
+                    <input type="file" className="hidden" accept="image/*" onChange={handlePhotoUpload} />
+                  </label>
+                </div>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">
+                  Employee Photo<br/><span className="text-slate-300 font-bold">(Optional)</span>
+                </p>
+              </div>
+
+              {/* Form Fields Section */}
+              <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Employee Name</label>
+                  <input 
+                    type="text"
+                    placeholder="Enter full name"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    className="w-full px-5 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all font-bold"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Designation</label>
+                  <input 
+                    type="text"
+                    placeholder="e.g. Housekeeping"
+                    value={form.designation}
+                    onChange={(e) => setForm({ ...form, designation: e.target.value })}
+                    className="w-full px-5 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all font-bold"
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Employee Code (5 Chars)</label>
+                  <input 
+                    type="text"
+                    placeholder="e.g. HK001"
+                    maxLength={5}
+                    value={form.code}
+                    onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
+                    className="w-full px-5 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all font-bold tracking-widest"
+                  />
+                </div>
+                <div className="md:col-span-2 pt-4 flex gap-3">
+                  <button 
+                    onClick={handleAssign}
+                    disabled={isSubmitting || isUploading}
+                    className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl shadow-lg shadow-indigo-600/20 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 flex items-center justify-center gap-2 uppercase tracking-widest text-sm"
+                  >
+                    {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : editingId ? <Save className="w-5 h-5" /> : <PlusCircle className="w-5 h-5" />}
+                    {editingId ? "Update Employee" : "Assign Employee"}
+                  </button>
+                  {editingId && (
+                    <button 
+                      onClick={() => {
+                        setEditingId(null);
+                        setForm({ name: "", designation: "", code: "", photo: "" });
+                      }}
+                      className="px-6 py-4 bg-slate-200 text-slate-600 font-black rounded-2xl hover:bg-slate-300 transition-all uppercase tracking-widest text-sm"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {selectedHotel && (
+        <div className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-xl font-black text-slate-900">Current Staff at {allHotels.find(h => h._id === selectedHotel)?.hotelName}</h3>
+            <span className="px-4 py-1.5 bg-slate-100 rounded-full text-[10px] font-black text-slate-500 uppercase tracking-widest">
+              {staffList.length} Employees
+            </span>
+          </div>
+
+          {loading ? (
+            <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+          ) : staffList.length === 0 ? (
+            <div className="text-center py-12 border-2 border-dashed border-slate-100 rounded-[32px]">
+              <p className="text-slate-400 font-bold italic">No employees assigned to this hotel yet.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {staffList.map((s: any) => (
+                <div key={s._id} className="p-6 bg-slate-50 rounded-3xl border border-slate-100 group hover:border-indigo-600/30 transition-all relative">
+                  <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                    <button onClick={() => handleEdit(s)} className="p-2 bg-white text-indigo-600 rounded-lg shadow-sm border border-slate-100 hover:bg-indigo-600 hover:text-white transition-all">
+                      <Pencil className="w-3 h-3" />
+                    </button>
+                    <button onClick={() => handleDelete(s._id)} className="p-2 bg-white text-red-600 rounded-lg shadow-sm border border-slate-100 hover:bg-red-600 hover:text-white transition-all">
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-14 h-14 bg-white rounded-2xl border border-slate-200 flex items-center justify-center text-indigo-600 font-black overflow-hidden shadow-md group/photo relative">
+                      {s.photo ? (
+                        <img 
+                          src={s.photo} 
+                          alt={s.name} 
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-125" 
+                        />
+                      ) : (
+                        <span className="text-xl">{s.name.charAt(0)}</span>
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-black text-slate-900 leading-tight">{s.name}</p>
+                      <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mt-1">{s.designation}</p>
+                    </div>
+                  </div>
+                  <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Employee Code</span>
+                    <span className="text-xs font-black text-slate-900 bg-white px-3 py-1 rounded-lg border border-slate-200 shadow-sm">{s.employeeCode}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

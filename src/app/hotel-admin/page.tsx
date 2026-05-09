@@ -17,6 +17,14 @@ import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
+// Housekeeping Module Imports
+import { HouseStatusTab } from "@/components/hotel-admin/housekeeping/HouseStatusTab";
+import { MaintenanceBlockTab } from "@/components/hotel-admin/housekeeping/MaintenanceBlockTab";
+import { WorkOrderTab } from "@/components/hotel-admin/housekeeping/WorkOrderTab";
+import { SupervisorPanel } from "@/components/hotel-admin/housekeeping/SupervisorPanel";
+import { StaffTracking } from "@/components/hotel-admin/housekeeping/StaffTracking";
+import { HousekeepingReports } from "@/components/hotel-admin/housekeeping/HousekeepingReports";
+
 export default function HotelAdminDashboard() {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -29,11 +37,13 @@ export default function HotelAdminDashboard() {
   const [stats, setStats] = useState<any>(null);
   const [bookings, setBookings] = useState<any[]>([]);
   const [hotelData, setHotelData] = useState<any>(null);
-  const [virtualRooms, setVirtualRooms] = useState<any[]>([]);
-  const [roomAssignments, setRoomAssignments] = useState<Record<string, string>>({}); // bookingId -> roomId
+  const roomAssignmentsMemo = useState<Record<string, string>>({}); // bookingId -> roomId - wait, I'll keep this as state or useMemo
   const [checkInForm, setCheckInForm] = useState<{ bookingId: string, roomNumber: string, paymentMethod: string } | null>(null);
   const [resFilter, setResFilter] = useState('All');
   const [resSearch, setResSearch] = useState('');
+  const [allStaff, setAllStaff] = useState<any[]>([]);
+  const [loadingStaff, setLoadingStaff] = useState(false);
+  const [staffSearch, setStaffSearch] = useState('');
   const [newResForm, setNewResForm] = useState({
     checkIn: new Date().toISOString().split('T')[0],
     checkInTime: "12:00",
@@ -104,8 +114,9 @@ export default function HotelAdminDashboard() {
     if (isAuthorized && hotelId) {
       if (activeTab === 'dashboard') {
         fetchStats();
-      } else if (['bookings', 'reservation', 'stayview', 'roomview'].includes(activeTab)) {
+      } else if (['bookings', 'reservation', 'stayview', 'roomview', 'stafftracking', 'employeedetails'].includes(activeTab)) {
         fetchBookings();
+        fetchStaff();
       } else if (activeTab === 'inventory' || activeTab === 'new-reservation') {
         fetchHotelData();
       }
@@ -173,6 +184,22 @@ export default function HotelAdminDashboard() {
     }
   };
 
+  const fetchStaff = async () => {
+    if (!hotelId) return;
+    try {
+      setLoadingStaff(true);
+      const res = await fetch(`/api/admin/staff?hotelId=${hotelId}`);
+      const data = await res.json();
+      if (data.success) {
+        setAllStaff(data.staff);
+      }
+    } catch (e) {
+      console.error("Failed to fetch staff:", e);
+    } finally {
+      setLoadingStaff(false);
+    }
+  };
+
   const fetchHotelData = async () => {
     try {
       setLoadingHotel(true);
@@ -205,61 +232,70 @@ export default function HotelAdminDashboard() {
     }
   }, [hotelData]);
 
-  useEffect(() => {
-    if (hotelData?.rooms) {
-      const rooms: any[] = [];
-      let globalRoomCounter = 100;
+  // Synchronize Virtual Rooms with Hotel Inventory
+  const virtualRooms = typeof window !== 'undefined' ? (function() {
+    if (!hotelData?.rooms) return [];
+    const rooms: any[] = [];
+    let globalRoomCounter = 101;
 
-      hotelData.rooms.forEach((type: any, typeIdx: number) => {
-        const assignedNumbers = type.roomNumbers 
-          ? type.roomNumbers.split(',').map((s: string) => s.trim()).filter((s: string) => s !== "")
-          : [];
+    hotelData.rooms.forEach((type: any) => {
+      const assignedNumbers = type.roomNumbers 
+        ? type.roomNumbers.split(',').map((s: string) => s.trim()).filter((s: string) => s !== "")
+        : [];
 
-        const count = assignedNumbers.length > 0 ? assignedNumbers.length : (type.count || 0);
+      // If assigned numbers are provided, use them as the source of truth for count
+      const count = assignedNumbers.length > 0 ? assignedNumbers.length : (type.count || 0);
 
-        for (let i = 1; i <= count; i++) {
-          const roomNumber = assignedNumbers.length > 0 
-            ? assignedNumbers[i-1] 
-            : (globalRoomCounter++).toString();
+      for (let i = 1; i <= count; i++) {
+        const roomNumber = assignedNumbers.length > 0 
+          ? assignedNumbers[i-1] 
+          : (globalRoomCounter++).toString();
 
-          rooms.push({
-            id: `${type.type}-${i}-${roomNumber}`,
-            roomType: type.type,
-            roomNumber,
-            price: type.price
-          });
-        }
-      });
-      setVirtualRooms(rooms);
-    }
-  }, [hotelData]);
-
-  useEffect(() => {
-    if (virtualRooms.length > 0 && bookings.length > 0) {
-      const assignments: Record<string, string> = {};
-      const sortedBookings = [...bookings].sort((a, b) => new Date(a.checkInDate).getTime() - new Date(b.checkInDate).getTime());
-      
-      const roomSchedule: Record<string, Array<{ start: number, end: number }>> = {};
-      virtualRooms.forEach(r => roomSchedule[r.id] = []);
-
-      sortedBookings.forEach(booking => {
-        const start = new Date(booking.checkInDate).getTime();
-        const end = new Date(booking.checkOutDate).getTime();
-        
-        // Find first available room of the correct type
-        const availableRoom = virtualRooms.find(r => {
-          if (r.roomType !== booking.roomType) return false;
-          return !roomSchedule[r.id].some(s => (start < s.end && end > s.start));
+        rooms.push({
+          id: `${type.type}-${roomNumber}`,
+          roomType: type.type,
+          roomNumber,
+          price: type.price
         });
+      }
+    });
+    return rooms;
+  })() : [];
 
-        if (availableRoom) {
-          assignments[booking._id] = availableRoom.id;
-          roomSchedule[availableRoom.id].push({ start, end });
+  // Synchronize Room Assignments
+  const roomAssignments = typeof window !== 'undefined' ? (function() {
+    if (virtualRooms.length === 0 || bookings.length === 0) return {};
+    const assignments: Record<string, string> = {};
+    const sortedBookings = [...bookings].sort((a, b) => new Date(a.checkInDate).getTime() - new Date(b.checkInDate).getTime());
+    
+    const roomSchedule: Record<string, Array<{ start: number, end: number }>> = {};
+    virtualRooms.forEach(r => roomSchedule[r.id] = []);
+
+    sortedBookings.forEach(booking => {
+      // If booking has an explicitly assigned room number, try to find that room
+      if (booking.assignedRoomNumber) {
+        const targetRoom = virtualRooms.find(r => r.roomNumber === booking.assignedRoomNumber);
+        if (targetRoom) {
+          assignments[booking._id] = targetRoom.id;
+          return;
         }
+      }
+
+      const start = new Date(booking.checkInDate).getTime();
+      const end = new Date(booking.checkOutDate).getTime();
+      
+      const availableRoom = virtualRooms.find(r => {
+        if (r.roomType !== booking.roomType) return false;
+        return !roomSchedule[r.id].some(s => (start < s.end && end > s.start));
       });
-      setRoomAssignments(assignments);
-    }
-  }, [virtualRooms, bookings]);
+
+      if (availableRoom) {
+        assignments[booking._id] = availableRoom.id;
+        roomSchedule[availableRoom.id].push({ start, end });
+      }
+    });
+    return assignments;
+  })() : {};
 
 
   const handleUpdateBookingStatus = async (bookingId: string, status: string, additionalData: any = {}) => {
@@ -742,7 +778,10 @@ export default function HotelAdminDashboard() {
               subItems: [
                 { id: 'housestatus', label: 'House Status', icon: CheckSquare },
                 { id: 'maintenanceblock', label: 'Maintenance Block', icon: Hammer },
-                { id: 'workorder', label: 'Work Order / Task', icon: ListTodo }
+                { id: 'workorder', label: 'Work Order / Task', icon: ListTodo },
+                { id: 'supervisorpanel', label: 'Supervisor Panel', icon: Monitor },
+                { id: 'stafftracking', label: 'Staff Tracking', icon: Users },
+                { id: 'hkreports', label: 'HK Reports', icon: BarChart3 }
               ]
             },
             { 
@@ -755,6 +794,7 @@ export default function HotelAdminDashboard() {
                 { id: 'inserttransaction', label: 'Insert Transaction', icon: Plus }
               ]
             },
+            { id: 'employeedetails', label: 'Employee Details', icon: Users },
             { id: 'b2b', label: 'B2B Market Place', icon: ShoppingBag },
             { id: 'netlocks', label: 'Net Locks', icon: Key },
             { id: 'reports', label: 'Reports', icon: BarChart3 },
@@ -2320,8 +2360,121 @@ export default function HotelAdminDashboard() {
           </div>
         )}
 
+        {/* ============================================================ */}
+        {/* HOUSEKEEPING MODULE — HOUSE STATUS */}
+        {/* ============================================================ */}
+        {activeTab === 'housestatus' && <HouseStatusTab virtualRooms={virtualRooms} bookings={bookings} />}
+
+        {/* ============================================================ */}
+        {/* HOUSEKEEPING MODULE — MAINTENANCE BLOCK */}
+        {/* ============================================================ */}
+        {activeTab === 'maintenanceblock' && <MaintenanceBlockTab virtualRooms={virtualRooms} />}
+
+        {/* ============================================================ */}
+        {/* HOUSEKEEPING MODULE — WORK ORDER / TASK */}
+        {/* ============================================================ */}
+        {activeTab === 'workorder' && <WorkOrderTab virtualRooms={virtualRooms} bookings={bookings} />}
+
+        {/* ============================================================ */}
+        {/* HOUSEKEEPING MODULE — SUPERVISOR PANEL */}
+        {/* ============================================================ */}
+        {activeTab === 'supervisorpanel' && <SupervisorPanel />}
+
+        {/* ============================================================ */}
+        {/* HOUSEKEEPING MODULE — STAFF TRACKING */}
+        {/* ============================================================ */}
+        {activeTab === 'stafftracking' && <StaffTracking staff={allStaff.filter(s => s.designation.toLowerCase().includes('house'))} />}
+
+        {activeTab === 'employeedetails' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4">
+            <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-black text-slate-900">Employee Details</h1>
+                <p className="text-slate-500 mt-2 font-medium">List of all staff members assigned to this property.</p>
+              </div>
+              <div className="relative w-full md:w-80">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                <input 
+                  type="text"
+                  placeholder="Search by name or code..."
+                  value={staffSearch}
+                  onChange={(e) => setStaffSearch(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 font-bold text-sm shadow-sm transition-all"
+                />
+              </div>
+            </header>
+
+            <div className="bg-white rounded-[2rem] shadow-xl border border-slate-100 overflow-hidden">
+               <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                     <thead>
+                        <tr className="bg-slate-50/50 border-b border-slate-100">
+                           <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Employee</th>
+                           <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Designation</th>
+                           <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Employee Code</th>
+                           <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Assigned Date</th>
+                        </tr>
+                     </thead>
+                     <tbody className="divide-y divide-slate-100">
+                        {loadingStaff ? (
+                          <tr><td colSpan={4} className="p-12 text-center text-slate-400 font-bold">Fetching employee records...</td></tr>
+                        ) : allStaff.filter(s => 
+                            s.name.toLowerCase().includes(staffSearch.toLowerCase()) || 
+                            s.employeeCode.toLowerCase().includes(staffSearch.toLowerCase())
+                          ).length === 0 ? (
+                          <tr><td colSpan={4} className="p-12 text-center text-slate-400 font-bold italic">No matching employees found.</td></tr>
+                        ) : (
+                          allStaff
+                            .filter(s => 
+                              s.name.toLowerCase().includes(staffSearch.toLowerCase()) || 
+                              s.employeeCode.toLowerCase().includes(staffSearch.toLowerCase())
+                            )
+                            .map((s) => (
+                              <tr key={s._id} className="hover:bg-slate-50/50 transition-colors">
+                                 <td className="px-8 py-6">
+                                    <div className="flex items-center gap-4">
+                                       <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center font-black overflow-hidden shadow-md border-2 border-white group/photo relative">
+                                          {s.photo ? (
+                                            <img 
+                                              src={s.photo} 
+                                              alt={s.name} 
+                                              className="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-125" 
+                                            />
+                                          ) : (
+                                            <span className="text-xl">{s.name.charAt(0)}</span>
+                                          )}
+                                       </div>
+                                       <span className="font-bold text-slate-900">{s.name}</span>
+                                    </div>
+                                 </td>
+                                 <td className="px-8 py-6">
+                                    <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                                       {s.designation}
+                                    </span>
+                                 </td>
+                                 <td className="px-8 py-6">
+                                    <span className="font-mono font-bold text-slate-600 tracking-widest">{s.employeeCode}</span>
+                                 </td>
+                                 <td className="px-8 py-6 text-slate-500 text-sm">
+                                    {new Date(s.createdAt).toLocaleDateString()}
+                                 </td>
+                              </tr>
+                            ))
+                        )}
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================ */}
+        {/* HOUSEKEEPING MODULE — REPORTS */}
+        {/* ============================================================ */}
+        {activeTab === 'hkreports' && <HousekeepingReports />}
+
         {['rates', 'distribution', 'guest', 'cashiering', 'housekeeping', 'nightaudit', 'b2b', 'netlocks', 'reports', 'exported', 
-          'ratewizard', 'packages', 'stopsell', 'channellogs', 'unsettled', 'lostfound', 'travelagent', 'businesssource', 'salesperson', 'companydb', 'expensevoucher', 'pos', 'housestatus', 'maintenanceblock', 'workorder', 'nightaudit_main', 'nightauditlog', 'inserttransaction'].includes(activeTab) && (
+          'ratewizard', 'packages', 'stopsell', 'channellogs', 'travelagent', 'businesssource', 'salesperson', 'companydb', 'expensevoucher', 'pos', 'nightaudit_main', 'nightauditlog', 'inserttransaction'].includes(activeTab) && (
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-slate-400 animate-in fade-in zoom-in-95">
               <div className="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mb-8 border-4 border-white shadow-xl">
                   <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
