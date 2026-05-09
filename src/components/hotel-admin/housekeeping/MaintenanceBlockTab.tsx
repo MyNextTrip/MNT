@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import { 
   Hammer, AlertTriangle, Clock, CheckCircle2, 
   Wrench, Plus, Search, Filter, 
-  Calendar, User, Tool, Image as ImageIcon,
-  History, BarChart3
+  User, BarChart3
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 

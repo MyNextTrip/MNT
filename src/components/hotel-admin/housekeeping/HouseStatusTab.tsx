@@ -151,7 +151,11 @@ export const HouseStatusTab = ({ virtualRooms, bookings }: HouseStatusTabProps) 
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <h3 className="text-2xl font-black text-slate-900">Room {room.roomNumber}</h3>
-                    {status === 'Ready' && <ShieldCheck className="w-4 h-4 text-emerald-500" title="Sanitized" />}
+                    {status === 'Ready' && (
+                      <span title="Sanitized">
+                        <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                      </span>
+                    )}
                   </div>
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{room.roomType}</p>
                 </div>
