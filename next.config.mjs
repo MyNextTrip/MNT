@@ -2,9 +2,13 @@
 const nextConfig = {
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'res.cloudinary.com' },
-      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
-      { protocol: 'https', hostname: 'rukmini-ct.flixcart.com' }
+      { protocol: 'https', hostname: 'res.cloudinary.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'rukmini-ct.flixcart.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'images.oyoroomscdn.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'd1vsci4s9o4dj5.cloudfront.net', pathname: '/**' },
+      { protocol: 'https', hostname: '**', pathname: '/**' },
+      { protocol: 'http', hostname: '**', pathname: '/**' },
     ],
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200],

@@ -1,59 +1,85 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import { Hotel } from '@/lib/models/Hotel';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import cloudinary from '@/config/cloudinary';
+
+const uploadToCloudinary = async (file: File, folder: string) => {
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload_stream(
+      { folder },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    ).end(buffer);
+  });
+};
+
+const uploadUrlToCloudinary = async (url: string, folder: string) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload(
+      url,
+      { folder },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+  });
+};
 
 export async function POST(req: Request) {
   try {
     await connectToDatabase();
     
-    // Using formData to capture potential multimedia uploads natively
     const formData = await req.formData();
-    
-    // Parse pure stringified JSON parameters securely
     const dataString = formData.get('data') as string;
     const data = JSON.parse(dataString);
     
-    // Intercept physical file uploads from the Next.js runtime
+    // Process main hotel images (physical uploads)
     const imageFiles = formData.getAll('imageFiles') as File[];
     const uploadedPaths: string[] = [];
 
-    // Check system directory & bootstrap recursively if missing
-    const uploadDir = path.join(process.cwd(), 'public/uploads');
-    try { await mkdir(uploadDir, { recursive: true }); } catch (e) {}
-
-    // Async physical writes to local /public storage folder
     for (const file of imageFiles) {
       if (file.name) {
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-        const filePath = path.join(uploadDir, fileName);
-        await writeFile(filePath, buffer);
-        uploadedPaths.push(`/uploads/${fileName}`);
+        const result: any = await uploadToCloudinary(file, 'mnt_hotels');
+        uploadedPaths.push(result.secure_url);
       }
     }
 
-    // Combine raw manual URL Strings and Physical File Upload Paths uniformly
-    const finalImages = [...data.images, ...uploadedPaths];
-
-    // Intercept physical room-specific uploads
-    if (data.rooms && Array.isArray(data.rooms)) {
-      for (let i = 0; i < data.rooms.length; i++) {
-        const roomFile = formData.get(`roomImage_${i}`) as File;
-        if (roomFile && roomFile.name) {
-          const bytes = await roomFile.arrayBuffer();
-          const buffer = Buffer.from(bytes);
-          const fileName = `room-${Date.now()}-${roomFile.name.replace(/\s+/g, '-')}`;
-          const filePath = path.join(uploadDir, fileName);
-          await writeFile(filePath, buffer);
-          data.rooms[i].image = `/uploads/${fileName}`;
+    // Process main hotel images (URLs) - Upload to Cloudinary
+    const urlPaths: string[] = [];
+    if (data.images && Array.isArray(data.images)) {
+      for (const url of data.images) {
+        if (typeof url === 'string' && url.startsWith('http')) {
+          try {
+            const result: any = await uploadUrlToCloudinary(url, 'mnt_hotels');
+            urlPaths.push(result.secure_url);
+          } catch (e) {
+            console.error(`Failed to upload image URL to Cloudinary: ${url}`, e);
+            urlPaths.push(url); // Fallback to original URL if upload fails
+          }
+        } else {
+          urlPaths.push(url);
         }
       }
     }
 
-    // Build the MongoDB Document precisely matching Mongoose schema
+    const finalImages = [...urlPaths, ...uploadedPaths];
+
+    // Process room-specific images
+    if (data.rooms && Array.isArray(data.rooms)) {
+      for (let i = 0; i < data.rooms.length; i++) {
+        const roomFile = formData.get(`roomImage_${i}`) as File;
+        if (roomFile && roomFile.name) {
+          const result: any = await uploadToCloudinary(roomFile, 'mnt_rooms');
+          data.rooms[i].image = result.secure_url;
+        }
+      }
+    }
+
     const newHotel = await Hotel.create({
       hotelName: data.hotelName,
       location: data.location,

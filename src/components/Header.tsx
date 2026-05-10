@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, User, Menu, Phone, Globe, ChevronDown, LogOut, MapPin, Building2, TreePine, Briefcase, ShieldCheck, Map, Camera, Star, ArrowRight, X, Plane, LayoutDashboard, Ticket } from "lucide-react";
-import Image from "next/image";
+
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/LanguageContext";
 import { languages } from "@/lib/translations";
@@ -82,12 +82,10 @@ export default function Header() {
           <div className="flex items-center gap-8">
             <Link href="/" className="group flex items-center transition-all duration-300" aria-label="Go to MyNextTrip home">
               <div className="relative w-36 h-12 transform group-hover:scale-110 group-hover:brightness-110 active:scale-95 transition-all duration-300 ease-out">
-                <Image 
+                <img 
                   src="/images/mnt-logo-new.png" 
                   alt="MyNextTrip - Premium Travel and Hotel Booking" 
-                  fill 
-                  className="object-contain" 
-                  priority
+                  className="absolute inset-0 w-full h-full object-contain" 
                 />
               </div>
             </Link>

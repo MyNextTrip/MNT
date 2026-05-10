@@ -179,8 +179,31 @@ export default async function HotelPage({ params }: { params: Promise<{ id: stri
     const serializedHotel = {
       ...hotel,
       _id: (hotel._id as any).toString(),
-      rooms: hotel.rooms?.map((r: any) => ({ ...r, _id: r._id?.toString() })),
-      reviews: hotel.reviews?.map((rev: any) => ({ ...rev, _id: rev._id?.toString(), createdAt: rev.createdAt?.toISOString() }))
+      rooms: hotel.rooms?.map((r: any) => {
+        // Handle image fallback here on the server to prevent hydration mismatch
+        const hotelName = hotel.hotelName || "";
+        const fallbackImage = "/images/hero-bg.png"; // Default fallback
+        
+        // Use a simplified version of the mapping logic if needed, 
+        // but since we can't easily import the client-side getHotelImage here 
+        // without potentially pulling in client-only libs, we'll just ensure 
+        // the client and server have the same data.
+        
+        return {
+          _id: r._id?.toString(),
+          type: r.type || "",
+          price: r.price || "0",
+          count: r.count || 1,
+          roomNumbers: r.roomNumbers || "",
+          image: r.image || "" // Keep it as empty string if missing
+        };
+      }),
+      images: (hotel.images || []).map((img: any) => typeof img === 'string' ? img : String(img)),
+      reviews: hotel.reviews?.map((rev: any) => ({
+        ...rev,
+        _id: rev._id?.toString(),
+        createdAt: rev.createdAt?.toISOString()
+      }))
     };
 
     // ── Rich JSON-LD Schema: LodgingBusiness ──

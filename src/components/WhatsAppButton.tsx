@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Settings, User, X } from "lucide-react";
@@ -63,12 +63,11 @@ export default function WhatsAppButton() {
            {isOpen ? (
              <X className="w-8 h-8 text-slate-800" />
            ) : (
-             <Image
-                src="/images/whatsapp-icon.png"
-                alt="WhatsApp"
-                fill
-                className="object-contain p-2"
-              />
+              <img
+                 src="/images/whatsapp-icon.png"
+                 alt="WhatsApp"
+                 className="absolute inset-0 w-full h-full object-contain p-2"
+               />
            )}
         </div>
         

@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect, Suspense, useMemo } from "react";
-import Image from "next/image";
+
 import { Link2, MapPin, Star, Building2, IndianRupee, Loader2 } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { HotelsGridSkeleton } from "./Skeletons";
+import { getHotelImage } from "@/lib/utils";
 
 interface HotelsListClientProps {
   initialHotels?: any[];
@@ -78,13 +79,14 @@ function HotelsList({ initialHotels }: HotelsListClientProps) {
         return (
           <div key={hotel._id} className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden border border-slate-100 group flex flex-col animate-in fade-in zoom-in-95 fill-mode-both">
           <Link href={hotelLink} className="h-64 relative overflow-hidden block">
-            <Image 
-              src={hotel.images && hotel.images.length > 0 ? hotel.images[0] : '/images/hero-bg.png'} 
+            <img 
+              src={(hotel.images && hotel.images.filter((img: any) => img && img.trim() !== "").length > 0) 
+                ? hotel.images.filter((img: any) => img && img.trim() !== "")[0] 
+                : getHotelImage(hotel.hotelName)} 
               alt={hotel.hotelName} 
-              fill 
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover group-hover:scale-110 transition-transform duration-700"
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               loading="lazy"
+              suppressHydrationWarning
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
             <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-black text-primary tracking-widest uppercase flex items-center gap-1.5 shadow-sm">

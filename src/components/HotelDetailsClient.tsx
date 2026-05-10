@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import Image from "next/image";
+import { useState, useEffect, Suspense, useMemo } from "react";
+
 import { useRouter, useSearchParams } from "next/navigation";
 import { 
   MapPin, Star, Building2, IndianRupee, Loader2, Check, 
   ArrowLeft, ChevronLeft, ChevronRight, UploadCloud, MessageSquare, PlayCircle,
   BedDouble, Calendar, Coffee, Info, X, LogIn, Lock, Phone, CreditCard, Wallet, User as UserIcon, Clock, ShieldAlert,
-  ChevronDown
+  ChevronDown, ImageIcon
 } from "lucide-react";
 import Link from "next/link";
 import Script from "next/script";
-import { cn } from "@/lib/utils";
+import { cn, getHotelImage } from "@/lib/utils";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 
 import { HotelDetailsSkeleton } from "./Skeletons";
@@ -130,6 +130,29 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
     
     if (!initialHotel && id) fetchHotel();
   }, [id, initialHotel]);
+
+  const processedHotel = useMemo(() => {
+    if (!hotel) return null;
+    
+    const mainImages = (hotel.images || []).filter((img: string) => typeof img === 'string' && img.trim() !== "");
+    const roomImages = (hotel.rooms || []).map((r: any) => r.image).filter((img: string) => typeof img === 'string' && img.trim() !== "");
+    let allImages = [...new Set([...mainImages, ...roomImages])];
+    
+    if (allImages.length === 0) {
+      allImages = [getHotelImage(hotel.hotelName)];
+    }
+
+    return {
+      ...hotel,
+      allImages,
+      rooms: hotel.rooms?.map((room: any) => ({
+        ...room,
+        displayImage: (room.image && typeof room.image === 'string' && room.image.trim() !== "") 
+          ? room.image 
+          : getHotelImage(hotel.hotelName)
+      }))
+    };
+  }, [hotel]);
 
   useEffect(() => {
     if (searchParams?.get("bookNow") === "true" && hotel && hotel.rooms && hotel.rooms.length > 0) {
@@ -399,18 +422,15 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
         
         {/* Image Slider */}
         {(() => {
-          const mainImages = hotel.images || [];
-          const roomImages = hotel.rooms ? hotel.rooms.map((r: any) => r.image).filter(Boolean) : [];
-          const allImages = [...mainImages, ...roomImages];
+          if (!processedHotel) return null;
+          const { allImages } = processedHotel;
           
-          if (allImages.length === 0) return null;
-
           return (
-            <div className="relative rounded-3xl overflow-hidden shadow-xl mb-8 h-[300px] md:h-[500px] bg-black group">
+            <div className="relative rounded-3xl overflow-hidden shadow-xl mb-8 h-[300px] md:h-[500px] bg-slate-100 group">
               <OptimizedImage 
                 src={allImages[currentImageIndex % allImages.length]} 
-                alt={`${hotel.hotelName} image ${currentImageIndex + 1}`} 
-                fill className="object-cover transition-opacity duration-500" priority
+                alt={`${processedHotel.hotelName} image ${currentImageIndex + 1}`} 
+                fill priority
                 sizes="(max-width: 768px) 100vw, 1200px"
               />
               {allImages.length > 1 && (
@@ -435,7 +455,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
               <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{hotel.owner === "MyNextTrip" ? "Premium Property" : "Verified Partner"}</span>
               <div className="flex items-center text-amber-500 text-sm font-bold bg-amber-50 px-2 py-1 rounded"><Star className="w-4 h-4 fill-amber-500 mr-1" /> {hotel.owner === "MyNextTrip" ? "5.0" : "4.5"}</div>
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold font-serif text-slate-900 mb-2">{hotel.hotelName}</h1>
+            <h1 className="text-3xl md:text-5xl font-bold font-serif text-slate-900 mb-2">{processedHotel.hotelName}</h1>
           </div>
           
           {/* WhatsApp Button */}
@@ -448,7 +468,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
               suppressHydrationWarning
             >
               <div className="relative w-6 h-6">
-                <Image src="/images/whatsapp-icon.png" alt="WhatsApp" fill className="object-contain brightness-0 invert" />
+                <img src="/images/whatsapp-icon.png" alt="WhatsApp" className="absolute inset-0 w-full h-full object-contain brightness-0 invert" />
               </div>
               <span className="text-sm uppercase tracking-wider">Chat with Property</span>
             </Link>
@@ -501,13 +521,13 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
                 <div className="flex items-center gap-2 text-primary font-bold text-sm bg-primary/5 px-4 py-2 rounded-full">{isRoomsVisible ? 'Hide' : 'Show Rooms'} <ChevronDown className={cn("w-4 h-4 transition-transform", isRoomsVisible ? "rotate-180" : "")} /></div>
               </div>
               <div className={cn("flex flex-col gap-6 transition-all duration-700 overflow-hidden", isRoomsVisible ? "max-h-[5000px] opacity-100" : "max-h-0 opacity-0")}>
-                {hotel.rooms.map((room: any, idx: number) => (
+                {processedHotel.rooms.map((room: any, idx: number) => (
                   <div key={idx} className="bg-white/90 backdrop-blur-xl rounded-[24px] shadow-xl border-2 border-transparent hover:border-primary/30 transition-all p-4 md:p-6 group relative">
                     <div 
                       className="relative w-full h-48 md:h-64 rounded-[20px] overflow-hidden mb-6 bg-slate-100 cursor-pointer group/img"
-                      onClick={() => setExpandedImage(room.image || (hotel.images && hotel.images.length > 0 ? hotel.images[idx % hotel.images.length] : '/images/hero-bg.png'))}
+                      onClick={() => setExpandedImage(room.displayImage)}
                     >
-                      <OptimizedImage src={room.image || (hotel.images && hotel.images.length > 0 ? hotel.images[idx % hotel.images.length] : '/images/hero-bg.png')} alt={room.type} fill className="object-cover group-hover/img:scale-105 transition-transform" />
+                      <OptimizedImage src={room.displayImage} alt={room.type} fill />
                       <div className="absolute top-4 left-4 bg-white/95 px-4 py-1.5 rounded-full shadow-md"><span className="text-sm font-black text-slate-900 uppercase tracking-widest">{room.type}</span></div>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -546,10 +566,39 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
           {/* Map */}
           {hotel.googleMapUrl && (
             <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Interactive Map</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2" suppressHydrationWarning><MapPin className="text-primary w-6 h-6" /> Interactive Map</h2>
               {renderMap(hotel.googleMapUrl, hotel.hotelName, hotel.address)}
             </section>
           )}
+
+          {/* Property Gallery */}
+          {(() => {
+            if (!processedHotel) return null;
+            const { allImages } = processedHotel;
+
+            if (allImages.length <= 1) return null;
+
+            return (
+              <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2" suppressHydrationWarning><ImageIcon className="text-primary w-6 h-6" /> Property Gallery</h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {allImages.map((img: string, idx: number) => (
+                    <div 
+                      key={idx} 
+                      className="relative aspect-square rounded-xl overflow-hidden cursor-pointer hover:opacity-90 transition-all border border-slate-100 group"
+                      onClick={() => {
+                        setExpandedImage(img);
+                        setCurrentImageIndex(idx);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                    >
+                      <OptimizedImage src={img} alt={`Gallery ${idx + 1}`} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            );
+          })()}
 
           {/* Reviews */}
           <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100" id="reviews">
@@ -578,7 +627,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
                   </div>
                   <p className="text-slate-600 leading-relaxed mb-4">{review.text}</p>
                   <div className="flex flex-wrap gap-3">
-                    {review.images?.map((img: string, i: number) => (<div key={i} className="relative w-24 h-24 rounded-xl overflow-hidden shadow-sm border border-slate-200"><Image src={img} alt="review" fill className="object-cover" /></div>))}
+                    {review.images?.map((img: string, i: number) => (<div key={i} className="relative w-24 h-24 rounded-xl overflow-hidden shadow-sm border border-slate-200"><img src={img} alt="review" className="absolute inset-0 w-full h-full object-cover" /></div>))}
                     {review.videos?.map((vid: string, i: number) => (<div key={i} className="relative w-48 h-24 rounded-xl overflow-hidden shadow-sm border border-slate-200 bg-black"><video src={vid} controls className="w-full h-full object-cover" /></div>))}
                   </div>
                 </div>
@@ -616,11 +665,10 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
             {/* Room Preview in Modal */}
             <div className="px-8 pt-6">
               <div className="relative w-full h-40 rounded-2xl overflow-hidden shadow-sm border border-slate-100">
-                <Image 
-                  src={selectedRoomForBooking.room.image || (hotel.images && hotel.images.length > 0 ? hotel.images[selectedRoomForBooking.idx % hotel.images.length] : '/images/hero-bg.png')} 
+                <OptimizedImage 
+                  src={selectedRoomForBooking.room.displayImage || getHotelImage(processedHotel.hotelName)} 
                   alt={selectedRoomForBooking.room.type} 
-                  fill 
-                  className="object-cover" 
+                  fill className="object-cover" 
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-4 left-4">
@@ -680,7 +728,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
                </div>
             </div>
             <div className="p-8 bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-6">
-                <div><p className="text-3xl font-black">₹{(parseInt(selectedRoomForBooking.room.price) + (MEAL_PLANS.find(p => p.id === (selectedMealPlan[selectedRoomForBooking.idx] || 'EP'))?.price || 0)) * calculateNights(startDate, endDate) * roomCount}</p></div>
+                <div><p className="text-3xl font-black" suppressHydrationWarning>₹{(parseInt(selectedRoomForBooking.room.price) + (MEAL_PLANS.find(p => p.id === (selectedMealPlan[selectedRoomForBooking.idx] || 'EP'))?.price || 0)) * calculateNights(startDate, endDate) * roomCount}</p></div>
                <button onClick={executeBooking} disabled={isBookingInProgress} className="w-full sm:w-auto px-10 py-5 bg-primary text-white font-black rounded-[20px]" suppressHydrationWarning>{isBookingInProgress ? "Confirming..." : "Confirm Booking"}</button>
             </div>
           </div>
@@ -706,7 +754,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
           <div className="absolute inset-0 bg-slate-900/90 backdrop-blur-md" onClick={() => setExpandedImage(null)}></div>
           <div className="relative w-full max-w-5xl h-[80vh] flex flex-col items-center justify-center animate-in fade-in zoom-in">
             <button onClick={() => setExpandedImage(null)} className="absolute -top-12 right-0 text-white"><X className="w-8 h-8" /></button>
-            <div className="relative w-full h-full rounded-2xl overflow-hidden"><Image src={expandedImage} alt="Expanded" fill className="object-contain" /></div>
+            <div className="relative w-full h-full rounded-2xl overflow-hidden"><img src={expandedImage} alt="Expanded" className="absolute inset-0 w-full h-full object-contain" /></div>
           </div>
         </div>
       )}

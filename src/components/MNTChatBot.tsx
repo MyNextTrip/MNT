@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { MessageCircle, X, Send, Mic, MicOff, Volume2, VolumeX, User, Phone, Bot, Loader2, Sparkles, ShieldCheck, Quote, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
+
 
 interface Message {
   role: "user" | "bot";
@@ -270,7 +270,7 @@ export default function MNTChatBot() {
                   
                   <div className="relative group">
                     <div className="absolute left-6 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center">
-                       <Image src="/images/whatsapp-icon.png" alt="WA" width={26} height={26} className="grayscale opacity-50 group-focus-within:grayscale-0 group-focus-within:opacity-100 transition-all drop-shadow-md" />
+                       <img src="/images/whatsapp-icon.png" alt="WA" width={26} height={26} className="grayscale opacity-50 group-focus-within:grayscale-0 group-focus-within:opacity-100 transition-all drop-shadow-md" />
                     </div>
                     <input 
                       type="tel" 

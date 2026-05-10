@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
+
 import Link from "next/link";
 import { ArrowRight, MapPin, Star, Building2, Check, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -90,11 +90,10 @@ export default function Services() {
               >
                 <Link href={`/hotels?location=${encodeURIComponent(dest.city)}`} className="group relative block bg-white rounded-[24px] md:rounded-[32px] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 h-[380px] md:h-[450px]">
                   {/* Background Image */}
-                  <Image 
+                  <img 
                     src={dest.image}
                     alt={dest.city}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-1000"
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                   />
                   
                   {/* Overlay Gradient */}
