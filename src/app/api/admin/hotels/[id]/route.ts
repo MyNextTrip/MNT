@@ -8,7 +8,7 @@ const uploadToCloudinary = async (file: File, folder: string) => {
   const buffer = Buffer.from(bytes);
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload_stream(
-      { folder },
+      { folder, resource_type: 'auto' },
       (error, result) => {
         if (error) reject(error);
         else resolve(result);
@@ -109,6 +109,24 @@ export async function PUT(req: Request, props: { params: Promise<{ id: string }>
       }
     }
 
+    // Process Menu Card upload
+    let menuCardUrl = data.menuCard || "";
+    const menuCardFile = formData.get('menuCardFile') as File;
+    if (menuCardFile && menuCardFile.name) {
+      const result: any = await uploadToCloudinary(menuCardFile, 'mnt_menus');
+      menuCardUrl = result.secure_url;
+    }
+
+    // Process Banquet Images
+    const banquetImageFiles = formData.getAll('banquetImageFiles') as File[];
+    const uploadedBanquetPaths: string[] = data.banquetImages || [];
+    for (const file of banquetImageFiles) {
+      if (file.name) {
+        const result: any = await uploadToCloudinary(file, 'mnt_banquets');
+        uploadedBanquetPaths.push(result.secure_url);
+      }
+    }
+
     const updatedHotel = await Hotel.findByIdAndUpdate(
       id,
       {
@@ -119,6 +137,10 @@ export async function PUT(req: Request, props: { params: Promise<{ id: string }>
         amenities: data.amenities,
         images: finalImages,
         owner: data.owner,
+        restaurantPrice: Number(data.restaurantPrice) || 0,
+        banquetPrice: Number(data.banquetPrice) || 899,
+        menuCard: menuCardUrl,
+        banquetImages: uploadedBanquetPaths,
         ...(data.googleMapUrl ? { googleMapUrl: data.googleMapUrl } : {})
       },
       { new: true }

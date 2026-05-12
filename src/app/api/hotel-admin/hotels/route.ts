@@ -34,14 +34,10 @@ export async function PUT(req: Request) {
       return NextResponse.json({ success: false, message: 'Hotel ID is required' }, { status: 400 });
     }
     
-    const { rooms } = await req.json();
-
-    if (!rooms) {
-      return NextResponse.json({ success: false, message: 'Rooms data is required' }, { status: 400 });
-    }
+    const updateData = await req.json();
 
     await connectToDatabase();
-    const hotel = await Hotel.findByIdAndUpdate(hotelId, { rooms }, { new: true });
+    const hotel = await Hotel.findByIdAndUpdate(hotelId, { ...updateData }, { new: true });
 
     if (!hotel) {
       return NextResponse.json({ success: false, message: 'Hotel not found' }, { status: 404 });

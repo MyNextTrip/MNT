@@ -11,7 +11,7 @@ import {
   PlusCircle, Save, Loader2, User, Users, Bed,
   LayoutGrid, DoorOpen, CalendarCheck, Tags, Globe, UserCheck, Wallet, Sparkles, Moon, ShoppingBag, Key, BarChart3, FileDown,
   ChevronRight, Wand2, Gift, Slash, FileSearch, Contact, CreditCard, Backpack, Briefcase, Compass, UserPlus, Building, Receipt, Monitor, CheckSquare, Hammer, ListTodo, History, Plus,
-  MoveHorizontal, Replace, ArrowLeftRight, Ban, LayoutList, Printer, Send, Search, Mail, Phone, Eye
+  MoveHorizontal, Replace, ArrowLeftRight, Ban, LayoutList, Printer, Send, Search, Mail, Phone, Eye, Upload, ExternalLink, Utensils
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import OptimizedImage from "@/components/ui/OptimizedImage";
@@ -420,6 +420,155 @@ export default function HotelAdminDashboard() {
     }
   };
 
+  const handleUpdateMenuCard = async (file: File) => {
+    if (!hotelData) return;
+    
+    try {
+      setIsSaving(true);
+      
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Upload failed: ${errorText}`);
+      }
+
+      const data = await res.json();
+      if (data.success) {
+        const updatedHotelData = { ...hotelData, menuCard: data.url };
+        
+        // Update local state first
+        setHotelData(updatedHotelData);
+
+        // Auto-save to MongoDB immediately
+        const saveRes = await fetch(`/api/hotel-admin/hotels?hotelId=${hotelId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ menuCard: data.url }),
+        });
+
+        if (saveRes.ok) {
+          alert("Menu card uploaded and saved successfully!");
+        } else {
+          alert("Menu uploaded, but failed to save in database. Please click 'Save Changes' manually.");
+        }
+      } else {
+        alert("Upload failed: " + (data.message || "Unknown error"));
+      }
+    } catch (e: any) {
+      console.error(e);
+      alert(e.message || "Failed to upload menu card");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleUpdateBanquetImages = async (files: FileList) => {
+    if (!hotelData) return;
+    try {
+      setIsSaving(true);
+      const newImageUrls: string[] = [];
+      
+      for (let i = 0; i < files.length; i++) {
+        const formData = new FormData();
+        formData.append('file', files[i]);
+
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            newImageUrls.push(data.url);
+          }
+        }
+      }
+
+      if (newImageUrls.length > 0) {
+        const currentImages = hotelData.banquetImages || [];
+        const updatedImages = [...currentImages, ...newImageUrls];
+        const updatedHotelData = { ...hotelData, banquetImages: updatedImages };
+        
+        setHotelData(updatedHotelData);
+
+        const saveRes = await fetch(`/api/hotel-admin/hotels?hotelId=${hotelId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ banquetImages: updatedImages }),
+        });
+
+        if (saveRes.ok) {
+          alert("Banquet images uploaded and saved successfully!");
+        } else {
+          alert("Images uploaded, but failed to save in database. Please click 'Save Changes' manually.");
+        }
+      }
+    } catch (e: any) {
+      console.error(e);
+      alert(e.message || "Failed to upload banquet images");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleUpdateMainImages = async (files: FileList) => {
+    if (!hotelData) return;
+    try {
+      setIsSaving(true);
+      const newImageUrls: string[] = [];
+      
+      for (let i = 0; i < files.length; i++) {
+        const formData = new FormData();
+        formData.append('file', files[i]);
+
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            newImageUrls.push(data.url);
+          }
+        }
+      }
+
+      if (newImageUrls.length > 0) {
+        const currentImages = hotelData.images || [];
+        const updatedImages = [...currentImages, ...newImageUrls];
+        const updatedHotelData = { ...hotelData, images: updatedImages };
+        
+        setHotelData(updatedHotelData);
+
+        const saveRes = await fetch(`/api/hotel-admin/hotels?hotelId=${hotelId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ images: updatedImages }),
+        });
+
+        if (saveRes.ok) {
+          alert("Property images uploaded and saved successfully!");
+        } else {
+          alert("Images uploaded, but failed to save in database. Please click 'Save Changes' manually.");
+        }
+      }
+    } catch (e: any) {
+      console.error(e);
+      alert(e.message || "Failed to upload property images");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleSaveInventory = async () => {
     try {
       setIsSaving(true);
@@ -427,7 +576,12 @@ export default function HotelAdminDashboard() {
       const res = await fetch(`/api/hotel-admin/hotels?hotelId=${hotelId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rooms: hotelData.rooms })
+        body: JSON.stringify({ 
+          rooms: hotelData.rooms,
+          restaurantPrice: hotelData.restaurantPrice,
+          banquetPrice: hotelData.banquetPrice,
+          menuCard: hotelData.menuCard
+        })
       });
       if (!res.ok) {
         const text = await res.text();
@@ -1541,8 +1695,11 @@ export default function HotelAdminDashboard() {
             </header>
 
             <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
-                <div className="flex items-center justify-between mb-8">
-                    <h3 className="text-xl font-bold text-slate-800">Available Room Types</h3>
+                <div className="flex items-center justify-between mb-8 pb-8 border-b border-slate-100">
+                    <div>
+                        <h3 className="text-xl font-bold text-slate-800">Available Room Types</h3>
+                        <p className="text-xs text-slate-500 font-medium mt-1">Configure your room categories and nightly rates.</p>
+                    </div>
                     <button 
                         onClick={handleAddRoom}
                         className="flex items-center gap-2 px-4 py-2 bg-amber-50 text-amber-600 font-bold rounded-xl hover:bg-amber-100 transition-colors text-sm"
@@ -1550,6 +1707,143 @@ export default function HotelAdminDashboard() {
                         <PlusCircle className="w-4 h-4" /> Add Room Type
                     </button>
                 </div>
+
+                {/* Restaurant & Banquet Pricing */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 p-6 bg-slate-50/50 rounded-2xl border border-slate-100">
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Restaurant Price (Per Head)</label>
+                        <div className="relative">
+                            <Utensils className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 w-5 h-5" />
+                            <input 
+                                type="number"
+                                value={hotelData?.restaurantPrice || 0}
+                                onChange={(e) => setHotelData({ ...hotelData, restaurantPrice: Number(e.target.value) })}
+                                className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all font-bold text-slate-700"
+                            />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Banquet Price (Per Head)</label>
+                        <div className="relative">
+                            <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500 w-5 h-5" />
+                            <input 
+                                type="number"
+                                value={hotelData?.banquetPrice || 899}
+                                onChange={(e) => setHotelData({ ...hotelData, banquetPrice: Number(e.target.value) })}
+                                className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all font-bold text-slate-700"
+                            />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Restaurant Menu Card</label>
+                        <div className="flex items-center gap-3">
+                            <label className="flex-1 cursor-pointer">
+                                <div className="px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-indigo-50 hover:border-indigo-400 transition-all flex items-center gap-2 justify-center">
+                                    <Upload className="w-4 h-4 text-indigo-600" />
+                                    {hotelData?.menuCard ? 'Update Menu' : 'Upload Menu'}
+                                </div>
+                                <input 
+                                    type="file" accept=".pdf,image/*,.doc,.docx" className="hidden" 
+                                    onChange={(e) => {
+                                        if (e.target.files?.[0]) handleUpdateMenuCard(e.target.files[0]);
+                                    }}
+                                />
+                            </label>
+                            {hotelData?.menuCard && (
+                                <a 
+                                    href={hotelData.menuCard} 
+                                    target="_blank" 
+                                    className="w-12 h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-indigo-600 hover:bg-indigo-50 transition-all"
+                                    title="View Current Menu"
+                                >
+                                    <ExternalLink className="w-5 h-5" />
+                                </a>
+                            )}
+                        </div>
+                    </div>
+                    
+                    {/* Banquet Hall Images Upload */}
+                    <div className="space-y-2 col-span-1 md:col-span-3 pt-4 border-t border-slate-200/60 mt-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Banquet Hall Images</label>
+                        <div className="flex flex-col gap-4">
+                            <label className="cursor-pointer w-full md:w-auto self-start">
+                                <div className="px-6 py-3 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-emerald-50 hover:border-emerald-400 transition-all flex items-center gap-2 justify-center shadow-sm">
+                                    <Upload className="w-4 h-4 text-emerald-600" />
+                                    Upload Banquet Images
+                                </div>
+                                <input 
+                                    type="file" accept="image/*" multiple className="hidden" 
+                                    onChange={(e) => {
+                                        if (e.target.files && e.target.files.length > 0) handleUpdateBanquetImages(e.target.files);
+                                    }}
+                                />
+                            </label>
+                            
+                            {/* Display Uploaded Images */}
+                            {hotelData?.banquetImages && hotelData.banquetImages.length > 0 && (
+                                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 mt-2">
+                                    {hotelData.banquetImages.map((img: string, idx: number) => (
+                                        <div key={idx} className="relative group rounded-xl overflow-hidden border border-slate-200 aspect-square">
+                                            <img src={img} alt={`Banquet ${idx+1}`} className="w-full h-full object-cover" />
+                                            <button
+                                                onClick={() => {
+                                                    const updatedImages = hotelData.banquetImages.filter((_: any, i: number) => i !== idx);
+                                                    setHotelData({ ...hotelData, banquetImages: updatedImages });
+                                                }}
+                                                className="absolute top-1 right-1 p-1 bg-red-500/80 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                                title="Remove Image"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Property Main Images Upload */}
+                    <div className="space-y-2 col-span-1 md:col-span-3 pt-4 border-t border-slate-200/60 mt-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Property Gallery Images</label>
+                        <div className="flex flex-col gap-4">
+                            <label className="cursor-pointer w-full md:w-auto self-start">
+                                <div className="px-6 py-3 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-blue-50 hover:border-blue-400 transition-all flex items-center gap-2 justify-center shadow-sm">
+                                    <Upload className="w-4 h-4 text-blue-600" />
+                                    Upload Property Images
+                                </div>
+                                <input 
+                                    type="file" accept="image/*" multiple className="hidden" 
+                                    onChange={(e) => {
+                                        if (e.target.files && e.target.files.length > 0) handleUpdateMainImages(e.target.files);
+                                    }}
+                                />
+                            </label>
+                            
+                            {/* Display Uploaded Images */}
+                            {hotelData?.images && hotelData.images.length > 0 && (
+                                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 mt-2">
+                                    {hotelData.images.map((img: string, idx: number) => (
+                                        <div key={idx} className="relative group rounded-xl overflow-hidden border border-slate-200 aspect-square">
+                                            <img src={img} alt={`Gallery ${idx+1}`} className="w-full h-full object-cover" />
+                                            <button
+                                                onClick={() => {
+                                                    const updatedImages = hotelData.images.filter((_: any, i: number) => i !== idx);
+                                                    setHotelData({ ...hotelData, images: updatedImages });
+                                                }}
+                                                className="absolute top-1 right-1 p-1 bg-red-500/80 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                                title="Remove Image"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-8 space-y-6"></div>
 
                 {loadingHotel ? (
                     <div className="flex justify-center py-12"><Loader2 className="animate-spin text-indigo-500 w-10 h-10" /></div>

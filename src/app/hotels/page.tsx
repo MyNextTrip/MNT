@@ -31,25 +31,37 @@ export default async function HotelsPage({
 }) {
   const params = await searchParams;
   const locationQuery = params.location as string || "";
+  const searchQuery = params.q as string || "";
   
   let initialHotels = [];
-  try {
-    await connectToDatabase();
-    
-    let query = {};
-    if (locationQuery) {
-      query = {
-        $or: [
+  
+  // Only search if there is a query
+  if (searchQuery || locationQuery) {
+    try {
+      await connectToDatabase();
+      
+      let query: any = {};
+      
+      if (searchQuery) {
+        query.$or = [
+          { hotelName: { $regex: searchQuery, $options: 'i' } },
+          { address: { $regex: searchQuery, $options: 'i' } },
+          { location: { $regex: searchQuery, $options: 'i' } },
+          { whatsappNumber: { $regex: searchQuery, $options: 'i' } },
+          { ownerMobNo: { $regex: searchQuery, $options: 'i' } }
+        ];
+      } else if (locationQuery) {
+        query.$or = [
           { location: { $regex: locationQuery, $options: 'i' } },
           { address: { $regex: locationQuery, $options: 'i' } }
-        ]
-      };
-    }
+        ];
+      }
 
-    const hotels = await Hotel.find(query).sort({ createdAt: -1 }).limit(20).lean();
-    initialHotels = JSON.parse(JSON.stringify(hotels));
-  } catch (error) {
-    console.error("Error fetching initial hotels:", error);
+      const hotels = await Hotel.find(query).sort({ createdAt: -1 }).limit(20).lean();
+      initialHotels = JSON.parse(JSON.stringify(hotels));
+    } catch (error) {
+      console.error("Error fetching initial hotels:", error);
+    }
   }
 
   return (

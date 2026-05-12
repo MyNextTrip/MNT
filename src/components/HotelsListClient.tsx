@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense, useMemo } from "react";
 
-import { Link2, MapPin, Star, Building2, IndianRupee, Loader2 } from "lucide-react";
+import { Link2, MapPin, Star, Building2, IndianRupee, Loader2, Search } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { HotelsGridSkeleton } from "./Skeletons";
@@ -15,25 +15,36 @@ interface HotelsListClientProps {
 function HotelsList({ initialHotels }: HotelsListClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const searchParam = searchParams?.get('q') || "";
   const locationParam = searchParams?.get('location') || "";
   
   const [hotels, setHotels] = useState<any[]>(initialHotels || []);
   const [loading, setLoading] = useState(false);
   const [isFirstRender, setIsFirstRender] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     // If it's the first render and we have initial hotels, skip the fetch
-    // unless the location param actually changed from what was rendered on server (not easy to detect here without more complexity)
-    // But since the server already handles the initial location query, we can trust it for the first load.
-    if (isFirstRender && initialHotels) {
+    if (isFirstRender && initialHotels && initialHotels.length > 0) {
       setIsFirstRender(false);
+      return;
+    }
+
+    if (!searchParam && !locationParam) {
+      setHotels([]);
       return;
     }
 
     const fetchHotels = async () => {
       try {
         setLoading(true);
-        const url = locationParam ? `/api/hotels?location=${encodeURIComponent(locationParam)}` : '/api/hotels';
+        let url = '/api/hotels';
+        if (searchParam) {
+          url = `/api/hotels?q=${encodeURIComponent(searchParam)}`;
+        } else if (locationParam) {
+          url = `/api/hotels?location=${encodeURIComponent(locationParam)}`;
+        }
         const res = await fetch(url);
         const data = await res.json();
         if (data.success) {
@@ -47,24 +58,47 @@ function HotelsList({ initialHotels }: HotelsListClientProps) {
     };
 
     fetchHotels();
-  }, [locationParam]);
+  }, [locationParam, searchParam]);
 
-  if (loading) {
+  if (loading || !mounted) {
     return <HotelsGridSkeleton />;
+  }
+
+  // If no search is active
+  if (!searchParam && !locationParam) {
+    return (
+      <div className="flex flex-col justify-center items-center py-32 text-slate-500 w-full col-span-full bg-white rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 animate-in fade-in slide-in-from-bottom-8">
+        <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mb-8">
+          <Search className="w-10 h-10 text-primary animate-pulse" />
+        </div>
+        <h3 className="text-3xl font-black text-slate-900 mb-4">Start Your Search</h3>
+        <p className="max-w-md text-center text-slate-500 text-lg font-medium leading-relaxed px-8">
+          Enter a <span className="text-primary font-bold">hotel name</span>, <span className="text-primary font-bold">location</span>, or <span className="text-primary font-bold">phone number</span> in the search bar above to find your perfect stay.
+        </p>
+        <div className="mt-12 flex gap-4">
+           <span className="px-4 py-2 bg-slate-50 rounded-full text-xs font-bold text-slate-400 uppercase tracking-widest border border-slate-100">#QuickBooking</span>
+           <span className="px-4 py-2 bg-slate-50 rounded-full text-xs font-bold text-slate-400 uppercase tracking-widest border border-slate-100">#DirectContact</span>
+        </div>
+      </div>
+    );
   }
 
   if (hotels.length === 0) {
     return (
-      <div className="flex flex-col justify-center items-center py-32 text-slate-500 w-full col-span-full bg-white rounded-3xl border border-dashed border-slate-200">
-        <Building2 className="w-16 h-16 text-slate-300 mb-4" />
-        <h3 className="text-2xl font-bold text-slate-700">
-          {locationParam ? "Currently Not Available in this city" : "No properties found."}
+      <div className="flex flex-col justify-center items-center py-32 text-slate-500 w-full col-span-full bg-white rounded-[3rem] shadow-xl border border-slate-100">
+        <Building2 className="w-20 h-20 text-slate-200 mb-6" />
+        <h3 className="text-2xl font-black text-slate-900">
+          No matches found
         </h3>
-        <p className="max-w-md text-center mt-2 px-4">
-          {locationParam 
-            ? `We don't have any listings in "${locationParam}" at the moment. Try searching for a different city like Patna or Ranchi.` 
-            : "We couldn't find any hotels matching your search. Please check back later."}
+        <p className="max-w-md text-center mt-3 text-slate-500 font-medium px-8 leading-relaxed">
+          We couldn't find any properties matching "{searchParam || locationParam}". Try searching for something else or check the spelling.
         </p>
+        <button 
+          onClick={() => router.push('/hotels')}
+          className="mt-8 px-8 py-3 bg-slate-900 text-white font-bold rounded-2xl hover:bg-primary transition-all active:scale-95 shadow-lg"
+        >
+          Clear Search
+        </button>
       </div>
     );
   }

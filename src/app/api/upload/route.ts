@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     // Upload to Cloudinary
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
-        { folder: 'mnt_rooms' },
+        { folder: 'mnt_rooms', resource_type: 'auto' },
         (error, result) => {
           if (error) reject(error);
           else resolve(result);

@@ -29,8 +29,12 @@ export default function Header() {
     hotelName: "", ownerMobNo: "", hotelAddress: "", whatsappNumber: ""
   });
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [mounted, setMounted] = useState(false);
+
   // Grab the user from localStorage when the component mounts on the client
   useEffect(() => {
+    setMounted(true);
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
@@ -40,6 +44,24 @@ export default function Header() {
       }
     }
   }, []);
+
+  // Redirect to home if search is cleared
+  useEffect(() => {
+    if (mounted && searchQuery === "") {
+      const currentPath = window.location.pathname;
+      if (currentPath.includes("/hotels")) {
+        router.push("/");
+      }
+    }
+  }, [searchQuery, mounted, router]);
+
+  const handleSearch = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/hotels?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsMobileMenuOpen(false);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -76,22 +98,85 @@ export default function Header() {
 
   return (
     <>
-    <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/70 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/70 backdrop-blur-md" suppressHydrationWarning>
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="group flex items-center transition-all duration-300" aria-label="Go to MyNextTrip home">
-              <div className="relative w-36 h-12 transform group-hover:scale-110 group-hover:brightness-110 active:scale-95 transition-all duration-300 ease-out">
+        <div className="flex h-16 items-center justify-between gap-4">
+          <div className="flex items-center gap-4 lg:gap-8 flex-1">
+            <Link href="/" className="group flex items-center transition-all duration-300 shrink-0" aria-label="Go to MyNextTrip home">
+              <div className="relative w-20 h-7 md:w-32 md:h-10 transform group-hover:scale-105 active:scale-95 transition-all duration-300 ease-out">
                 <img 
                   src="/images/mnt-logo-new.png" 
-                  alt="MyNextTrip - Premium Travel and Hotel Booking" 
+                  alt="MyNextTrip" 
                   className="absolute inset-0 w-full h-full object-contain" 
                 />
               </div>
             </Link>
-            <nav className="hidden md:flex items-center gap-6 h-16">
-              <Link href="/destinations" className="text-sm font-medium hover:text-primary transition-colors text-slate-700 h-full flex items-center">{t('nav.destinations')}</Link>
 
+            {/* Responsive Search Bar - Visible on Mobile & Desktop */}
+            <div className="flex flex-1 max-w-[140px] sm:max-w-md relative group/search">
+              {mounted && (
+                <>
+                <form onSubmit={handleSearch} className="w-full relative">
+                <div className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/search:text-primary transition-all duration-300">
+                  <Search className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                </div>
+                <input 
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search MNT's 🏨 Hotels..."
+                  className="w-full pl-8 md:pl-11 pr-2 md:pr-14 py-1.5 md:py-2.5 bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl text-[10px] md:text-sm font-medium focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-slate-400 shadow-sm hover:border-slate-300"
+                />
+                
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                  {searchQuery && (
+                    <button 
+                      type="button"
+                      onClick={() => { 
+                        setSearchQuery(""); 
+                        router.push("/");
+                      }}
+                      className="p-1.5 hover:bg-slate-200 rounded-full text-slate-400 transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                  <button 
+                    type="submit"
+                    className="p-1.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/30 active:scale-90"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </form>
+
+              {/* Live Search Results Dropdown */}
+              {searchQuery.length > 2 && (
+                <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-2 z-[60]">
+                  <div className="p-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Quick Results</span>
+                    <button onClick={handleSearch} className="text-[10px] font-bold text-primary hover:underline">View all results</button>
+                  </div>
+                  <div className="max-h-[350px] overflow-y-auto p-2 space-y-1">
+                    {/* These would ideally come from an API, but for immediate UI impact I'll show a "Press Enter" hint if no results logic yet */}
+                    <div className="p-4 text-center">
+                      <p className="text-sm font-bold text-slate-800 mb-1">Searching for "{searchQuery}"</p>
+                      <p className="text-xs text-slate-500">Press Enter or click GO to see matching hotels, addresses, and contacts.</p>
+                      <div className="mt-4 flex flex-wrap gap-2 justify-center">
+                         <span className="px-2 py-1 bg-primary/5 text-primary text-[10px] font-bold rounded-md">#HotelName</span>
+                         <span className="px-2 py-1 bg-primary/5 text-primary text-[10px] font-bold rounded-md">#Address</span>
+                         <span className="px-2 py-1 bg-primary/5 text-primary text-[10px] font-bold rounded-md">#WhatsApp</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+                </>
+              )}
+            </div>
+
+            <nav className="hidden xl:flex items-center gap-6 h-16">
+              <Link href="/destinations" className="text-sm font-medium hover:text-primary transition-colors text-slate-700 h-full flex items-center">{t('nav.destinations')}</Link>
               <Link href="/packages" className="text-sm font-medium hover:text-primary transition-colors text-slate-700 h-full flex items-center">{t('nav.packages')}</Link>
               
               {/* Hotels Mega Menu */}
@@ -142,7 +227,7 @@ export default function Header() {
                       <div className="space-y-4">
                         {[
                           { name: "Siddhi Vinayak", loc: "Chhatauni", path: "/hotels?location=Motihari" },
-                          { name: "Siddhi Vinayak", loc: "Station Rd", path: "/hotels?location=Motihari" },
+                          { name: "Siddhi Vinayak", loc: "Belbawana", path: "/hotels?location=Motihari" },
                           { name: "Hotel Crystal", loc: "Motihari Central", path: "/hotels?location=Motihari" }
                         ].map((hotel, i) => (
                           <Link key={i} href={hotel.path} className="group/item block">
@@ -269,20 +354,18 @@ export default function Header() {
               </Link>
             </div>
             <div className="flex items-center gap-2">
-              <button className="p-2 hover:bg-gray-100 rounded-full md:hidden">
-                <Search className="h-5 w-5" />
-              </button>
+              {/* Login Button adjusted for mobile */}
               {user ? (
                 <div className="relative">
                   <button 
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-md transition-all border border-primary/20 shadow-sm"
+                    className="flex items-center gap-1.5 md:gap-2 px-2 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-lg md:rounded-md transition-all border border-primary/20 shadow-sm"
                     suppressHydrationWarning
                   >
-                    <div className="w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center text-xs font-bold uppercase">
+                    <div className="w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center text-[10px] md:text-xs font-bold uppercase">
                       {user.name.charAt(0)}
                     </div>
-                    <span className="max-w-[100px] truncate">{user.name}</span>
+                    <span className="max-w-[60px] md:max-w-[100px] truncate hidden sm:inline-block">{user.name}</span>
                     <ChevronDown className={cn("h-3 w-3 transition-transform", showUserMenu && "rotate-180")} />
                   </button>
                   
@@ -336,9 +419,9 @@ export default function Header() {
                 </div>
               ) : (
                 <Link href="/login">
-                  <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-md transition-all shadow-sm" suppressHydrationWarning>
+                  <button className="flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-lg md:rounded-md transition-all shadow-sm" suppressHydrationWarning>
                     <User className="h-4 w-4" />
-                    <span>{t('nav.login')}</span>
+                    <span className="hidden xs:inline">{t('nav.login')}</span>
                   </button>
                 </Link>
               )}
@@ -365,6 +448,26 @@ export default function Header() {
               <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400" suppressHydrationWarning>
                 <X className="w-6 h-6" />
               </button>
+            </div>
+            
+            {/* Mobile Search */}
+            <div className="p-4 border-b border-slate-50">
+              <form onSubmit={handleSearch} className="relative group/msearch">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within/msearch:text-primary transition-colors" />
+                <input 
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search hotels, address, WhatsApp..."
+                  className="w-full pl-11 pr-12 py-3.5 bg-slate-100 border border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-slate-400"
+                />
+                <button 
+                  type="submit"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary text-white rounded-xl shadow-lg active:scale-90"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </form>
             </div>
             
             <div className="flex-1 overflow-y-auto py-4">

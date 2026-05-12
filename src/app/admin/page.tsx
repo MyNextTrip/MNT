@@ -10,7 +10,7 @@ import {
   Smartphone, Sparkles, Dumbbell, Waves, Heart, Baby, 
   Briefcase, Utensils, ConciergeBell, Dog,
   Navigation as NavigationIcon, Monitor, Zap, Menu, X, Key, Copy, Check, Save, Loader2, MessageSquareText, Phone, CheckCircle2,
-  Map as MapIcon, Leaf, CalendarCheck, Search, FileDown, MessageSquareMore, UserPlus, Camera
+  Map as MapIcon, Leaf, CalendarCheck, Search, FileDown, MessageSquareMore, UserPlus, Camera, Upload, ExternalLink
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import OptimizedImage from "@/components/ui/OptimizedImage";
@@ -44,6 +44,7 @@ export default function AdminDashboard() {
   const [isLoadingCreds, setIsLoadingCreds] = useState(false);
   const [isExistingCreds, setIsExistingCreds] = useState(false);
   const [resSearch, setResSearch] = useState("");
+  const [hotelSearch, setHotelSearch] = useState("");
   
   // Form State
   const [imageMode, setImageMode] = useState<'url' | 'upload'>('url');
@@ -58,7 +59,13 @@ export default function AdminDashboard() {
     amenities: [] as string[],
     images: [] as string[],
     owner: "MyNextTrip",
-    mapUrl: ""
+    mapUrl: "",
+    restaurantPrice: "0",
+    banquetPrice: "899",
+    banquetImages: [] as string[],
+    menuCard: "",
+    menuCardFile: null as File | null,
+    banquetImageFiles: [] as File[]
   });
 
   const generateReservationPDF = async (booking: any) => {
@@ -281,7 +288,11 @@ export default function AdminDashboard() {
         amenities: formData.amenities,
         images: imageMode === 'url' ? formData.images : [],
         owner: formData.owner,
-        googleMapUrl: formData.mapUrl
+        googleMapUrl: formData.mapUrl,
+        restaurantPrice: formData.restaurantPrice,
+        banquetPrice: formData.banquetPrice,
+        menuCard: formData.menuCard,
+        banquetImages: formData.banquetImages
       };
 
       const submitData = new FormData();
@@ -300,6 +311,16 @@ export default function AdminDashboard() {
         }
       });
 
+      if (formData.menuCardFile) {
+        submitData.append('menuCardFile', formData.menuCardFile);
+      }
+
+      if (formData.banquetImageFiles && formData.banquetImageFiles.length > 0) {
+        formData.banquetImageFiles.forEach(file => {
+          submitData.append('banquetImageFiles', file);
+        });
+      }
+
       const url = editHotelId ? `/api/admin/hotels/${editHotelId}` : '/api/admin/hotels';
       const method = editHotelId ? 'PUT' : 'POST';
 
@@ -316,7 +337,9 @@ export default function AdminDashboard() {
       // Reset Form securely upon successful payload
       setFormData({
         hotelName: "", location: "", address: "", rooms: [],
-        amenities: [], images: [], owner: "MyNextTrip", mapUrl: ""
+        amenities: [], images: [], owner: "MyNextTrip", mapUrl: "",
+        restaurantPrice: "0", banquetPrice: "899", menuCard: "", menuCardFile: null,
+        banquetImages: [], banquetImageFiles: []
       });
       setImageFiles([]);
       setCurrentUrlInput("");
@@ -358,6 +381,7 @@ export default function AdminDashboard() {
         fetchHotelInquiries();
         fetchChatbotUsers();
       } else if (activeTab === 'all-properties') {
+        setHotelSearch(""); // Reset search when entering properties tab
         fetchHotels();
       } else if (activeTab === 'bookings') {
         fetchBookings();
@@ -374,7 +398,7 @@ export default function AdminDashboard() {
   const fetchHotels = async () => {
     try {
       setLoadingHotels(true);
-      const res = await fetch('/api/hotels');
+      const res = await fetch('/api/admin/hotels');
       const data = await res.json();
       if (data.success) {
         setAllHotels(data.hotels);
@@ -455,7 +479,13 @@ export default function AdminDashboard() {
       amenities: hotel.amenities || [],
       images: hotel.images || [],
       owner: hotel.owner || "MyNextTrip",
-      mapUrl: hotel.googleMapUrl || ""
+      mapUrl: hotel.googleMapUrl || "",
+      restaurantPrice: hotel.restaurantPrice?.toString() || "0",
+      banquetPrice: hotel.banquetPrice?.toString() || "899",
+      menuCard: hotel.menuCard || "",
+      menuCardFile: null,
+      banquetImages: hotel.banquetImages || [],
+      banquetImageFiles: []
     });
     setImageMode('url');
     setActiveTab('add-hotel');
@@ -617,7 +647,9 @@ export default function AdminDashboard() {
                     setEditHotelId(null);
                     setFormData({
                       hotelName: "", location: "", address: "", rooms: [],
-                      amenities: [], images: [], owner: "MyNextTrip", mapUrl: ""
+                      amenities: [], images: [], owner: "MyNextTrip", mapUrl: "",
+                      restaurantPrice: "0", banquetPrice: "899", menuCard: "",
+                      menuCardFile: null, banquetImages: [], banquetImageFiles: []
                     });
                   }
                 }
@@ -730,22 +762,62 @@ export default function AdminDashboard() {
 
         {activeTab === 'all-properties' && (
           <div className="animate-in fade-in slide-in-from-bottom-4">
-            <header className="mb-8 flex items-center justify-between">
+            <header className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div>
-                <h1 className="text-3xl font-black text-slate-900">All Properties</h1>
+                <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
+                  All Properties 
+                  <span className="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full">{allHotels.length}</span>
+                </h1>
                 <p className="text-slate-500 mt-2 font-medium">Manage and review your active MongoDB listings.</p>
               </div>
-              <button onClick={() => {
-                setEditHotelId(null);
-                setFormData({ hotelName: "", location: "", address: "", rooms: [], amenities: [], images: [], owner: "MyNextTrip", mapUrl: "" });
-                setActiveTab('add-hotel');
-                setIsSidebarOpen(false);
-              }} className="flex items-center gap-2 px-5 py-3 bg-primary text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
-                <PlusCircle className="w-5 h-5" /> Add New Hotel
-              </button>
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-4 w-full md:w-auto">
+                <div className="relative w-full md:w-80">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input 
+                    type="text"
+                    placeholder="Search properties..."
+                    value={hotelSearch}
+                    onChange={(e) => setHotelSearch(e.target.value)}
+                    className="w-full pl-11 pr-10 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary/10 transition-all shadow-sm"
+                  />
+                  {hotelSearch && (
+                    <button 
+                      onClick={() => setHotelSearch("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-all"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 w-full md:w-auto">
+                  <button 
+                    onClick={fetchHotels}
+                    className="p-3.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all shadow-sm group"
+                    title="Refresh Data"
+                  >
+                    <Zap className={cn("w-5 h-5 text-slate-400 group-hover:text-primary", loadingHotels && "animate-spin text-primary")} />
+                  </button>
+                  <button onClick={() => {
+                    setEditHotelId(null);
+                    setFormData({ hotelName: "", location: "", address: "", rooms: [], amenities: [], images: [], owner: "MyNextTrip", mapUrl: "", restaurantPrice: "0", banquetPrice: "899", menuCard: "", menuCardFile: null, banquetImages: [], banquetImageFiles: [] });
+                    setActiveTab('add-hotel');
+                    setIsSidebarOpen(false);
+                  }} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-3.5 bg-primary text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all whitespace-nowrap">
+                    <PlusCircle className="w-5 h-5" /> Add New Hotel
+                  </button>
+                </div>
+              </div>
             </header>
 
             <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden">
+              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
+                <p className="text-xs font-black text-slate-500 uppercase tracking-widest">
+                  Showing {allHotels.filter(h => 
+                    (h.hotelName?.toLowerCase() || "").includes(hotelSearch.toLowerCase()) || 
+                    (h.location?.toLowerCase() || "").includes(hotelSearch.toLowerCase())
+                  ).length} of {allHotels.length} Properties
+                </p>
+              </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
@@ -761,8 +833,36 @@ export default function AdminDashboard() {
                       <tr><td colSpan={4} className="p-8 text-center text-slate-500">Loading properties from MongoDB...</td></tr>
                     ) : allHotels.length === 0 ? (
                       <tr><td colSpan={4} className="p-8 text-center text-slate-500">No properties found. List a new one above.</td></tr>
+                    ) : allHotels.filter(h => 
+                        (h.hotelName?.toLowerCase() || "").includes(hotelSearch.toLowerCase()) || 
+                        (h.location?.toLowerCase() || "").includes(hotelSearch.toLowerCase())
+                      ).length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="p-12 text-center">
+                          <div className="flex flex-col items-center gap-3">
+                            <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center text-slate-300">
+                              <Search className="w-6 h-6" />
+                            </div>
+                            <div>
+                              <p className="text-slate-900 font-bold">No matching properties</p>
+                              <p className="text-xs text-slate-500 mt-1">Try adjusting your search terms or filters.</p>
+                            </div>
+                            <button 
+                              onClick={() => setHotelSearch("")}
+                              className="mt-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-all"
+                            >
+                              Clear Search
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
                     ) : (
-                      allHotels.map((h: any) => (
+                      allHotels
+                        .filter(h => 
+                          (h.hotelName?.toLowerCase() || "").includes(hotelSearch.toLowerCase()) || 
+                          (h.location?.toLowerCase() || "").includes(hotelSearch.toLowerCase())
+                        )
+                        .map((h: any) => (
                         <tr key={h._id} className="hover:bg-slate-50/50 transition-colors">
                           <td className="px-6 py-4">
                             <div className="w-16 h-16 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden relative">
@@ -915,6 +1015,129 @@ export default function AdminDashboard() {
                   placeholder="e.g. Apollo Bunder, Colaba, Mumbai, 400001"
                   className="w-full p-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium text-slate-700 resize-none"
                 />
+              </div>
+
+              {/* Restaurant & Banquet Pricing */}
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-100">
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-700 uppercase tracking-widest flex items-center gap-2">
+                     Restaurant Price (Per Head)
+                  </label>
+                  <div className="relative">
+                    <Utensils className="absolute left-4 top-1/2 -translate-y-1/2 text-primary w-5 h-5" />
+                    <input 
+                      type="number"
+                      value={formData.restaurantPrice} onChange={e=>setFormData({...formData, restaurantPrice: e.target.value})}
+                      placeholder="0"
+                      className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium text-slate-700"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-700 uppercase tracking-widest flex items-center gap-2">
+                     Banquet Price (Per Head)
+                  </label>
+                  <div className="relative">
+                    <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500 w-5 h-5" />
+                    <input 
+                      type="number"
+                      value={formData.banquetPrice} onChange={e=>setFormData({...formData, banquetPrice: e.target.value})}
+                      placeholder="899"
+                      className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium text-slate-700"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-700 uppercase tracking-widest flex items-center gap-2">
+                     Menu Card Upload
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <label className="flex-1 cursor-pointer">
+                      <div className="px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-primary/5 hover:border-primary/30 transition-all flex items-center gap-2 justify-center">
+                        <Upload className="w-4 h-4 text-primary" />
+                        {formData.menuCardFile ? formData.menuCardFile.name : (formData.menuCard ? 'Update Menu' : 'Upload Menu')}
+                      </div>
+                      <input 
+                        type="file" accept=".pdf,image/*,.doc,.docx" className="hidden" 
+                        onChange={(e) => {
+                          if (e.target.files?.[0]) {
+                            setFormData({...formData, menuCardFile: e.target.files[0]});
+                          }
+                        }}
+                      />
+                    </label>
+                    {formData.menuCard && !formData.menuCardFile && (
+                      <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 border border-emerald-100">
+                        <Check className="w-5 h-5" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Banquet Hall Images Upload */}
+              <div className="md:col-span-2 space-y-2 mt-4 pt-4 border-t border-slate-100">
+                <label className="text-sm font-bold text-slate-700 uppercase tracking-widest flex items-center gap-2">
+                   Banquet Hall Images
+                </label>
+                <div className="flex flex-col gap-4">
+                  <label className="cursor-pointer w-full md:w-auto self-start">
+                    <div className="px-6 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-emerald-50 hover:border-emerald-400 transition-all flex items-center gap-2 justify-center shadow-sm">
+                      <Upload className="w-4 h-4 text-emerald-600" />
+                      Upload Banquet Images
+                    </div>
+                    <input 
+                      type="file" accept="image/*" multiple className="hidden" 
+                      onChange={(e) => {
+                        if (e.target.files) {
+                          const newFiles = Array.from(e.target.files);
+                          setFormData(prev => ({
+                            ...prev, 
+                            banquetImageFiles: [...prev.banquetImageFiles, ...newFiles]
+                          }));
+                        }
+                      }}
+                    />
+                  </label>
+                  
+                  {/* Display newly selected files and existing uploaded images */}
+                  {(formData.banquetImageFiles.length > 0 || formData.banquetImages.length > 0) && (
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 mt-2">
+                      {formData.banquetImages.map((img: string, idx: number) => (
+                        <div key={`existing-${idx}`} className="relative group rounded-xl overflow-hidden border border-slate-200 aspect-square">
+                          <img src={img} alt={`Banquet ${idx+1}`} className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updatedImages = formData.banquetImages.filter((_, i) => i !== idx);
+                              setFormData({ ...formData, banquetImages: updatedImages });
+                            }}
+                            className="absolute top-1 right-1 p-1 bg-red-500/80 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                            title="Remove Image"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                      {formData.banquetImageFiles.map((file, idx) => (
+                        <div key={`new-${idx}`} className="relative group rounded-xl overflow-hidden border border-emerald-400 border-dashed aspect-square flex items-center justify-center bg-emerald-50/50">
+                          <p className="text-[10px] font-bold text-emerald-600 text-center px-2 truncate w-full">{file.name}</p>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updatedFiles = formData.banquetImageFiles.filter((_, i) => i !== idx);
+                              setFormData({ ...formData, banquetImageFiles: updatedFiles });
+                            }}
+                            className="absolute top-1 right-1 p-1 bg-red-500/80 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                            title="Remove File"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -1191,7 +1414,7 @@ export default function AdminDashboard() {
               type="button" 
               onClick={() => {
                 setEditHotelId(null);
-                setFormData({ hotelName: "", location: "", address: "", rooms: [], amenities: [], images: [], owner: "MyNextTrip", mapUrl: "" });
+                setFormData({ hotelName: "", location: "", address: "", rooms: [], amenities: [], images: [], owner: "MyNextTrip", mapUrl: "", restaurantPrice: "0", banquetPrice: "899", menuCard: "", menuCardFile: null, banquetImages: [], banquetImageFiles: [] });
                 setActiveTab('all-properties');
               }}
               className="text-slate-500 font-bold hover:text-slate-700 transition-colors px-4 py-2"

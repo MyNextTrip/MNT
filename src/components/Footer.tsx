@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Youtube, X, ExternalLink, Globe } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -8,6 +8,11 @@ import { useLanguage } from "@/lib/LanguageContext";
 export default function Footer() {
   const { t } = useLanguage();
   const [isAgencyModalOpen, setIsAgencyModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <footer className="relative bg-gradient-to-b from-slate-900 to-[#0a0f1c] text-slate-300 pt-24 pb-8 overflow-hidden border-t border-slate-800">
@@ -18,17 +23,32 @@ export default function Footer() {
       <div className="container relative z-10 mx-auto px-4 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16">
           <div className="lg:col-span-4 space-y-6">
-            <Link href="/" className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-400 tracking-tighter" aria-label="MyNextTrip Home">
-              MyNextTrip
+            <Link href="/" className="group flex items-center transition-all duration-300 shrink-0" aria-label="MyNextTrip Home">
+              <div 
+                className={`relative transform group-hover:scale-105 transition-all duration-300 ease-out ${mounted ? "w-52 h-14 md:w-72 md:h-20 -ml-2" : "w-40 h-10"}`}
+                suppressHydrationWarning
+              >
+                {mounted ? (
+                  <img 
+                    src="/images/mnt-logo-new.png" 
+                    alt="MyNextTrip" 
+                    className="w-full h-full object-contain object-left" 
+                  />
+                ) : (
+                  <span className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-400 tracking-tighter">
+                    MyNextTrip
+                  </span>
+                )}
+              </div>
             </Link>
             <p className="text-sm leading-relaxed max-w-sm text-slate-400">
               {t('footer.desc')}
             </p>
-            <div className="flex gap-4 pt-2">
+            <div className="flex gap-4 pt-2" suppressHydrationWarning>
               <Link href="https://www.facebook.com/profile.php?id=61575468341367" className="p-2.5 bg-slate-800/50 border border-slate-700/50 rounded-xl hover:bg-primary hover:border-primary hover:-translate-y-1 transition-all text-white shadow-lg shadow-black/20" aria-label="Facebook">
                 <Facebook className="h-5 w-5" />
               </Link>
-              <Link href="https://www.instagram.com/mynexttrip07/" className="p-2.5 bg-slate-800/50 border border-slate-700/50 rounded-xl hover:bg-primary hover:border-primary hover:-translate-y-1 transition-all text-white shadow-lg shadow-black/20" aria-label="Instagram">
+              <Link href="https://www.instagram.com/mnt.mynexttrip/" className="p-2.5 bg-slate-800/50 border border-slate-700/50 rounded-xl hover:bg-primary hover:border-primary hover:-translate-y-1 transition-all text-white shadow-lg shadow-black/20" aria-label="Instagram">
                 <Instagram className="h-5 w-5" />
               </Link>
               <Link href="#" className="p-2.5 bg-slate-800/50 border border-slate-700/50 rounded-xl hover:bg-primary hover:border-primary hover:-translate-y-1 transition-all text-white shadow-lg shadow-black/20" aria-label="LinkedIn">
@@ -99,7 +119,7 @@ export default function Footer() {
             <p className="text-[11px] text-slate-400 mb-5 leading-relaxed">
               {t('footer.newsletter_desc')}
             </p>
-            <div className="flex bg-slate-800/60 p-1.5 rounded-xl border border-slate-700/50 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/50 transition-all shadow-inner">
+            <div className="flex bg-slate-800/60 p-1.5 rounded-xl border border-slate-700/50 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/50 transition-all shadow-inner" suppressHydrationWarning>
               <input 
                 type="email" 
                 placeholder="Email" 

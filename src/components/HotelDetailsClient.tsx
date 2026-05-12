@@ -7,7 +7,7 @@ import {
   MapPin, Star, Building2, IndianRupee, Loader2, Check, 
   ArrowLeft, ChevronLeft, ChevronRight, UploadCloud, MessageSquare, PlayCircle,
   BedDouble, Calendar, Coffee, Info, X, LogIn, Lock, Phone, CreditCard, Wallet, User as UserIcon, Clock, ShieldAlert,
-  ChevronDown, ImageIcon
+  ChevronDown, ImageIcon, ExternalLink
 } from "lucide-react";
 import Link from "next/link";
 import Script from "next/script";
@@ -136,7 +136,8 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
     
     const mainImages = (hotel.images || []).filter((img: string) => typeof img === 'string' && img.trim() !== "");
     const roomImages = (hotel.rooms || []).map((r: any) => r.image).filter((img: string) => typeof img === 'string' && img.trim() !== "");
-    let allImages = [...new Set([...mainImages, ...roomImages])];
+    const banquetImages = (hotel.banquetImages || []).filter((img: string) => typeof img === 'string' && img.trim() !== "");
+    let allImages = [...new Set([...mainImages, ...roomImages, ...banquetImages])];
     
     if (allImages.length === 0) {
       allImages = [getHotelImage(hotel.hotelName)];
@@ -547,6 +548,100 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
                     </div>
                   </div>
                 ))}
+              </div>
+            </section>
+          )}
+
+          {/* Restaurant & Banquet Hall Section (Excluding Hotel Chandrashila) */}
+          {hotel && !hotel.hotelName?.toLowerCase().includes("chandrashila") && (
+            <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 mt-8 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform"><Coffee className="w-24 h-24 text-primary" /></div>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2"><Coffee className="text-primary w-6 h-6" /> Restaurant & Banquet Hall</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Restaurant */}
+                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 mb-2">Multi-Cuisine Restaurant</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed mb-4">Enjoy a wide range of delicious Indian, Chinese, and Continental dishes prepared by our expert chefs.</p>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    {hotel.restaurantPrice && hotel.restaurantPrice > 0 ? (
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-black text-primary">₹{hotel.restaurantPrice}</span>
+                        <span className="text-[10px] font-bold text-primary uppercase tracking-wider">Per Head Avg</span>
+                      </div>
+                    ) : null}
+                    <div className="flex items-center gap-2 text-xs font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-full w-fit">
+                      <Check className="w-3.5 h-3.5" /> Fine Dining Experience
+                    </div>
+                  </div>
+                </div>
+
+                {/* Banquet Hall */}
+                <div className="bg-emerald-50/30 p-6 rounded-2xl border border-emerald-100 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-emerald-900 mb-2">Grand Banquet Hall</h3>
+                    <p className="text-sm text-emerald-800 leading-relaxed mb-4">Perfect for weddings, corporate events, and parties with top-notch amenities and catering.</p>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-2xl font-black text-emerald-900">₹{hotel.banquetPrice || 899}</span>
+                      <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Per Head Cost</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 bg-emerald-100 px-3 py-1.5 rounded-full w-fit">
+                      <Check className="w-3.5 h-3.5" /> High-End Catering Included
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {hotel.menuCard && (
+                <div className="mt-8 p-6 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-primary/10 rounded-xl">
+                      <Coffee className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="text-slate-900 font-bold text-lg">Restaurant Menu</h4>
+                      <p className="text-slate-500 text-sm font-medium">Explore our delicious range of multi-cuisine dishes.</p>
+                    </div>
+                  </div>
+                  <a 
+                    href={
+                      hotel.menuCard?.toLowerCase().match(/\.(pdf|doc|docx)$/) 
+                        ? `https://docs.google.com/viewer?url=${encodeURIComponent(hotel.menuCard)}` 
+                        : hotel.menuCard
+                    } 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full md:w-auto px-8 py-3.5 bg-primary text-white font-black rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    View Menu Card
+                  </a>
+                </div>
+              )}
+
+              <div className="mt-8 p-6 bg-slate-900 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                  <h4 className="text-white font-bold text-lg mb-1">Need more information?</h4>
+                  <p className="text-slate-400 text-sm font-medium">Contact us for availability and customized packages.</p>
+                </div>
+                {getHotelWhatsApp(hotel.hotelName, hotel.address) && (
+                  <Link 
+                    href={`https://wa.me/${getHotelWhatsApp(hotel.hotelName, hotel.address)}?text=Hi, I'm interested in information about the Restaurant and Banquet Hall at ${hotel.hotelName}. Please provide more details.`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
+                    suppressHydrationWarning
+                  >
+                    <div className="relative w-5 h-5">
+                      <img src="/images/whatsapp-icon.png" alt="WhatsApp" className="absolute inset-0 w-full h-full object-contain brightness-0 invert" />
+                    </div>
+                    <span className="text-xs uppercase tracking-widest">Enquire on +{getHotelWhatsApp(hotel.hotelName, hotel.address)}</span>
+                  </Link>
+                )}
               </div>
             </section>
           )}

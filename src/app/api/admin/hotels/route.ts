@@ -8,7 +8,7 @@ const uploadToCloudinary = async (file: File, folder: string) => {
   const buffer = Buffer.from(bytes);
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload_stream(
-      { folder },
+      { folder, resource_type: 'auto' },
       (error, result) => {
         if (error) reject(error);
         else resolve(result);
@@ -29,6 +29,17 @@ const uploadUrlToCloudinary = async (url: string, folder: string) => {
     );
   });
 };
+
+export async function GET() {
+  try {
+    await connectToDatabase();
+    const hotels = await Hotel.find({}).sort({ createdAt: -1 });
+    return NextResponse.json({ success: true, hotels }, { status: 200 });
+  } catch (error: any) {
+    console.error('Error fetching hotels for admin:', error);
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+  }
+}
 
 export async function POST(req: Request) {
   try {
@@ -80,6 +91,24 @@ export async function POST(req: Request) {
       }
     }
 
+    // Process Menu Card upload
+    let menuCardUrl = data.menuCard || "";
+    const menuCardFile = formData.get('menuCardFile') as File;
+    if (menuCardFile && menuCardFile.name) {
+      const result: any = await uploadToCloudinary(menuCardFile, 'mnt_menus');
+      menuCardUrl = result.secure_url;
+    }
+
+    // Process Banquet Images
+    const banquetImageFiles = formData.getAll('banquetImageFiles') as File[];
+    const uploadedBanquetPaths: string[] = data.banquetImages || [];
+    for (const file of banquetImageFiles) {
+      if (file.name) {
+        const result: any = await uploadToCloudinary(file, 'mnt_banquets');
+        uploadedBanquetPaths.push(result.secure_url);
+      }
+    }
+
     const newHotel = await Hotel.create({
       hotelName: data.hotelName,
       location: data.location,
@@ -88,7 +117,11 @@ export async function POST(req: Request) {
       amenities: data.amenities,
       images: finalImages,
       owner: data.owner,
-      googleMapUrl: data.googleMapUrl
+      googleMapUrl: data.googleMapUrl,
+      restaurantPrice: Number(data.restaurantPrice) || 0,
+      banquetPrice: Number(data.banquetPrice) || 899,
+      menuCard: menuCardUrl,
+      banquetImages: uploadedBanquetPaths
     });
 
     return NextResponse.json({ success: true, hotel: newHotel }, { status: 201 });

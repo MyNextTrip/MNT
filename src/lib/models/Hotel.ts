@@ -26,6 +26,10 @@ const HotelSchema = new mongoose.Schema({
   images: [{ type: String }],
   owner: { type: String, default: "MyNextTrip" },
   googleMapUrl: { type: String },
+  restaurantPrice: { type: Number, default: 0 },
+  banquetPrice: { type: Number, default: 899 },
+  banquetImages: [{ type: String }],
+  menuCard: { type: String },
   reviews: [ReviewSchema]
 }, { timestamps: true, collection: 'hotels' });
 
