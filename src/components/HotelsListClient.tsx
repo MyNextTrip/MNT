@@ -2,11 +2,11 @@
 
 import { useState, useEffect, Suspense, useMemo } from "react";
 
-import { Link2, MapPin, Star, Building2, IndianRupee, Loader2, Search } from "lucide-react";
+import { Link2, MapPin, Star, Building2, IndianRupee, Loader2, Search, Newspaper } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { HotelsGridSkeleton } from "./Skeletons";
-import { getHotelImage } from "@/lib/utils";
+import { getHotelImage, getHotelWhatsApp, getHotelBlog } from "@/lib/utils";
 
 interface HotelsListClientProps {
   initialHotels?: any[];
@@ -153,7 +153,7 @@ function HotelsList({ initialHotels }: HotelsListClientProps) {
               </div>
             </div>
 
-            <div className="mt-4 mb-4">
+            <div className="mt-4 mb-4 flex flex-col gap-3">
               {hotel.rooms && hotel.rooms.length > 0 ? (
                 <div className="flex items-end justify-between">
                   <div>
@@ -169,6 +169,35 @@ function HotelsList({ initialHotels }: HotelsListClientProps) {
                   <p className="text-sm font-bold text-slate-700 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">Contact for pricing</p>
                 </div>
               )}
+
+              {/* Quick Actions: WhatsApp & Blog */}
+              <div className="flex items-center gap-2 mt-2">
+                {getHotelWhatsApp(hotel.hotelName, hotel.address) && (
+                  <Link 
+                    href={`https://wa.me/${getHotelWhatsApp(hotel.hotelName, hotel.address)}?text=Hi, I'm interested in booking a stay at ${hotel.hotelName}. Please provide more details.`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-[10px] font-black uppercase tracking-wider border border-emerald-100 hover:bg-emerald-100 transition-all"
+                    suppressHydrationWarning
+                  >
+                    <div className="relative w-3.5 h-3.5">
+                      <img src="/images/whatsapp-icon.png" alt="WhatsApp" className="absolute inset-0 w-full h-full object-contain" />
+                    </div>
+                    Chat
+                  </Link>
+                )}
+                {(hotel.blog || getHotelBlog(hotel.hotelName)) && (
+                  <Link 
+                    href={(hotel.blog || getHotelBlog(hotel.hotelName))!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 py-2 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black uppercase tracking-wider border border-blue-100 hover:bg-blue-100 transition-all"
+                  >
+                    <Newspaper className="w-3.5 h-3.5" />
+                    Blog
+                  </Link>
+                )}
+              </div>
             </div>
 
             <div className="mt-auto grid grid-cols-2 gap-3 pt-4 border-t border-slate-50">

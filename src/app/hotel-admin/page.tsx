@@ -370,29 +370,47 @@ export default function HotelAdminDashboard() {
     setHotelData({ ...hotelData, rooms: newRooms });
   };
 
-  const handleUpdateRoomImage = async (index: number, file: File) => {
+  const handleAddRoomImages = async (index: number, files: FileList) => {
     if (!hotelData) return;
     
+    const currentImages = hotelData.rooms[index].images || [];
+    if (currentImages.length >= 10) {
+      alert("You can only upload a maximum of 10 images per room category.");
+      return;
+    }
+
+    const remainingSlots = 10 - currentImages.length;
+    const filesToUpload = Array.from(files).slice(0, remainingSlots);
+
+    if (files.length > remainingSlots) {
+      alert(`You can only add ${remainingSlots} more image(s). Only the first ${remainingSlots} will be uploaded.`);
+    }
+
     try {
       setIsSaving(true);
+      const newImageUrls: string[] = [];
       
-      const formData = new FormData();
-      formData.append('file', file);
+      for (let i = 0; i < filesToUpload.length; i++) {
+        const formData = new FormData();
+        formData.append('file', filesToUpload[i]);
 
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`Upload failed: ${errorText}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            newImageUrls.push(data.url);
+          }
+        }
       }
 
-      const data = await res.json();
-      if (data.success) {
+      if (newImageUrls.length > 0) {
         const newRooms = [...hotelData.rooms];
-        newRooms[index] = { ...newRooms[index], image: data.url };
+        const updatedImages = [...(newRooms[index].images || []), ...newImageUrls];
+        newRooms[index] = { ...newRooms[index], images: updatedImages };
         
         // Update local state first
         setHotelData({ ...hotelData, rooms: newRooms });
@@ -405,19 +423,26 @@ export default function HotelAdminDashboard() {
         });
 
         if (saveRes.ok) {
-          alert("Room image uploaded and saved successfully!");
+          alert("Room images uploaded and saved successfully!");
         } else {
-          alert("Image uploaded to Cloudinary, but failed to save in database. Please click 'Save Changes' manually.");
+          alert("Images uploaded, but failed to save in database. Please click 'Save Changes' manually.");
         }
-      } else {
-        alert("Upload failed: " + (data.message || "Unknown error"));
       }
     } catch (e) {
-      console.error("Failed to upload image:", e);
-      alert("Error uploading image to Cloudinary. Please check your connection and try again.");
+      console.error("Failed to upload images:", e);
+      alert("Error uploading images to Cloudinary. Please check your connection and try again.");
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleRemoveRoomImage = (roomIndex: number, imageIndex: number) => {
+    if (!hotelData) return;
+    const newRooms = [...hotelData.rooms];
+    const currentImages = newRooms[roomIndex].images || [];
+    const updatedImages = currentImages.filter((_: any, i: number) => i !== imageIndex);
+    newRooms[roomIndex] = { ...newRooms[roomIndex], images: updatedImages };
+    setHotelData({ ...hotelData, rooms: newRooms });
   };
 
   const handleUpdateMenuCard = async (file: File) => {
@@ -1897,40 +1922,53 @@ export default function HotelAdminDashboard() {
                                         className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-bold text-slate-700"
                                     />
                                 </div>
-                                <div className="w-full lg:w-48 space-y-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-indigo-600">Room Photo</label>
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
-                                            {room.image ? (
-                                              <div className="w-full h-full relative">
-                                                <OptimizedImage 
-                                                  src={room.image} 
-                                                  alt={room.roomType}
-                                                  width={100}
-                                                  height={80}
-                                                  className="w-full h-full object-cover" 
-                                                />
-                                              </div>
-                                            ) : (
-                                                <BedDouble className="w-5 h-5 text-slate-300" />
-                                            )}
-                                        </div>
-                                        <label className="flex-1 cursor-pointer">
-                                            <div className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:bg-amber-50 hover:border-amber-400 transition-all text-center">
-                                                {room.image ? 'Change' : 'Upload'}
+                                
+                                <div className="w-full space-y-4 pt-4 border-t border-slate-100 mt-2">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-indigo-600">Room Photos (Max 10)</label>
+                                        <label className="cursor-pointer">
+                                            <div className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-bold hover:bg-indigo-100 transition-all flex items-center gap-2">
+                                                <Upload className="w-4 h-4" /> Upload Photos
                                             </div>
                                             <input 
-                                                type="file" accept="image/*" className="hidden" 
+                                                type="file" accept="image/*" multiple className="hidden" 
                                                 onChange={(e) => {
-                                                    if (e.target.files?.[0]) handleUpdateRoomImage(idx, e.target.files[0]);
+                                                    if (e.target.files && e.target.files.length > 0) handleAddRoomImages(idx, e.target.files);
                                                 }}
                                             />
                                         </label>
                                     </div>
+                                    
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-10 gap-3">
+                                        {(room.images || (room.image ? [room.image] : [])).map((img: string, imgIdx: number) => (
+                                            <div key={imgIdx} className="relative group aspect-square rounded-xl overflow-hidden border border-slate-200 bg-white">
+                                                <OptimizedImage 
+                                                    src={img} 
+                                                    alt={`Room ${idx} image ${imgIdx}`}
+                                                    width={100}
+                                                    height={100}
+                                                    className="w-full h-full object-cover" 
+                                                />
+                                                <button 
+                                                    onClick={() => handleRemoveRoomImage(idx, imgIdx)}
+                                                    className="absolute top-1 right-1 p-1 bg-red-500/80 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-md"
+                                                    title="Remove Image"
+                                                >
+                                                    <X className="w-3 h-3" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                        {(!room.images || room.images.length === 0) && !room.image && (
+                                            <div className="col-span-full py-4 text-center border-2 border-dashed border-slate-100 rounded-xl">
+                                                <p className="text-[10px] font-bold text-slate-400 italic">No photos uploaded for this category.</p>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
+
                                 <button 
                                     onClick={() => handleRemoveRoom(idx)}
-                                    className="p-3.5 text-red-400 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors border border-transparent hover:border-red-100"
+                                    className="p-3.5 text-red-400 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors border border-transparent hover:border-red-100 lg:self-center"
                                 >
                                     <Trash2 className="w-5 h-5" />
                                 </button>

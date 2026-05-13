@@ -50,3 +50,53 @@ export function getHotelImage(hotelName: string, fallback: string = '/images/her
   
   return fallback;
 }
+
+export const HOTEL_WHATSAPP_MAPPING: Record<string, string> = {
+  "Mountain View Resort": "918102749739",
+  "Hotel La Vista": "918235416130",
+  "Hotel The Dev Regency": "919934306111",
+  "Gharonda Hotel": "917091383111",
+  "Princess Home": "919546633866",
+  "Hotel Chandrashila": "918298400222",
+  "Hotel Friends Inn": "918102232956",
+};
+
+export const getHotelWhatsApp = (hotelName: string, address: string) => {
+  if (!hotelName) return null;
+  // Direct matches
+  for (const [name, phone] of Object.entries(HOTEL_WHATSAPP_MAPPING)) {
+    if (hotelName.toLowerCase().includes(name.toLowerCase())) return phone;
+  }
+  
+  // Special handling for Siddhi Vinayak branches
+  if (hotelName.toLowerCase().includes("siddhi vinayak")) {
+    if (address?.toLowerCase().includes("chatauni") || address?.toLowerCase().includes("narega")) {
+      return "916287099704";
+    }
+    if (address?.toLowerCase().includes("station") || address?.toLowerCase().includes("belbawana")) {
+      return "916287099703";
+    }
+    return "916287099704"; // Default to one of them
+  }
+  
+  return null;
+};
+
+export const HOTEL_BLOG_MAPPING: Record<string, string> = {
+  "Mountain View": "https://hotel-mountain-view-resort.blogspot.com/2026/05/hotel-mountian-view-resort.html",
+  "La Vista": "https://hotel-la-vista.blogspot.com/2026/05/hotel-la-vista-blogger-post-ready-to.html",
+  "Gharonda": "https://gharonda-hotel.blogspot.com/2026/05/gharonda-hotel-restaurant-banquet.html",
+  "Dev Regency": "https://dev-regency.blogspot.com/2026/05/premium-property-patna-bihar-hotel-dev.html",
+  "Chandrashila": "https://hotelchand.blogspot.com/2026/05/hotel-chandrashila-by-mnt.html",
+  "Princess Home": "https://hotelprincesshome.blogspot.com/2026/05/hotel-princess-home-by-mnt.html",
+  "Siddhi Vinayak": "https://sdhvhr.blogspot.com/2026/05/siddhi-vinayak-hotel-banquet-by-mnt.html",
+  "Friends Inn": "https://hotel-friends-inn.blogspot.com/2026/05/hotel-friends-inn-by-mnt.html",
+};
+
+export const getHotelBlog = (hotelName: string) => {
+  if (!hotelName) return null;
+  for (const [name, blogUrl] of Object.entries(HOTEL_BLOG_MAPPING)) {
+    if (hotelName.toLowerCase().includes(name.toLowerCase())) return blogUrl;
+  }
+  return null;
+};

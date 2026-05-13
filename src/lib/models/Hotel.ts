@@ -5,7 +5,7 @@ const RoomSchema = new mongoose.Schema({
   price: { type: String, required: true },
   count: { type: Number, required: true, default: 1 },
   roomNumbers: { type: String },
-  image: { type: String }
+  images: [{ type: String }]
 });
 
 const ReviewSchema = new mongoose.Schema({
@@ -30,6 +30,7 @@ const HotelSchema = new mongoose.Schema({
   banquetPrice: { type: Number, default: 899 },
   banquetImages: [{ type: String }],
   menuCard: { type: String },
+  blog: { type: String },
   reviews: [ReviewSchema]
 }, { timestamps: true, collection: 'hotels' });
 

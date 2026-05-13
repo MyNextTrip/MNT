@@ -7,11 +7,11 @@ import {
   MapPin, Star, Building2, IndianRupee, Loader2, Check, 
   ArrowLeft, ChevronLeft, ChevronRight, UploadCloud, MessageSquare, PlayCircle,
   BedDouble, Calendar, Coffee, Info, X, LogIn, Lock, Phone, CreditCard, Wallet, User as UserIcon, Clock, ShieldAlert,
-  ChevronDown, ImageIcon, ExternalLink
+  ChevronDown, ImageIcon, ExternalLink, Newspaper
 } from "lucide-react";
 import Link from "next/link";
 import Script from "next/script";
-import { cn, getHotelImage } from "@/lib/utils";
+import { cn, getHotelImage, getHotelWhatsApp, getHotelBlog } from "@/lib/utils";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 
 import { HotelDetailsSkeleton } from "./Skeletons";
@@ -38,35 +38,7 @@ const getTomorrow = () => {
   return d.toLocaleDateString('en-CA');
 };
 
-const HOTEL_WHATSAPP_MAPPING: Record<string, string> = {
-  "Mountain View Resort": "918102749739",
-  "Hotel La Vista": "918235416130",
-  "Hotel The Dev Regency": "919934306111",
-  "Gharonda Hotel": "917091383111",
-  "Princess Home": "919546633866",
-  "Hotel Chandrashila": "918298400222",
-  "Hotel Friends Inn": "918102232956",
-};
 
-const getHotelWhatsApp = (hotelName: string, address: string) => {
-  // Direct matches
-  for (const [name, phone] of Object.entries(HOTEL_WHATSAPP_MAPPING)) {
-    if (hotelName.toLowerCase().includes(name.toLowerCase())) return phone;
-  }
-  
-  // Special handling for Siddhi Vinayak branches
-  if (hotelName.toLowerCase().includes("siddhi vinayak")) {
-    if (address.toLowerCase().includes("chatauni") || address.toLowerCase().includes("narega")) {
-      return "916287099704";
-    }
-    if (address.toLowerCase().includes("station") || address.toLowerCase().includes("belbawana")) {
-      return "916287099703";
-    }
-    return "916287099704"; // Default to one of them
-  }
-  
-  return null;
-};
 
 function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
   const router = useRouter();
@@ -86,6 +58,11 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
   
   // Slider State
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Review System States
   const [reviewForm, setReviewForm] = useState({ userName: "", text: "", rating: 5 });
@@ -135,7 +112,7 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
     if (!hotel) return null;
     
     const mainImages = (hotel.images || []).filter((img: string) => typeof img === 'string' && img.trim() !== "");
-    const roomImages = (hotel.rooms || []).map((r: any) => r.image).filter((img: string) => typeof img === 'string' && img.trim() !== "");
+    const roomImages = (hotel.rooms || []).flatMap((r: any) => r.images || (r.image ? [r.image] : [])).filter((img: string) => typeof img === 'string' && img.trim() !== "");
     const banquetImages = (hotel.banquetImages || []).filter((img: string) => typeof img === 'string' && img.trim() !== "");
     let allImages = [...new Set([...mainImages, ...roomImages, ...banquetImages])];
     
@@ -146,12 +123,16 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
     return {
       ...hotel,
       allImages,
-      rooms: hotel.rooms?.map((room: any) => ({
-        ...room,
-        displayImage: (room.image && typeof room.image === 'string' && room.image.trim() !== "") 
-          ? room.image 
-          : getHotelImage(hotel.hotelName)
-      }))
+      rooms: hotel.rooms?.map((room: any) => {
+        const images = room.images || (room.image ? [room.image] : []);
+        return {
+          ...room,
+          images,
+          displayImage: (images.length > 0) 
+            ? images[0] 
+            : getHotelImage(hotel.hotelName)
+        };
+      })
     };
   }, [hotel]);
 
@@ -459,21 +440,35 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
             <h1 className="text-3xl md:text-5xl font-bold font-serif text-slate-900 mb-2">{processedHotel.hotelName}</h1>
           </div>
           
-          {/* WhatsApp Button */}
-          {getHotelWhatsApp(hotel.hotelName, hotel.address) && (
-            <Link 
-              href={`https://wa.me/${getHotelWhatsApp(hotel.hotelName, hotel.address)}?text=Hi, I'm interested in booking a stay at ${hotel.hotelName}. Please provide more details.`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 px-6 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-2xl transition-all shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 group"
-              suppressHydrationWarning
-            >
-              <div className="relative w-6 h-6">
-                <img src="/images/whatsapp-icon.png" alt="WhatsApp" className="absolute inset-0 w-full h-full object-contain brightness-0 invert" />
-              </div>
-              <span className="text-sm uppercase tracking-wider">Chat with Property</span>
-            </Link>
-          )}
+          <div className="flex flex-wrap items-center gap-3" key="action-buttons-container">
+            {isMounted && getHotelWhatsApp(hotel.hotelName, hotel.address) && (
+              <Link 
+                href={`https://wa.me/${getHotelWhatsApp(hotel.hotelName, hotel.address)}?text=Hi, I'm interested in booking a stay at ${hotel.hotelName}. Please provide more details.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 px-6 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-2xl transition-all shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 group"
+              >
+                <div className="relative w-6 h-6">
+                  <img src="/images/whatsapp-icon.png" alt="WhatsApp" className="absolute inset-0 w-full h-full object-contain brightness-0 invert" />
+                </div>
+                <span className="text-sm uppercase tracking-wider">Chat with Property</span>
+              </Link>
+            )}
+
+            {isMounted && (hotel.blog || getHotelBlog(hotel.hotelName)) && (
+              <Link 
+                href={(hotel.blog || getHotelBlog(hotel.hotelName))!}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl transition-all shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95 group"
+              >
+                <div className="relative w-6 h-6">
+                  <Newspaper className="w-6 h-6 text-white" />
+                </div>
+                <span className="text-sm uppercase tracking-wider">View Property Blog</span>
+              </Link>
+            )}
+          </div>
         </div>
 
         <div className="space-y-12">
@@ -524,12 +519,26 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
               <div className={cn("flex flex-col gap-6 transition-all duration-700 overflow-hidden", isRoomsVisible ? "max-h-[5000px] opacity-100" : "max-h-0 opacity-0")}>
                 {processedHotel.rooms.map((room: any, idx: number) => (
                   <div key={idx} className="bg-white/90 backdrop-blur-xl rounded-[24px] shadow-xl border-2 border-transparent hover:border-primary/30 transition-all p-4 md:p-6 group relative">
-                    <div 
-                      className="relative w-full h-48 md:h-64 rounded-[20px] overflow-hidden mb-6 bg-slate-100 cursor-pointer group/img"
-                      onClick={() => setExpandedImage(room.displayImage)}
-                    >
-                      <OptimizedImage src={room.displayImage} alt={room.type} fill />
-                      <div className="absolute top-4 left-4 bg-white/95 px-4 py-1.5 rounded-full shadow-md"><span className="text-sm font-black text-slate-900 uppercase tracking-widest">{room.type}</span></div>
+                    <div className="flex flex-col gap-4 mb-6">
+                      <div className="flex items-center justify-between">
+                         <span className="text-sm font-black text-slate-900 uppercase tracking-widest">{room.type}</span>
+                         {room.images && room.images.length > 1 && (
+                           <span className="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-full">{room.images.length} Photos</span>
+                         )}
+                      </div>
+                      
+                      <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x">
+                        {(room.images && room.images.length > 0 ? room.images : [room.displayImage]).map((img: string, i: number) => (
+                          <div 
+                            key={i}
+                            className="relative flex-shrink-0 w-full sm:w-80 h-56 md:h-72 rounded-[20px] overflow-hidden bg-slate-100 cursor-pointer snap-center group/img"
+                            onClick={() => setExpandedImage(img)}
+                          >
+                            <OptimizedImage src={img} alt={`${room.type} - photo ${i+1}`} fill className="object-cover group-hover/img:scale-105 transition-transform duration-500" />
+                            {i === 0 && <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-[10px] font-black uppercase">Main Photo</div>}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                       <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col justify-center"><p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">Check-in</p><p className="text-sm font-bold text-slate-800">{new Date(startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</p></div>
@@ -855,6 +864,28 @@ function HotelDetailsContent({ id, initialHotel }: HotelDetailsClientProps) {
       )}
 
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
+
+      {/* Floating Blog Icon */}
+      {isMounted && getHotelBlog(hotel.hotelName) && (
+        <div className="fixed bottom-6 left-[7.5rem] md:left-[8.5rem] z-[60] group pointer-events-auto">
+          <Link 
+            href={getHotelBlog(hotel.hotelName)!}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 hover:scale-110 active:scale-95 overflow-hidden border border-slate-100 relative group/blog"
+          >
+             <div className="relative w-full h-full p-2 flex items-center justify-center">
+                <Newspaper className="w-8 h-8 text-blue-600 transition-transform group-hover/blog:rotate-12" />
+             </div>
+             {/* Pulse Ring */}
+             <div className="absolute inset-0 rounded-full border-4 border-blue-500/20 animate-ping pointer-events-none"></div>
+          </Link>
+          {/* Tooltip */}
+          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 px-4 py-2 bg-slate-900/90 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-xl opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 whitespace-nowrap pointer-events-none shadow-xl border border-white/10">
+            Official Blog
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Youtube, X, ExternalLink, Globe } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/LanguageContext";
 
 export default function Footer() {
@@ -25,8 +26,10 @@ export default function Footer() {
           <div className="lg:col-span-4 space-y-6">
             <Link href="/" className="group flex items-center transition-all duration-300 shrink-0" aria-label="MyNextTrip Home">
               <div 
-                className={`relative transform group-hover:scale-105 transition-all duration-300 ease-out ${mounted ? "w-52 h-14 md:w-72 md:h-20 -ml-2" : "w-40 h-10"}`}
-                suppressHydrationWarning
+                className={cn(
+                  "relative transform group-hover:scale-105 transition-all duration-300 ease-out",
+                  mounted ? "w-52 h-14 md:w-72 md:h-20 -ml-2" : "w-40 h-10"
+                )}
               >
                 {mounted ? (
                   <img 
@@ -142,7 +145,6 @@ export default function Footer() {
             <button 
               onClick={() => setIsAgencyModalOpen(true)}
               className="text-white font-bold ml-1 tracking-wider uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg shadow-sm hover:bg-primary/20 hover:border-primary/30 transition-all cursor-pointer group flex items-center gap-2"
-              suppressHydrationWarning
             >
               MD ATAUR ANSARI
               <ExternalLink className="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity" />
