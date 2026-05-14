@@ -8,15 +8,16 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
 
 const tabs = [
-  { id: "flights", label: "nav.flights", icon: Plane },
   { id: "hotels", label: "nav.hotels", icon: Building2 },
+  { id: "flights", label: "nav.flights", icon: Plane },
   { id: "packages", label: "nav.packages", icon: Globe },
 ];
 
 export default function Hero() {
   const { t } = useLanguage();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("flights");
+  const [mounted, setMounted] = useState(false);
+  const [activeTab, setActiveTab] = useState("hotels");
   const [isMuted, setIsMuted] = useState(true);
   const [flightDate, setFlightDate] = useState("");
   const [hotelIn, setHotelIn] = useState("");
@@ -27,7 +28,12 @@ export default function Hero() {
   const [hotelLocation, setHotelLocation] = useState("");
   const [hotelRooms, setHotelRooms] = useState(1);
   const [hotelAdults, setHotelAdults] = useState(2);
+  const [hotelBudget, setHotelBudget] = useState("Any");
   const [showHotelGuests, setShowHotelGuests] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Flight states
   const [flightFrom, setFlightFrom] = useState("Patna");
@@ -73,6 +79,7 @@ export default function Hero() {
       if (hotelIn) params.append("checkin", hotelIn);
       if (hotelOut) params.append("checkout", hotelOut);
       if (hotelRooms) params.append("rooms", hotelRooms.toString());
+      if (hotelBudget !== "Any") params.append("budget", hotelBudget);
       router.push(`/hotels?${params.toString()}`);
     } else {
       // Logic for flights/packages if needed, otherwise default to hotels
@@ -121,10 +128,10 @@ export default function Hero() {
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl p-4 md:p-8 border border-white/40 text-left relative mt-12 md:mt-16 max-w-5xl mx-auto mx-1">
+          <div className="bg-white rounded-[2.5rem] md:rounded-[4rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] p-5 md:p-10 border border-white/20 text-left relative mt-8 md:mt-20 max-w-5xl mx-auto w-[94%] md:w-full">
             {/* Desktop Tabs (Floating Pill) */}
             <div className="hidden md:flex absolute -top-7 left-1/2 -translate-x-1/2 items-center bg-white shadow-xl rounded-full px-2 py-1 gap-1 border border-primary/10 z-20 overflow-x-auto max-w-[95vw] no-scrollbar">
-              {tabs.map((tab) => {
+              {mounted && tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
@@ -136,7 +143,6 @@ export default function Hero() {
                         ? "bg-primary/10 text-primary shadow-[0_2px_10px_-4px_rgba(0,59,149,0.3)]" 
                         : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
                     )}
-                    suppressHydrationWarning
                   >
                     <Icon className={cn("w-4 h-4", activeTab === tab.id ? "text-primary" : "text-slate-300")} />
                     {t(tab.label)}
@@ -147,7 +153,7 @@ export default function Hero() {
 
             {/* Mobile Tabs (Connected Grid) */}
             <div className="grid grid-cols-3 md:hidden border-b border-slate-100 mb-4 -mx-4 -mt-4 bg-slate-50/50">
-              {tabs.map((tab) => {
+              {mounted && tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
                 return (
@@ -158,7 +164,6 @@ export default function Hero() {
                       "flex flex-col items-center justify-center gap-2 py-4 px-2 transition-all relative",
                       isActive ? "bg-white" : "text-slate-400"
                     )}
-                    suppressHydrationWarning
                   >
                     <div className={cn(
                       "p-2.5 rounded-2xl transition-all",
@@ -173,7 +178,7 @@ export default function Hero() {
                       {t(tab.label).split(' ')[0]} {/* Use single word for mobile grid */}
                     </span>
                     {isActive && (
-                      <div className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-t-full" />
+                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary" />
                     )}
                   </button>
                 );
@@ -196,7 +201,7 @@ export default function Hero() {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-0 md:gap-2 bg-slate-50 md:bg-white rounded-2xl md:p-0 overflow-hidden md:border-none">
-                  <div className="relative group/input p-3 bg-white rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm">
+                  <div className="relative group/input p-5 md:p-4 bg-slate-50 md:bg-white rounded-3xl md:rounded-2xl border border-slate-100 hover:border-primary/30 transition-all cursor-pointer shadow-sm md:shadow-none">
                     <p className="text-[9px] md:text-[10px] font-black tracking-wider text-slate-400 mb-0.5 uppercase">FROM</p>
                     <div className="flex justify-between items-center">
                       <input 
@@ -225,7 +230,7 @@ export default function Hero() {
                     <p className="text-[10px] md:text-xs font-semibold text-slate-400">{flightDate ? new Date(flightDate).toLocaleDateString('en-GB',{weekday:'long'}) : "Tap to open calendar"}</p>
                   </div>
                   <div 
-                    className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer select-none md:shadow-none"
+                    className="relative group/input p-5 md:p-4 bg-slate-50 md:bg-white rounded-3xl md:rounded-2xl border border-slate-100 hover:border-primary/30 transition-all cursor-pointer select-none shadow-sm md:shadow-none"
                     onClick={() => setShowFlightTravellers(!showFlightTravellers)}
                   >
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">TRAVELLERS & CLASS</p>
@@ -298,13 +303,10 @@ export default function Hero() {
                   <label className="flex items-center gap-2 text-xs md:text-sm font-black text-slate-500 hover:text-primary cursor-pointer whitespace-nowrap">
                     <input type="radio" name="hotel_type" className="text-blue-600 w-4 h-4 accent-primary" onChange={() => setHotelRooms(5)} checked={hotelRooms > 1 && hotelRooms <= 5} /> Group Booking
                   </label>
-                  <label className="flex items-center gap-2 text-xs md:text-sm font-black text-slate-500 hover:text-primary cursor-pointer whitespace-nowrap">
-                    <input type="radio" name="hotel_type" className="text-blue-600 w-4 h-4 accent-primary" /> Long Stay
-                  </label>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-0 md:gap-2 bg-slate-50 md:bg-white rounded-2xl md:p-0 overflow-hidden md:border-none">
-                  <div className="relative group/input md:col-span-2 p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-3 md:gap-2 bg-transparent md:bg-white rounded-2xl md:p-0 overflow-hidden md:border-none">
+                  <div className="relative group/input md:col-span-2 p-5 md:p-4 bg-slate-50 md:bg-white rounded-3xl md:rounded-2xl border border-slate-100 hover:border-primary/30 transition-all cursor-pointer shadow-sm md:shadow-none">
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">CITY OR PROPERTY</p>
                     <div className="flex justify-between items-center">
                       <input 
@@ -317,9 +319,29 @@ export default function Hero() {
                       /> 
                       <Building2 className="w-5 h-5 text-slate-300" />
                     </div>
-                    <p className="text-[10px] md:text-xs font-semibold text-slate-400">Popular: Patna, Ranchi, Nepal</p>
+                    {/* Quick Budget Suggestion */}
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {["₹1000", "₹2000", "₹3000", "₹5000"].map((price) => (
+                        <button
+                          key={price}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setHotelBudget(price === "₹1000" ? "Under ₹1000" : price === "₹2000" ? "₹1000 - ₹2000" : price === "₹3000" ? "₹2000 - ₹5000" : "Above ₹5000");
+                          }}
+                          className={cn(
+                            "px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-tighter border transition-all",
+                            (hotelBudget.includes(price.replace('₹', '')) || (price === "₹1000" && hotelBudget === "Under ₹1000"))
+                              ? "bg-emerald-600 border-emerald-600 text-white"
+                              : "bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-100"
+                          )}
+                        >
+                          {price}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-[10px] md:text-xs font-semibold text-slate-400 mt-2">Popular: Patna, Ranchi, Nepal</p>
                   </div>
-                  <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
+                  <div className="relative group/input p-5 md:p-4 bg-slate-50 md:bg-white rounded-3xl md:rounded-2xl border border-slate-100 hover:border-primary/30 transition-all cursor-pointer shadow-sm md:shadow-none">
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">CHECK-IN</p>
                     <div className="flex items-center justify-between relative">
                       <input type="date" min={today} value={hotelIn} onChange={e=>handleHotelInChange(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" suppressHydrationWarning />
@@ -327,7 +349,7 @@ export default function Hero() {
                       <Calendar className="w-5 h-5 text-slate-300" />
                     </div>
                   </div>
-                  <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
+                  <div className="relative group/input p-5 md:p-4 bg-slate-50 md:bg-white rounded-3xl md:rounded-2xl border border-slate-100 hover:border-primary/30 transition-all cursor-pointer shadow-sm md:shadow-none">
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">CHECK-OUT</p>
                     <div className="flex items-center justify-between relative">
                       <input type="date" min={minCheckOut} value={hotelOut} onChange={e=>setHotelOut(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" suppressHydrationWarning />
@@ -336,15 +358,54 @@ export default function Hero() {
                     </div>
                   </div>
                   <div 
-                    className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer select-none md:shadow-none"
+                    className="relative group/input p-5 md:p-4 bg-slate-50 md:bg-white rounded-3xl md:rounded-2xl border border-slate-100 hover:border-primary/30 transition-all cursor-pointer select-none shadow-sm md:shadow-none"
                     onClick={() => setShowHotelGuests(!showHotelGuests)}
                   >
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">GUESTS</p>
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-base md:text-sm font-black text-slate-800 truncate">
-                        <span className="text-primary mr-1">{hotelRooms}</span> Rm, <span className="text-primary mx-1">{hotelAdults}</span> Gst
-                      </h3>
-                      <Users className="w-4 h-4 text-slate-300" />
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setHotelRooms(Math.max(1, hotelRooms - 1)); }}
+                            className="w-6 h-6 flex items-center justify-center rounded-full bg-slate-200/50 hover:bg-red-500 hover:text-white transition-all text-xs font-black"
+                          >
+                            -
+                          </button>
+                          <h3 className="text-sm md:text-base font-black text-slate-800">
+                            <span className="text-primary">{hotelRooms}</span> <span className="text-[10px] uppercase">Rm</span>
+                          </h3>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setHotelRooms(Math.min(5, hotelRooms + 1)); }}
+                            className="w-6 h-6 flex items-center justify-center rounded-full bg-slate-200/50 hover:bg-emerald-500 hover:text-white transition-all text-xs font-black"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <Users className="w-4 h-4 text-slate-300" />
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setHotelAdults(Math.max(1, hotelAdults - 1)); }}
+                          className="w-6 h-6 flex items-center justify-center rounded-full bg-slate-200/50 hover:bg-red-500 hover:text-white transition-all text-xs font-black"
+                        >
+                          -
+                        </button>
+                        <h3 className="text-sm md:text-base font-black text-slate-800">
+                          <span className="text-primary">{hotelAdults}</span> <span className="text-[10px] uppercase">Gst</span>
+                        </h3>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setHotelAdults(Math.min(15, hotelAdults + 1)); }}
+                          className="w-6 h-6 flex items-center justify-center rounded-full bg-slate-200/50 hover:bg-emerald-500 hover:text-white transition-all text-xs font-black"
+                        >
+                          +
+                        </button>
+                        {hotelBudget !== "Any" && (
+                          <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded ml-1">
+                            {hotelBudget}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     {showHotelGuests && (
                       <div 
@@ -387,6 +448,28 @@ export default function Hero() {
                               >+</button>
                             </div>
                           </div>
+                          <div>
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-black text-slate-800 text-sm uppercase tracking-wider">Per Night Budget</span>
+                              <span className="text-[10px] font-bold text-emerald-600">Selected: {hotelBudget}</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              {["Any", "Under ₹1000", "₹1000 - ₹2000", "₹2000 - ₹5000", "Above ₹5000"].map((b) => (
+                                <button
+                                  key={b}
+                                  onClick={() => setHotelBudget(b)}
+                                  className={cn(
+                                    "px-3 py-2 rounded-xl text-[10px] font-black border transition-all",
+                                    hotelBudget === b 
+                                      ? "bg-emerald-600 border-emerald-600 text-white shadow-lg shadow-emerald-200" 
+                                      : "bg-white border-slate-200 text-slate-500 hover:border-emerald-200 hover:text-emerald-600"
+                                  )}
+                                >
+                                  {b}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
 
                           <button 
                             onClick={() => setShowHotelGuests(false)}
@@ -411,8 +494,8 @@ export default function Hero() {
                   </label>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-0 md:gap-2 bg-slate-50 md:bg-white rounded-2xl md:p-0 overflow-hidden md:border-none">
-                  <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-2 bg-transparent md:bg-white rounded-2xl md:p-0 overflow-hidden md:border-none">
+                  <div className="relative group/input p-5 md:p-4 bg-slate-50 md:bg-white rounded-3xl md:rounded-2xl border border-slate-100 hover:border-primary/30 transition-all cursor-pointer shadow-sm md:shadow-none">
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">FROM CITY</p>
                     <div className="flex justify-between items-center">
                       <input 
@@ -426,12 +509,12 @@ export default function Hero() {
                     </div>
                     <p className="text-[10px] md:text-xs font-semibold text-slate-400">Your location</p>
                   </div>
-                  <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
+                  <div className="relative group/input p-5 md:p-4 bg-slate-50 md:bg-white rounded-3xl md:rounded-2xl border border-slate-100 hover:border-primary/30 transition-all cursor-pointer shadow-sm md:shadow-none">
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">DESTINATION</p>
                     <div className="flex justify-between items-center"><input type="text" placeholder="Where to?" className="w-full text-lg md:text-xl font-black text-slate-800 placeholder:text-slate-300 focus:outline-none bg-transparent" suppressHydrationWarning /> <Globe className="w-5 h-5 text-slate-300" /></div>
                     <p className="text-[10px] md:text-xs font-semibold text-slate-400">Trending: Bali, Dubai</p>
                   </div>
-                  <div className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer shadow-sm md:shadow-none">
+                  <div className="relative group/input p-5 md:p-4 bg-slate-50 md:bg-white rounded-3xl md:rounded-2xl border border-slate-100 hover:border-primary/30 transition-all cursor-pointer shadow-sm md:shadow-none">
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">STARTING DATE</p>
                     <div className="flex items-center justify-between relative">
                       <input type="date" min={today} value={pkgDate} onChange={e=>setPkgDate(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" suppressHydrationWarning />
@@ -440,7 +523,7 @@ export default function Hero() {
                     </div>
                   </div>
                   <div 
-                    className="relative group/input p-4 md:p-3 bg-white md:rounded-xl border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer select-none md:shadow-none"
+                    className="relative group/input p-5 md:p-4 bg-slate-50 md:bg-white rounded-3xl md:rounded-2xl border border-slate-100 hover:border-primary/30 transition-all cursor-pointer select-none shadow-sm md:shadow-none"
                     onClick={() => setShowPkgGuests(!showPkgGuests)}
                   >
                     <p className="text-[9px] md:text-[10px] font-black tracking-widest text-slate-400 mb-1 uppercase">TRAVELLERS</p>

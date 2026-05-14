@@ -17,6 +17,7 @@ function HotelsList({ initialHotels }: HotelsListClientProps) {
   const searchParams = useSearchParams();
   const searchParam = searchParams?.get('q') || "";
   const locationParam = searchParams?.get('location') || "";
+  const budgetParam = searchParams?.get('budget') || "";
   
   const [hotels, setHotels] = useState<any[]>(initialHotels || []);
   const [loading, setLoading] = useState(false);
@@ -60,6 +61,22 @@ function HotelsList({ initialHotels }: HotelsListClientProps) {
     fetchHotels();
   }, [locationParam, searchParam]);
 
+  const filteredHotels = useMemo(() => {
+    if (!budgetParam || budgetParam === "Any") return hotels;
+    
+    return hotels.filter(hotel => {
+      if (!hotel.rooms || hotel.rooms.length === 0) return false;
+      const minPrice = Math.min(...hotel.rooms.map((r: any) => parseInt(r.price)));
+      
+      if (budgetParam === "Under ₹1000") return minPrice < 1000;
+      if (budgetParam === "₹1000 - ₹2000") return minPrice >= 1000 && minPrice <= 2000;
+      if (budgetParam === "₹2000 - ₹5000") return minPrice > 2000 && minPrice <= 5000;
+      if (budgetParam === "Above ₹5000") return minPrice > 5000;
+      
+      return true;
+    });
+  }, [hotels, budgetParam]);
+
   if (loading || !mounted) {
     return <HotelsGridSkeleton />;
   }
@@ -83,7 +100,7 @@ function HotelsList({ initialHotels }: HotelsListClientProps) {
     );
   }
 
-  if (hotels.length === 0) {
+  if (filteredHotels.length === 0) {
     return (
       <div className="flex flex-col justify-center items-center py-32 text-slate-500 w-full col-span-full bg-white rounded-[3rem] shadow-xl border border-slate-100">
         <Building2 className="w-20 h-20 text-slate-200 mb-6" />
@@ -91,7 +108,7 @@ function HotelsList({ initialHotels }: HotelsListClientProps) {
           No matches found
         </h3>
         <p className="max-w-md text-center mt-3 text-slate-500 font-medium px-8 leading-relaxed">
-          We couldn't find any properties matching "{searchParam || locationParam}". Try searching for something else or check the spelling.
+          We couldn't find any properties matching "{searchParam || locationParam}" {budgetParam && `within ${budgetParam}`}. Try searching for something else or check the spelling.
         </p>
         <button 
           onClick={() => router.push('/hotels')}
@@ -108,7 +125,7 @@ function HotelsList({ initialHotels }: HotelsListClientProps) {
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-      {hotels.map((hotel) => {
+      {filteredHotels.map((hotel) => {
         const hotelLink = `/hotels/${hotel._id}${checkinParam && checkoutParam ? `?checkin=${checkinParam}&checkout=${checkoutParam}` : ''}`;
         return (
           <div key={hotel._id} className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden border border-slate-100 group flex flex-col animate-in fade-in zoom-in-95 fill-mode-both">

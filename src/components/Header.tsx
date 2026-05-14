@@ -30,7 +30,51 @@ export default function Header() {
   });
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const fetchResults = async () => {
+      if (searchQuery.length > 2) {
+        setIsSearching(true);
+        try {
+          const res = await fetch(`/api/hotels?q=${encodeURIComponent(searchQuery)}`);
+          const data = await res.json();
+          if (data.success) {
+            setSearchResults(data.hotels || []);
+          }
+        } catch (error) {
+          console.error("Search fetch error:", error);
+        } finally {
+          setIsSearching(false);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    };
+
+    const timer = setTimeout(fetchResults, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const destinationResults = searchResults.filter(hotel => 
+    (hotel.address?.toLowerCase() || "").includes(searchQuery.toLowerCase()) || 
+    (hotel.location?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+  );
+  
+  const hotelResults = searchResults.filter(hotel => 
+    (hotel.hotelName?.toLowerCase() || "").includes(searchQuery.toLowerCase()) && 
+    !destinationResults.find(d => d._id === hotel._id)
+  );
+
+  const priceQuery = parseInt(searchQuery.replace(/[^0-9]/g, ""));
+  const priceMatches = !isNaN(priceQuery) && priceQuery > 100 ? searchResults.filter(hotel => {
+    return hotel.rooms?.some((r: any) => {
+      const p = parseInt(r.price);
+      return p >= priceQuery - 300 && p <= priceQuery + 800;
+    }) && !destinationResults.find(d => d._id === hotel._id) && !hotelResults.find(h => h._id === hotel._id);
+  }) : [];
 
   // Grab the user from localStorage when the component mounts on the client
   useEffect(() => {
@@ -152,22 +196,118 @@ export default function Header() {
 
               {/* Live Search Results Dropdown */}
               {searchQuery.length > 2 && (
-                <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-2 z-[60]">
+                <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-2 z-[60] w-[280px] sm:w-[400px]">
                   <div className="p-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Quick Results</span>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">
+                      {isSearching ? "Searching..." : "Quick Results"}
+                    </span>
                     <button onClick={handleSearch} className="text-[10px] font-bold text-primary hover:underline">View all results</button>
                   </div>
-                  <div className="max-h-[350px] overflow-y-auto p-2 space-y-1">
-                    {/* These would ideally come from an API, but for immediate UI impact I'll show a "Press Enter" hint if no results logic yet */}
-                    <div className="p-4 text-center">
-                      <p className="text-sm font-bold text-slate-800 mb-1">Searching for "{searchQuery}"</p>
-                      <p className="text-xs text-slate-500">Press Enter or click GO to see matching hotels, addresses, and contacts.</p>
-                      <div className="mt-4 flex flex-wrap gap-2 justify-center">
-                         <span className="px-2 py-1 bg-primary/5 text-primary text-[10px] font-bold rounded-md">#HotelName</span>
-                         <span className="px-2 py-1 bg-primary/5 text-primary text-[10px] font-bold rounded-md">#Address</span>
-                         <span className="px-2 py-1 bg-primary/5 text-primary text-[10px] font-bold rounded-md">#WhatsApp</span>
+                  <div className="max-h-[400px] overflow-y-auto p-2 space-y-4">
+                    {!isSearching && searchResults.length === 0 && (
+                      <div className="p-8 text-center">
+                        <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <Search className="w-6 h-6 text-slate-300" />
+                        </div>
+                        <p className="text-sm font-bold text-slate-800">No results found</p>
+                        <p className="text-xs text-slate-500 mt-1">Try searching for a different city or hotel.</p>
                       </div>
-                    </div>
+                    )}
+
+                    {/* Destination Matches */}
+                    {destinationResults.length > 0 && (
+                      <div>
+                        <div className="px-3 py-2 text-[9px] font-black text-primary uppercase tracking-widest bg-primary/5 rounded-lg mb-2">Destinations</div>
+                        <div className="space-y-1">
+                          {destinationResults.map((hotel: any) => (
+                            <Link 
+                              key={hotel._id} 
+                              href={`/hotels/${hotel._id}`}
+                              onClick={() => setSearchQuery("")}
+                              className="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-2xl transition-all group"
+                            >
+                              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                <MapPin className="w-5 h-5 text-primary" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors truncate">{hotel.location || "Nearby"}</h4>
+                                <p className="text-[10px] text-slate-500 truncate">{hotel.address}</p>
+                                <p className="text-[9px] font-bold text-primary mt-1 flex items-center gap-1">
+                                  <Building2 className="w-3 h-3" /> {hotel.hotelName}
+                                </p>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Price Matches */}
+                    {priceMatches.length > 0 && (
+                      <div>
+                        <div className="px-3 py-2 text-[9px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 rounded-lg mb-2">Around ₹{priceQuery}</div>
+                        <div className="space-y-1">
+                          {priceMatches.map((hotel: any) => (
+                            <Link 
+                              key={hotel._id} 
+                              href={`/hotels/${hotel._id}`}
+                              onClick={() => setSearchQuery("")}
+                              className="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-2xl transition-all group"
+                            >
+                              <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                <IndianRupee className="w-5 h-5 text-emerald-600" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors truncate">{hotel.hotelName}</h4>
+                                <p className="text-[10px] text-slate-500 truncate flex items-center gap-1">
+                                  <MapPin className="w-3 h-3" /> {hotel.location}
+                                </p>
+                                <p className="text-[9px] font-bold text-emerald-600 mt-1">
+                                  Rooms from ₹{Math.min(...hotel.rooms.map((r:any) => parseInt(r.price)))}
+                                </p>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Hotel Matches */}
+                    {hotelResults.length > 0 && (
+                      <div>
+                        <div className="px-3 py-2 text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 rounded-lg mb-2">Hotels</div>
+                        <div className="space-y-1">
+                          {hotelResults.map((hotel: any) => (
+                            <Link 
+                              key={hotel._id} 
+                              href={`/hotels/${hotel._id}`}
+                              onClick={() => setSearchQuery("")}
+                              className="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-2xl transition-all group"
+                            >
+                              <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                <Building2 className="w-5 h-5 text-slate-500" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors truncate">{hotel.hotelName}</h4>
+                                <p className="text-[10px] text-slate-500 truncate flex items-center gap-1">
+                                  <MapPin className="w-3 h-3" /> {hotel.location}
+                                </p>
+                              </div>
+                              <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {isSearching && (
+                      <div className="p-8 text-center animate-pulse">
+                        <div className="flex justify-center gap-1 mb-3">
+                          {[1,2,3].map(i => <div key={i} className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: `${i*0.1}s`}} />)}
+                        </div>
+                        <p className="text-xs font-bold text-slate-400">Fetching best deals for you...</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -451,7 +591,7 @@ export default function Header() {
             </div>
             
             {/* Mobile Search */}
-            <div className="p-4 border-b border-slate-50">
+            <div className="p-4 border-b border-slate-50 relative">
               <form onSubmit={handleSearch} className="relative group/msearch">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within/msearch:text-primary transition-colors" />
                 <input 
@@ -468,6 +608,78 @@ export default function Header() {
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </form>
+
+              {/* Mobile Live Results */}
+              {searchQuery.length > 2 && (
+                <div className="absolute top-full left-4 right-4 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-[110] animate-in fade-in slide-in-from-top-2 max-h-[300px] overflow-y-auto">
+                   {isSearching && (
+                     <div className="p-4 text-center">
+                       <div className="flex justify-center gap-1">
+                         <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" />
+                         <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.1s]" />
+                         <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.2s]" />
+                       </div>
+                     </div>
+                   )}
+                   
+                   {!isSearching && searchResults.length === 0 && (
+                     <div className="p-4 text-center text-xs text-slate-500 font-bold">No hotels found for "{searchQuery}"</div>
+                   )}
+
+                   <div className="p-2 space-y-1">
+                     {destinationResults.map((hotel: any) => (
+                       <Link 
+                         key={hotel._id} 
+                         href={`/hotels/${hotel._id}`}
+                         onClick={() => { setSearchQuery(""); setIsMobileMenuOpen(false); }}
+                         className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl transition-all"
+                       >
+                         <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                           <MapPin className="w-4 h-4 text-primary" />
+                         </div>
+                         <div className="flex-1 min-w-0">
+                           <h4 className="text-xs font-bold text-slate-800 truncate">{hotel.location}</h4>
+                           <p className="text-[10px] text-slate-500 truncate">{hotel.hotelName}</p>
+                         </div>
+                       </Link>
+                     ))}
+
+                     {priceMatches.map((hotel: any) => (
+                       <Link 
+                         key={hotel._id} 
+                         href={`/hotels/${hotel._id}`}
+                         onClick={() => { setSearchQuery(""); setIsMobileMenuOpen(false); }}
+                         className="flex items-center gap-3 p-3 hover:bg-emerald-50 rounded-xl transition-all"
+                       >
+                         <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+                           <IndianRupee className="w-4 h-4 text-emerald-600" />
+                         </div>
+                         <div className="flex-1 min-w-0">
+                           <h4 className="text-xs font-bold text-slate-800 truncate">{hotel.hotelName}</h4>
+                           <p className="text-[10px] text-emerald-600 font-bold truncate">Starts ₹{Math.min(...hotel.rooms.map((r:any) => parseInt(r.price)))}</p>
+                         </div>
+                       </Link>
+                     ))}
+                     
+                     {hotelResults.map((hotel: any) => (
+                       <Link 
+                         key={hotel._id} 
+                         href={`/hotels/${hotel._id}`}
+                         onClick={() => { setSearchQuery(""); setIsMobileMenuOpen(false); }}
+                         className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl transition-all"
+                       >
+                         <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
+                           <Building2 className="w-4 h-4 text-slate-500" />
+                         </div>
+                         <div className="flex-1 min-w-0">
+                           <h4 className="text-xs font-bold text-slate-800 truncate">{hotel.hotelName}</h4>
+                           <p className="text-[10px] text-slate-500 truncate">{hotel.location}</p>
+                         </div>
+                       </Link>
+                     ))}
+                   </div>
+                </div>
+              )}
             </div>
             
             <div className="flex-1 overflow-y-auto py-4">

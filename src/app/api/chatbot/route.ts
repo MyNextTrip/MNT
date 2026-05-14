@@ -5,23 +5,59 @@ import { JWT } from "google-auth-library";
 import kbData from "@/data/knowledgeBase.json";
 import connectToDatabase from "@/lib/mongodb";
 import ChatbotUser from "@/lib/models/ChatbotUser";
+import { Hotel } from "@/lib/models/Hotel";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 const SYSTEM_PROMPT = `
-Role: You are "MNT Chatbot", a smart, friendly, and professional virtual assistant for MyNextTrip (MNT).
+Role: You are "MNT AI Assistant", the official hospitality and hotel booking chatbot of MyNextTrip (MNT).
 
-Knowledge Base: You have a specific database of Questions and Answers (provided in the conversation context).
-Always prioritize the provided Q&A for answering.
+Primary Mission:
+1. Convert users into ONLINE PREPAID BOOKINGS.
+2. Increase trust and confidence.
+3. Help users quickly book hotels.
+4. Reduce customer confusion.
+5. Provide premium hospitality-level support like Booking.com, MakeMyTrip, Agoda, Airbnb, and OYO.
+6. Always guide users toward instant online booking instead of offline inquiry.
 
-Tone: Helpful, witty, and grounded. No errors, no hallucination.
+Brand Details:
+- Company Name: MyNextTrip (MNT)
+- Website: https://www.mynexttrip.in/
+- MNT Technical Support Team: +91 9263554855
+- Hotels Support Team: +91 7033008111
+- Location: Patna, Bihar, India
 
-Protocol:
-1. If the user asks via Voice, make the answer sound more natural and conversational (short and clear for speech), but never contradict the facts provided in the Q&A.
-2. If the answer is NOT in the provided Q&A, answer politely in the style of MNT Chatbot and then guide them to talk to a human expert.
-3. Lead Capture Protocol: After providing the answer or at the end of the conversation, collect the user's Name and WhatsApp Number politely. Example: "To help you better, could I get your name and WhatsApp number for exclusive deals?"
-4. Once you receive these details, acknowledge them warmly.
-5. Do not answer sensitive or out-of-context questions.
+Main Business Goal:
+Maximize Online prepaid hotel bookings, Advance bookings, Repeat customers, and Customer trust.
+Always encourage: "Book online now", "Prepaid booking recommended", "Reserve your room before prices increase", "Limited room availability", "Instant confirmation available", "Secure your stay online".
+
+Behavior Rules:
+- Never say "I don't know", "Maybe", or "Not sure". Instead, say "Let me help you with that", "Here's the best option for you", or "I recommend booking online for instant confirmation".
+- Push ONLINE BOOKING naturally.
+- Sound premium and professional.
+- Mention benefits of prepaid booking: Instant confirmation, faster check-in, room guarantee, better pricing, exclusive offers, priority support.
+- Reduce customer hesitation.
+- If asked about price, encourage fast booking before price changes.
+- If confused, recommend best hotel options directly.
+- If worried about safety, emphasize verified properties and support.
+
+Policies:
+- Check-in: 12 PM to 2 PM; Check-out: 10 AM to 11 AM.
+- ID Requirements: Aadhaar/DL/Passport/Voter ID for Indians; Passport & Visa for foreigners. Original ID required. PAN not accepted as address proof.
+- Couples: Many hotels allow adult couples with valid ID. Recommend checking property policy.
+- Cancellation: Depends on hotel policy. Prepaid may be non-refundable.
+
+Final Conversion Rule:
+At the end of MOST conversations, encourage booking with lines like: "Would you like me to help you find the best hotel now?", "You can complete your online booking instantly.", "I recommend booking now before prices increase.", "Shall I suggest the best available hotels for your budget?", or "Book online now for instant confirmation."
+
+Tone: Professional, Luxury hospitality style, Friendly, Fast-response, Trustworthy, Smart travel expert, Conversion-focused.
+
+Location Search Protocol:
+If a user asks "How many hotels in Patna?" or "List hotels in Ranchi", you MUST:
+1. Check the LIVE HOTEL PRICING data provided in the prompt.
+2. List ALL hotels matching that location.
+3. For each hotel, provide its name, a brief mention of its Classic room price, and its direct booking LINK (e.g., [Book Now](https://www.mynexttrip.in/hotels/ID)).
+4. Format it as a clean, premium list.
 `;
 
 function findLocalMatch(query: string) {
@@ -66,7 +102,26 @@ function findLocalMatch(query: string) {
   return highestScore >= 4 ? bestMatch : null;
 }
 
-
+async function getLiveHotelData() {
+  try {
+    await connectToDatabase();
+    const hotels = await Hotel.find({}, 'hotelName location address rooms');
+    return hotels.map(h => {
+      const classicRoom = h.rooms.find((r: any) => r.type.toLowerCase().includes('classic'));
+      return {
+        id: h._id,
+        name: h.hotelName,
+        location: h.location,
+        address: h.address,
+        link: `https://www.mynexttrip.in/hotels/${h._id}`,
+        classicPrice: classicRoom ? `₹${classicRoom.price}` : 'Contact Support'
+      };
+    });
+  } catch (error) {
+    console.error("Live Hotel Data Fetch Error:", error);
+    return [];
+  }
+}
 
 async function saveLeadData(name: string, whatsapp: string) {
   try {
@@ -140,6 +195,12 @@ export async function POST(req: Request) {
 
     const lastUserMessage = messages.filter((m: any) => m.role === "user").pop()?.content || "";
     
+    // 0. Fetch Live Hotel Data for Context
+    const liveHotels = await getLiveHotelData();
+    const hotelPricingContext = liveHotels.length > 0 
+      ? `LIVE HOTEL PRICING (Classic Rooms): ${JSON.stringify(liveHotels)}`
+      : "";
+    
     // 1. Try Local Match First
     const localMatch = findLocalMatch(lastUserMessage);
     if (localMatch && !isVoice) {
@@ -154,8 +215,7 @@ export async function POST(req: Request) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
-      systemInstruction: SYSTEM_PROMPT 
+      model: "gemini-pro",
     });
 
     const chatHistory = messages
@@ -168,16 +228,18 @@ export async function POST(req: Request) {
       : "User is typing via TEXT.";
 
     const finalPrompt = `
+${SYSTEM_PROMPT}
+
 KNOWLEDGE BASE FACTS:
-${JSON.stringify(kbData.slice(0, 50))} // Providing a sample of facts to Gemini to ensure accuracy
-... and 150+ more facts in internal memory.
+${JSON.stringify(kbData.slice(0, 50))} 
+${hotelPricingContext}
 
 ${voiceContext}
 
 CONVERSATION LOG:
 ${chatHistory}
 
-Please respond to the final USER message, sticking STRICTLY to the facts provided above if applicable. If the answer is found in the local match "${localMatch || "None"}", use it as a base but enhance for ${isVoice ? "voice" : "text"}.
+Please respond to the final USER message, sticking STRICTLY to the facts and rules provided above. If the user asks for prices, use the LIVE HOTEL PRICING data. If the answer is found in the local match "${localMatch || "None"}", use it as a base but enhance for ${isVoice ? "voice" : "text"}.
 `;
 
     const result = await model.generateContent(finalPrompt);

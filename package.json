@@ -17,6 +17,7 @@
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
+    "@types/three": "^0.184.1",
     "autoprefixer": "^10.4.27",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2",
@@ -25,13 +26,17 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@radix-ui/react-slot": "^1.2.4",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
     "@tailwindcss/postcss": "^4.2.2",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^1.41.3",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.38.0",
     "google-auth-library": "^10.6.2",
     "google-spreadsheet": "^5.2.0",
+    "gsap": "^3.15.0",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.470.0",
@@ -44,6 +49,7 @@
     "react-dom": "^19.2.5",
     "react-pageflip": "^2.0.3",
     "react-pdf": "^10.4.1",
-    "tailwind-merge": "^3.5.0"
+    "tailwind-merge": "^3.5.0",
+    "three": "^0.184.0"
   }
 }

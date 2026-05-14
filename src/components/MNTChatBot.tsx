@@ -13,7 +13,7 @@ interface Message {
 export default function MNTChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: "bot", content: "🌟 Welcome to MyNextTrip! I'm your MNT AI Expert. I can help you find premium hotels in Patna, Ranchi, Motihari, and Nepal. How can I assist you today?" }
+    { role: "bot", content: "🌟 Welcome to MyNextTrip! I'm your MNT AI Assistant. I'm here to help you find and book the most premium hotel stays with instant online confirmation. How can I assist you with your luxury escape today?" }
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -107,6 +107,10 @@ export default function MNTChatBot() {
 
       const data = await response.json();
       if (data.text) {
+        if (text === "avatar_mode") {
+          window.location.href = "/ai-assistant";
+          return;
+        }
         const botMsg = { role: "bot", content: data.text } as Message;
         setMessages((prev) => [...prev, botMsg]);
         if (shouldSpeak) {
@@ -159,7 +163,7 @@ export default function MNTChatBot() {
               </div>
               <div>
                 <h3 className="font-black text-2xl tracking-tight flex items-center gap-2">
-                  MNT ChatBot <Sparkles className="w-5 h-5 text-secondary fill-secondary animate-pulse" />
+                  MNT AI Assistant <Sparkles className="w-5 h-5 text-secondary fill-secondary animate-pulse" />
                 </h3>
                 <div className="flex items-center gap-2">
                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
@@ -195,6 +199,7 @@ export default function MNTChatBot() {
                 {msg.role === "bot" && i === 0 && (
                    <div className="mt-4 flex flex-wrap gap-2">
                       {[
+                        { label: "✨ Try MNT AI Avatar (3D)", val: "avatar_mode" },
                         { label: "🏨 Hotels in Ranchi", val: "Hotels in Ranchi" },
                         { label: "🏙️ Patna Stays", val: "Patna Stays" },
                         { label: "🏔️ Nepal Packages", val: "Nepal Tour Packages" },
