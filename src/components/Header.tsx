@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, User, Menu, Phone, Globe, ChevronDown, LogOut, MapPin, Building2, TreePine, Briefcase, ShieldCheck, Map, Camera, Star, ArrowRight, X, Plane, LayoutDashboard, Ticket } from "lucide-react";
+import { Search, User, Menu, Phone, Globe, ChevronDown, LogOut, MapPin, Building2, TreePine, Briefcase, ShieldCheck, Map, Camera, Star, ArrowRight, X, Plane, LayoutDashboard, Ticket, IndianRupee } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/LanguageContext";
